@@ -1,0 +1,7 @@
+html, body {
+	font-family: 'Microsoft JhengHei';
+}
+
+#class_table th, #class_table td {
+	text-align: center;
+}
