@@ -1,7 +1,17 @@
-html, body {
+* {
 	font-family: 'Microsoft JhengHei';
 }
 
-#class_table th, #class_table td {
+body {
+	padding-top: 50px;
+}
+
+.ui.top.attached.block.header, #class_table th, #class_table td {
 	text-align: center;
+	font-family: 'Microsoft JhengHei';
+	font-size: 16px;
+}
+
+.ui.fluid.selection {
+	margin-top: 5px;
 }
