@@ -7,7 +7,7 @@ html(lang="en")
     .ui.grid.stackable.centered
       .row
         .fourteen.wide.column
-          p 104學年度第二學期
+          p.section 104學年度第二學期
       .four.wide.column
         .ui.top.attached.block.header
           | 尋找課程
@@ -15,33 +15,39 @@ html(lang="en")
           .ui.fluid.icon.input
             input(type='text', placeholder='Search...')
             i.search.icon
-          .ui.fluid.selection.dropdown#serch_type
+          .ui.fluid.selection.dropdown#search-item
             input(type='hidden', name='user')
             i.dropdown.icon
-            .default.text Select
+            .default.text 選取項目
             .menu
-              .item(value='1')
-                | 找空堂
-              .item(value='2')
-                | 選通識
-          .ui.fluid.selection.dropdown#select_degree
-            input(type='hidden', name='user')
-            i.dropdown.icon
-            .default.text Select
-            .menu
-              .item(value='1')
+              .header
+                | 科系
+              .item(value="0")
                 | 學士班
-              .item(value='2')
+              .item(value="1")
                 | 碩士班
-              .item(value='3')
+              .item(value="2")
                 | 博士班
-              .item(value='4')
+              .item(value="3")
                 | 產專班
-              .item(value='5')
+              .item(value="4")
                 | 碩專班
-              .item(value='6')
+              .item(value="5")
                 | 進修學士班
-          .ui.divider
+              .item(value="6")
+                | 通識
+              .item(value="7")
+                | 共同科目
+              .item(value="8")
+                | 空堂
+                
+          select.ui.fluid.search.selection.dropdown#search-detail(multiple="")
+            option(value="")
+              | 選取分類
+
+          .ui.segment
+
+
         .ui.top.attached.block.header
           | 目前課程
         .ui.bottom.attached.segment
@@ -66,9 +72,8 @@ html(lang="en")
                     if (j != 0)
                       td(class-day=j)
                     else
-                      td= i
+                      td(class="size-small")= i
 
     script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js")
-    script(src="./js/tools.js")
     script(src="./js/main.js")

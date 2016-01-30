@@ -15,3 +15,7 @@ body {
 .ui.fluid.selection {
 	margin-top: 5px;
 }
+
+.size-small{
+	font-size: 10px !important;
+}
