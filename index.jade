@@ -6,32 +6,76 @@ html(lang="en")
   body
     .ui.grid.stackable.centered
       .row
-        .fourteen.wide.column
-          p.section 104學年度第二學期
+        .seven.wide.column
+          .ui.celled.horizontal.list
+            .item
+              | 104學年度第二學期
+            .item
+              .ui.dropdown#select-degree
+                .text 選取部門
+                input(type='hidden', name='degree')
+                i.dropdown.icon
+                .menu
+                  .item(value="0")
+                    | 學士班
+                  .item(value="1")
+                    | 碩士班
+                  .item(value="2")
+                    | 博士班
+                  .item(value="3")
+                    | 產專班
+                  .item(value="4")
+                    | 碩專班
+                  .item(value="5")
+                    | 進修學士班
+            .item
+              .ui.dropdown#select-department
+                .text 選取科系
+                input(type='hidden', name='department')
+                i.dropdown.icon
+                .menu
+            .item
+              .ui.dropdown#select-level
+                .text 選取年級
+                input(type='hidden', name='level')
+                i.dropdown.icon
+                .menu
+                  .item(value="1")
+                    | 一年級
+                  .item(value="2")
+                    | 二年級
+                  .item(value="3")
+                    | 三年級
+                  .item(value="4")
+                    | 四年級
+                  .item(value="5")
+                    | 五年級
+        .seven.wide.column.right.aligned.container
+          
+          .ui.icon.buttons#tools-btn
+            .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini")
+              i.icon.photo
+            .ui.button(data-content="輸出課程代碼" data-variation="mini")
+              i.icon.save
+            .ui.button(data-content="將課表輸出為QRcode" data-variation="mini")
+              i.icon.qrcode
+            .ui.button(data-content="清除課表所有內容" data-variation="mini")
+              i.icon.trash
+
       .four.wide.column
         .ui.top.attached.block.header
           | 尋找課程
         .ui.bottom.attached.segment
           .ui.fluid.icon.input
-            input(type='text', placeholder='Search...')
+            input.default-font(type='text', placeholder='請輸入搜尋關鍵字')
             i.search.icon
           .ui.fluid.selection.dropdown#search-item
-            input(type='hidden', name='user')
+            input(type='hidden', name='search_item')
             i.dropdown.icon
             .default.text 選取項目
             .menu
-              .header
-                | 科系
               .item(value="0")
                 | 學士班
-              .item(value="1")
-                | 碩士班
-              .item(value="2")
-                | 博士班
-              .item(value="3")
-                | 產專班
-              .item(value="4")
-                | 碩專班
               .item(value="5")
                 | 進修學士班
               .item(value="6")
@@ -45,19 +89,40 @@ html(lang="en")
             option(value="")
               | 選取分類
 
-          .ui.segment
+          .ui.segment#serch-sol
+            .ui.relaxed.divided.list
+              .item
+                .content
+                  .header.default-font 課程名稱
+                   a.ellipsis.mini.link.horizontal.icon
 
+                  .description.text-right
+                    .ui.celled.horizontal.list
+                      .item
+                        | 老師
+                      .item
+                        | 課程類型
+                      .item.addCourse
+                        button.blue.ui.button 排課
+                        .ui.popup.hidden.text-left
+                          .ui.celled.horizontal.list
+                            .item 代碼:0000
+                            .item 學分:0
+                            .item 地點:A000
 
         .ui.top.attached.block.header
           | 目前課程
-        .ui.bottom.attached.segment
-          .ui.segment
+        .ui.bottom.attached.segment.text-right
+          .ui.mini.horizontal.statistic
+            .value 0
+            .label.default-font 學分
+          .ui.segment#now-course
 
       .ten.wide.column
         .ui.top.attached.block.header
           | 模擬課表
         .ui.bottom.attached.segment
-          table.ui.unstackable.very.basic.fixed.table#class_table
+          table.ui.unstackable.very.basic.fixed.table#class-table
             thead
               tr
                 each day in ['', '一', '二', '三', '四', '五']
@@ -72,8 +137,7 @@ html(lang="en")
                     if (j != 0)
                       td(class-day=j)
                     else
-                      td(class="size-small")= i
-
+                      td.one.wide.size-small= i
     script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js")
     script(src="./js/main.js")

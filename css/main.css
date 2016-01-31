@@ -6,10 +6,15 @@ body {
 	padding-top: 50px;
 }
 
-.ui.top.attached.block.header, #class_table th, #class_table td {
+.ui.top.attached.block.header, #class_table th {
 	text-align: center;
 	font-family: 'Microsoft JhengHei';
 	font-size: 16px;
+}
+
+#class-table td {
+	font-size: 14px;
+	word-wrap:break-word;
 }
 
 .ui.fluid.selection {
@@ -18,4 +23,30 @@ body {
 
 .size-small{
 	font-size: 10px !important;
+}
+
+#serch-sol, #now-course {
+	background-color: #F3F4F5;
+}
+
+#now-course {
+	margin-top: 0px;
+}
+
+.default-font {
+	font-family: 'Microsoft JhengHei' !important;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.text-left {
+	text-align: left;
+}
+
+#serch-sol .button {
+	margin-right: 0px;
+	padding: 3px 6px;
+	font-family: 'Microsoft JhengHei';
 }
