@@ -6,6 +6,15 @@ body {
 	padding-top: 50px;
 }
 
+a {
+	color: #252626;
+	margin-right: 0px;
+}
+
+a:hover {
+	color: lightblue;
+}
+
 .ui.top.attached.block.header, #class_table th {
 	text-align: center;
 	font-family: 'Microsoft JhengHei';

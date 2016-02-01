@@ -29,27 +29,18 @@ html(lang="en")
                   .item(value="5")
                     | 進修學士班
             .item
-              .ui.dropdown#select-department
+              .ui.dropdown.disabled#select-department
                 .text 選取科系
                 input(type='hidden', name='department')
                 i.dropdown.icon
                 .menu
             .item
-              .ui.dropdown#select-level
+              .ui.dropdown.disabled#select-level
                 .text 選取年級
                 input(type='hidden', name='level')
                 i.dropdown.icon
                 .menu
-                  .item(value="1")
-                    | 一年級
-                  .item(value="2")
-                    | 二年級
-                  .item(value="3")
-                    | 三年級
-                  .item(value="4")
-                    | 四年級
-                  .item(value="5")
-                    | 五年級
+                  
         .seven.wide.column.right.aligned.container
           
           .ui.icon.buttons#tools-btn
@@ -94,7 +85,8 @@ html(lang="en")
               .item
                 .content
                   .header.default-font 課程名稱
-                   a.ellipsis.mini.link.horizontal.icon
+                    a(target="_blank" href="#")
+                      i.ellipsis.horizontal.icon
 
                   .description.text-right
                     .ui.celled.horizontal.list
