@@ -103,6 +103,11 @@ html(lang="en")
                             .item 地點:A000
 
         .ui.top.attached.block.header
+          | 保留課程
+        .ui.bottom.attached.segment.text-right
+          .ui.segment#hold-course
+
+        .ui.top.attached.block.header
           | 目前課程
         .ui.bottom.attached.segment.text-right
           .ui.mini.horizontal.statistic
@@ -114,7 +119,7 @@ html(lang="en")
         .ui.top.attached.block.header
           | 模擬課表
         .ui.bottom.attached.segment
-          table.ui.unstackable.very.basic.fixed.table#class-table
+          table.ui.unstackable.very.basic.fixed.table#class-table(style="text-align: center !important")
             thead
               tr
                 each day in ['', '一', '二', '三', '四', '五']

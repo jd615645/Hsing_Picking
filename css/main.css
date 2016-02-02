@@ -34,7 +34,7 @@ a:hover {
 	font-size: 10px !important;
 }
 
-#serch-sol, #now-course {
+#serch-sol, #hold-course, #now-course {
 	background-color: #F3F4F5;
 }
 
@@ -52,6 +52,10 @@ a:hover {
 
 .text-left {
 	text-align: left;
+}
+
+.text-center {
+	text-align: center;
 }
 
 #serch-sol .button {
