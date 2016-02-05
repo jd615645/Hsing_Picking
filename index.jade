@@ -44,13 +44,13 @@ html(lang="en")
         .seven.wide.column.right.aligned.container
           
           .ui.icon.buttons#tools-btn
-            .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini")
+            .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini" value="1")
               i.icon.photo
-            .ui.button(data-content="輸出課程代碼" data-variation="mini")
+            .ui.button(data-content="輸出課程代碼" data-variation="mini" value="2")
               i.icon.save
-            .ui.button(data-content="將課表輸出為QRcode" data-variation="mini")
+            .ui.button(data-content="將課表輸出為QRcode" data-variation="mini" value="3")
               i.icon.qrcode
-            .ui.button(data-content="清除課表所有內容" data-variation="mini")
+            .ui.button(data-content="清除課表所有內容" data-variation="mini" value="4")
               i.icon.trash
 
       .four.wide.column
@@ -80,46 +80,90 @@ html(lang="en")
             option(value="")
               | 選取分類
 
-          .ui.segment#serch-sol
+          .ui.right.aligned.segment#course-search
+            button.ui.grey.circular.icon.button
+              i.icon.trash
             .ui.relaxed.divided.list
-              .item
-                .content
-                  .header.default-font 課程名稱
-                    a(target="_blank" href="#")
-                      i.ellipsis.horizontal.icon
+              //- .item(value="0")
+              //-   .content
+              //-     .header.default-font.text-left 
+              //-       a(target="_blank" href="#") 課程名稱
+              //-     .description.text-right
+              //-       .ui.celled.horizontal.list
+              //-         .item
+              //-           | 老師
+              //-         .item
+              //-           | 課程類型
+              //-         .item
+              //-           .ui.dropdown.item.simple
+              //-             button.blue.ui.button.add-btn 排課
+              //-             //- .ui.popup.hidden.text-left
+              //-               .ui.celled.horizontal.list
+              //-                 .item 代碼:0000
+              //-                 .item 學分:0
+              //-                 .item 地點:A000
+              //-             .menu
+              //-               .item
+              //-                 button.orange.ui.button.keep-btn 保留
 
-                  .description.text-right
-                    .ui.celled.horizontal.list
-                      .item
-                        | 老師
-                      .item
-                        | 課程類型
-                      .item.addCourse
-                        button.blue.ui.button 排課
-                        .ui.popup.hidden.text-left
-                          .ui.celled.horizontal.list
-                            .item 代碼:0000
-                            .item 學分:0
-                            .item 地點:A000
 
-        .ui.top.attached.block.header
+        .ui.top.attached.block.header(style="margin-top: 10px;")
           | 保留課程
         .ui.bottom.attached.segment.text-right
-          .ui.segment#hold-course
+          .ui.segment#course-keep
+            button.ui.grey.circular.icon.button
+              i.icon.trash
+            .ui.relaxed.divided.list
+              //- .item(value="0")
+              //-   .content
+              //-     .header.default-font.text-left
+              //-       a(target="_blank" href="#") 課程名稱
+              //-       .ui.popup.hidden.text-left
+              //-         .ui.horizontal.list
+              //-           .item 代碼:0000
+              //-           .item 學分:0
+              //-           .item 地點:A000
+              //-     .description.text-right
+              //-       .ui.celled.horizontal.list
+              //-         .item
+              //-           | 老師
+              //-         .item
+              //-           | 課程類型
+              //-         .item
+              //-           .ui.dropdown.item.simple
+              //-             button.blue.ui.button.add-btn 排課
+              //-             .menu
+              //-               .item
+              //-                 button.red.ui.button.del-btn 刪除
 
-        .ui.top.attached.block.header
+        .ui.top.attached.block.header(style="margin-top: 10px;")
           | 目前課程
         .ui.bottom.attached.segment.text-right
-          .ui.mini.horizontal.statistic
-            .value 0
+          .ui.mini.horizontal.statistic#totle-credits
+            .value#totle-credits 0
             .label.default-font 學分
-          .ui.segment#now-course
+          .ui.segment#course-now
+            button.ui.grey.circular.icon.button
+              i.icon.trash
+            .ui.relaxed.divided.list
+              //- .item.courseItem(value="0")
+              //-   .content
+              //-     .header.default-font.text-left 
+              //-       a(target="_blank" href="#") 課程名稱
+              //-     .description.text-right
+              //-       .ui.celled.horizontal.list
+              //-         .item
+              //-           | 老師
+              //-         .item
+              //-           | 課程類型
+              //-         .item
+              //-           button.red.ui.button.del-btn 刪除
 
       .ten.wide.column
         .ui.top.attached.block.header
           | 模擬課表
         .ui.bottom.attached.segment
-          table.ui.unstackable.very.basic.fixed.table#class-table(style="text-align: center !important")
+          table.ui.unstackable.very.basic.fixed.table#class-table
             thead
               tr
                 each day in ['', '一', '二', '三', '四', '五']
@@ -135,6 +179,10 @@ html(lang="en")
                       td(class-day=j)
                     else
                       td.one.wide.size-small= i
-    script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+        .row.text-right
+          .ui.horizontal.list
+            .item 課程資訊最後更新時間：
+            .item 2016/02/05 00:00
+    script(src="//code.jquery.com/jquery-2.2.0.min.js")
     script(src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js")
     script(src="./js/main.js")

@@ -21,6 +21,10 @@ a:hover {
 	font-size: 16px;
 }
 
+#class-table {
+	text-align: center !important;
+}
+
 #class-table td {
 	font-size: 14px;
 	word-wrap:break-word;
@@ -34,12 +38,20 @@ a:hover {
 	font-size: 10px !important;
 }
 
-#serch-sol, #hold-course, #now-course {
+#course-search, #course-keep, #course-now {
 	background-color: #F3F4F5;
 }
 
 #now-course {
 	margin-top: 0px;
+}
+
+#course-now {
+	margin-top: 5px;
+}
+
+#totle-credits {
+	margin-bottom: 0px;
 }
 
 .default-font {
@@ -58,8 +70,37 @@ a:hover {
 	text-align: center;
 }
 
-#serch-sol .button {
+#course-search .item .button, #course-keep .item .button, #course-now .item .button {
 	margin-right: 0px;
 	padding: 3px 6px;
 	font-family: 'Microsoft JhengHei';
+}
+
+.simple.dropdown .menu .item {
+	padding: 5px 0px !important;
+}
+
+.ui.popup {
+	padding: 5px 7px !important;
+}
+
+#course-keep .ui.popup .item {
+	margin-left: 0px;
+}
+
+.segment#course-search, .segment#course-keep, .segment#course-now  {
+	padding: 12px 8px;
+}
+
+button.circular {
+	/*float: right;*/
+	position: absolute;
+	top: -5px;
+	right: 5px;
+	padding: 7px !important;
+	margin-right: 0px !important;
+}
+
+.segment .relaxed.divided {
+	margin-top: 0px !important;
 }
