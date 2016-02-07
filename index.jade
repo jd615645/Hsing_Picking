@@ -53,7 +53,7 @@ html(lang="en")
             .ui.button(data-content="清除課表所有內容" data-variation="mini" value="4")
               i.icon.trash
 
-      .four.wide.column
+      .four.wide.column(style="overflow-x:hidden;overflow-y:auto;overflow: auto;height:100%;")
         .ui.top.attached.block.header
           | 尋找課程
         .ui.bottom.attached.segment
@@ -88,6 +88,11 @@ html(lang="en")
               //-   .content
               //-     .header.default-font.text-left 
               //-       a(target="_blank" href="#") 課程名稱
+              //-       .ui.popup.hidden.text-left
+              //-         .ui.celled.horizontal.list
+              //-           .item 代碼:0000
+              //-           .item 學分:0
+              //-           .item 地點:A000
               //-     .description.text-right
               //-       .ui.celled.horizontal.list
               //-         .item
@@ -97,11 +102,6 @@ html(lang="en")
               //-         .item
               //-           .ui.dropdown.item.simple
               //-             button.blue.ui.button.add-btn 排課
-              //-             //- .ui.popup.hidden.text-left
-              //-               .ui.celled.horizontal.list
-              //-                 .item 代碼:0000
-              //-                 .item 學分:0
-              //-                 .item 地點:A000
               //-             .menu
               //-               .item
               //-                 button.orange.ui.button.keep-btn 保留

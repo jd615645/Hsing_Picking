@@ -223,22 +223,43 @@
     // 新增課程項目至尋找課程欄位
     function add_course_search(item) {
       var type = parse_course_type(item);
-      var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"orange ui button keep-btn\">保留<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
+      var location = '';
+      for (var i = 0; i < item.location.length; i++) {
+        location += item.location[i];
+        if(i != item.location.length-1)
+          location += ',';
+      };
+      var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"orange ui button keep-btn\">保留<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
       $('#course-keep .ui.relaxed.divided.list').append(html);
+      $('.courseItem a').popup({position : 'top left'});
     }
     
     // 新增課程項目至保留課程欄位
     function add_course_keep(item) {
       var type = parse_course_type(item);
-      var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
+      var location = '';
+      for (var i = 0; i < item.location.length; i++) {
+        location += item.location[i];
+        if(i != item.location.length-1)
+          location += ',';
+      };
+      var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
       $('#course-keep .ui.relaxed.divided.list').append(html);
+      $('.courseItem a').popup({position : 'top left'});
     }
 
     // 新增課程項目至目前課程欄位
     function add_course_now(item) {
       var type = parse_course_type(item);
-      var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"><a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div>");
+      var location = '';
+      for (var i = 0; i < item.location.length; i++) {
+        location += item.location[i];
+        if(i != item.location.length-1)
+          location += ',';
+      };
+      var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"><a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div>");
       $('#course-now .ui.relaxed.divided.list').append(html);
+      $('.courseItem a').popup({position : 'top left'});
     }
 
     // 改變網頁上的學分統計
@@ -290,7 +311,7 @@
                 $td.css('background-color', 'lightblue');
               else
                 $td.css('background-color', 'lightpink');
-            }
+            } 
             else
                 $td.css('background-color', 'lightgreen');
           }
@@ -365,7 +386,6 @@
 
     // 提示訊息元件初始化
     $('#tools-btn .ui.button').popup();
-    $('#serch-sol .ui.button.add-btn').popup({position : 'bottom right'});
-    $('#course-keep a').popup({position : 'top center'});
+    $('.courseItem a').popup({position : 'top left'});
   });
 })(jQuery);
