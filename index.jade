@@ -45,12 +45,16 @@ html(lang="en")
           
           .ui.icon.buttons#tools-btn
             .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini" value="1")
-              i.icon.photo
+              i.icon.download
             .ui.button(data-content="輸出課程代碼" data-variation="mini" value="2")
               i.icon.save
             .ui.button(data-content="將課表輸出為QRcode" data-variation="mini" value="3")
               i.icon.qrcode
-            .ui.button(data-content="清除課表所有內容" data-variation="mini" value="4")
+            .ui.button(data-content="切換課表時間顯示" data-variation="mini" value="4")
+              i.icon.wait
+            .ui.button(data-content="切換課表內容顯示項目" data-variation="mini" value="4")
+              i.icon.unhide
+            .ui.button(data-content="清除課表所有內容" data-variation="mini" value="5")
               i.icon.trash
 
       .four.wide.column(style="overflow-x:hidden;overflow-y:auto;overflow: auto;height:100%;")
@@ -58,8 +62,8 @@ html(lang="en")
           | 尋找課程
         .ui.bottom.attached.segment
           .ui.fluid.icon.input
-            input.default-font(type='text', placeholder='請輸入搜尋關鍵字')
-            i.search.icon
+            input.default-font#search-keyWord(type='text', placeholder='請輸入搜尋關鍵字')
+
           .ui.fluid.selection.dropdown#search-item
             input(type='hidden', name='search_item')
             i.dropdown.icon
@@ -73,16 +77,52 @@ html(lang="en")
                 | 通識
               .item(value="7")
                 | 共同科目
-              .item(value="8")
-                | 空堂
                 
-          select.ui.fluid.search.selection.dropdown#search-detail(multiple="")
+          select.ui.fluid.search.selection.dropdown.disabled#search-detail(multiple="")
             option(value="")
               | 選取分類
 
-          .ui.right.aligned.segment#course-search
-            button.ui.grey.circular.icon.button
+          //- select.ui.fluid.search.selection.dropdown#search-level(multiple="")
+          //-   option(value="")
+          //-     | 選擇年級
+          //-   option(value="1")
+          //-     | 一年級
+          //-   option(value="2")
+          //-     | 二年級
+          //-   option(value="3")
+          //-     | 三年級
+          //-   option(value="4")
+          //-     | 四年級
+          //-   option(value="5")
+          //-     | 五年級
+
+          .ui.fluid.selection.dropdown.disabled#search-time
+            input(type='hidden', name='search_item')
+            i.dropdown.icon
+            .default.text 選取時間
+            .menu
+              .item(value="0")
+                | 空堂
+              .item(value="1")
+                | 星期一
+              .item(value="2")
+                | 星期二
+              .item(value="3")
+                | 星期三
+              .item(value="4")
+                | 星期四
+              .item(value="5")
+                | 星期五
+
+          button.ui.fluid.icon.button.default-font#search-btn(style="margin-top: 5px; margin-bottom: 10px;")
+            i.icon.search
+            |  搜尋符合項目
+          
+          .ui.container
+            button.ui.grey.circular.icon.button#clear-search
               i.icon.trash
+
+          .ui.right.aligned.segment#course-search
             .ui.relaxed.divided.list
               //- .item.courseItem(value="0")
               //-   .content
@@ -109,10 +149,12 @@ html(lang="en")
 
         .ui.top.attached.block.header(style="margin-top: 10px;")
           | 保留課程
-        .ui.bottom.attached.segment.text-right
+        .ui.bottom.attached.segment
+
+          button.ui.grey.circular.icon.button#clear-keep
+            i.icon.trash
+
           .ui.segment#course-keep
-            button.ui.grey.circular.icon.button
-              i.icon.trash
             .ui.relaxed.divided.list
               //- .item.courseItem(value="0")
               //-   .content
@@ -138,13 +180,17 @@ html(lang="en")
 
         .ui.top.attached.block.header(style="margin-top: 10px;")
           | 目前課程
-        .ui.bottom.attached.segment.text-right
-          .ui.mini.horizontal.statistic#totle-credits
-            .value#totle-credits 0
-            .label.default-font 學分
-          .ui.segment#course-now
-            button.ui.grey.circular.icon.button
+        .ui.bottom.attached.segment
+          .ui.container.text-right
+            .ui.mini.horizontal.statistic#totle-credits
+              .value#totle-credits 0
+              .label.default-font 學分
+
+          .ui.container
+            button.ui.grey.circular.icon.button#clear-now
               i.icon.trash
+            
+          .ui.segment#course-now
             .ui.relaxed.divided.list
               //- .item.courseItem(value="0")
               //-   .content
@@ -183,6 +229,7 @@ html(lang="en")
           .ui.horizontal.list
             .item 課程資訊最後更新時間：
             .item February 6th, 2016, 17:55
+
     script(src="//code.jquery.com/jquery-2.2.0.min.js")
     script(src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js")
     script(src="./js/main.js")

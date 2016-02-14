@@ -7,15 +7,15 @@
     // 模擬課表內容
     window.class_table = {};
     
-    // 以上課時間為key的物件
-    window.course_time = {};
     // 以課程代碼為key的物件
     window.course_code = {};
-    // 以上課教師為key的物件
+    // 以上課時間為key的物件，其指向課程代碼
+    window.course_time = {};
+    // 以上課教師為key的物件，其指向課程代碼
     window.course_sensei = {};
-    // 以科系為key的物件
+    // 以科系為key的物件，其指向課程代碼
     window.course_department = {};
-    // 以課程名稱為key的物件
+    // 以課程名稱為key的物件，其指向課程代碼
     window.course_title = {};
 
     window.onepice_url = 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=1042&v_class_nbr=';
@@ -92,10 +92,32 @@
       }
     });
 
-    // 搜尋選單監聽
+    // 搜尋選單監聽(項目)
     $('#search-item').on('click', '.item', function() {
       select_item($(this).attr('value'));
     });
+
+    // 搜尋選單監聽(分類)
+    $('.bottom.attached.segment').on('click', '.multiple .item', function() {
+      $('#search-time').removeClass('disabled');
+    });
+
+    // 搜尋課程按鈕監聽
+    $('#search-btn').click(function() {
+      var get_value = $('#search-detail').dropdown('get value');
+
+      var keyWord = ($('#search-keyWord').val()).split(' ');
+      var item = $('#search-item .selected').attr('value');
+      var detail = get_value[get_value.length-1];
+      var time = $('#search-time .selected').attr('value');
+
+      item = item==undefined ? '' : item;
+      detail = detail==null ? '' : detail;
+      time = time==undefined ? '' : time;
+
+      course_search(keyWord, item, detail, time);
+    });
+
     // 更改部門選單事件監聽
     $('#select-degree').on('click', '.item', function() {
       degree_change($(this).attr('value'));
@@ -119,6 +141,19 @@
       else if(department.slice(-1) == 'B')
         team = 'B';
       department_find(department, level, team);
+    });
+
+    // 鼠標停在尋找課程選項上事件監聽
+    $('#course-search').on('mouseenter', '.courseItem', function() {
+      // 課程代碼
+      var code = $(this).attr('value');
+      highlight_table(code, false, false);
+    });
+    // 鼠標離開尋找課程選項事件監聽
+    $('#course-search').on('mouseleave', '.courseItem', function() {
+      // 課程代碼
+      var code = $(this).attr('value');
+      highlight_table(code, false, true);
     });
 
     // 鼠標停在保留課程選項上事件監聽
@@ -148,24 +183,42 @@
     });
 
     // 清除選單內容按鈕事件監聽
-    $('#course-search button.circular').click(function() {
+    $('#clear-search').click(function() {
       clear_course_search();
     });
-    $('#course-keep button.circular').click(function() {
+    $('#clear-keep').click(function() {
       clear_course_keep();
     });
-    $('#course-now button.circular').click(function() {
+    $('#clear-now').click(function() {
       clear_course_now();
       clear_table();
+    });
+
+    // 將尋找課程中的課程項目排入課表
+    $('#course-search').on('click','.add-btn' , function() {
+      var code = $(this).parents('.courseItem').attr('value');
+      console.log(course_code[code][0]);
+      if(isFree(course_code[code][0])) {
+        add_course2table(course_code[code][0]);
+        add_course_now(course_code[code][0]);
+        $(this).parents('.courseItem').remove();
+        highlight_table(code, false, true);
+      }
+      else
+        console.log('衝堂');
     });
 
     // 將保留課程中的課程項目排入課表
     $('#course-keep').on('click','.add-btn' , function() {
       var code = $(this).parents('.courseItem').attr('value');
-      add_course2table(course_code[code][0]);
-      add_course_now(course_code[code][0]);
-      $(this).parents('.courseItem').remove();
-      highlight_table(code, false, true);
+      if(isFree(course_code[code][0])) {
+        add_course2table(course_code[code][0]);
+        add_course_now(course_code[code][0]);
+        $(this).parents('.courseItem').remove();
+        highlight_table(code, false, true);
+      }
+      else
+        console.log('衝堂');
     });
 
     // 各別刪除目前課程中的課程項目
@@ -174,6 +227,92 @@
       $(this).parents('.courseItem').remove();
       clear_table_course(code);
     });
+
+    function isFree(course) {
+      var free = true;
+      $.each(course.time_parsed, function(ik, iv) {
+        $.each(iv.time, function(jk, jv) {
+          var $td = $('#class-table').find('tr[class-time=' + jv + '] td:eq(' + iv.day + ')');
+          if ($td.text() != "")
+            free = false;
+        });
+      });
+      return free;
+    }
+
+    // 搜尋課程
+    function course_search(keyWord, item, detail, time) {
+      var search = [];
+
+      // console.log('keyWord:' + keyWord);
+      // console.log('detail:' + detail);
+      // console.log('time:' + time);
+
+      if (item != '')
+      {
+        switch(item) {
+          case '0':
+            break;
+          case '5':
+
+            break;
+          case '6':
+            $.each(course_code, function(ik, iv) {
+              var type = parse_course_type(iv[0]);
+              if (type != '選修' && type != '必修') {
+                $.each(detail, function(jk, jv) {
+                  if (department_data[item][jv] == type)
+                    add_course_search(iv[0]);
+                });
+              }
+            });
+            break;
+          case '7':
+            $.each(course_code, function(ik, iv) {
+              var type = parse_course_type(iv[0]);
+              if (type != '選修' && type != '必修') {
+                $.each(detail, function(jk, jv) {
+                  if (department_data[item] == type)
+                    add_course_search(iv[0]);
+                });
+              }
+            });
+            break;
+        }
+      }
+    }
+
+    // 判斷課程類型
+    function parse_course_type(course) {
+      var general_type = {'人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
+                          '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
+                          '自然通識': ['生命科學學群', '環境科學學群', '物質科學學群', '數學統計學群', '工程科技學群']};
+      var sol = '';
+      if(course.discipline != '') {
+        $.each(general_type, function(ik, iv) {
+          $.each(iv, function(jk, jv) {
+            if (course.discipline == jv)
+              sol = ik;
+          });
+        });
+      }
+      else if (course.department == "通識教育中心" || course.department == "夜中文")
+        sol = '大學國文';
+      else if ( course.obligatory == '必修' &&
+                (course.department == "語言中心" || course.department == "夜外文" || (course.department == "夜共同科" && ((course.title_parsed.zh_TW).substr(0,1) == '英文'))))
+        sol = '大一英文';
+      else if (course.department == "體育室" || course.department == "夜共同科")
+        sol = '體育';
+      else if (course.department == "師資培育中心")
+        sol = '教程';
+      else if (course.department == "教官室")
+        sol = '國防';
+      else if (course.department == "語言中心")
+        sol = '全校外語';
+      else
+        sol = course.obligatory;
+      return sol;
+    }
 
     // 清除課表上的指定課程
     function clear_table_course (code) {
@@ -230,7 +369,7 @@
           location += ',';
       };
       var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"orange ui button keep-btn\">保留<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
-      $('#course-keep .ui.relaxed.divided.list').append(html);
+      $('#course-search .ui.relaxed.divided.list').append(html);
       $('.courseItem a').popup({position : 'top left'});
     }
     
@@ -319,38 +458,14 @@
       });
     }
 
-    function parse_course_type(course) {
-      var general_type = {'人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
-                          '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
-                          '自然通識': ['生命科學學群', '環境科學學群', '物質科學學群', '數學統計學群', '工程科技學群']};
-      if(course.discipline != '') {
-        $.each(general_type, function(key, val) {
-           if (course.discipline == val)
-            return key;
-        });
-      }
-      else if (course.department == "通識教育中心" || course.department == "夜中文")
-        return '大學國文';
-      else if ( course.obligatory &&
-                (course.department == "語言中心" || course.department == "夜外文" || (course.department == "夜共同科" && ((course.title_parsed.zh_TW).substr(0,1) == '英文'))))
-        return '大一英文';
-      else if (course.department == "體育室" || course.department == "夜共同科")
-        return '體育';
-      else if (course.department == "師資培育中心")
-        return '教程';
-      else if (course.department == "教官室")
-        return '國防';
-      else if (course.department == "語言中心")
-        return '全校外語';
-      else
-        return course.obligatory
-    }
+    
 
     // (標題選擇欄位)根據選取項目改變其他選單內容
     // select_item('部門名稱') => 選取分類欄位載入對應內容
     function degree_change(value) {
       var level = ['一年級', '二年級', '三年級', '四年級', '五年級',]
       var department = 2, html;
+
       $('#select-department .menu').empty();
       $('#select-department .text').text('選取科系');
       $('#select-level .menu').empty();
@@ -375,6 +490,10 @@
     // (尋找課程欄位)根據選取項目改變其他選單內容
     // select_item('項目名稱') => 選取分類欄位載入對應內容
     function select_item(value) {
+      $($('#search-detail').parents('.multiple')).removeClass('disabled');
+      $('#search-time').dropdown('restore defaults');
+      $('#search-time').addClass('disabled');
+
       $('#search-detail').empty();
       $('#search-detail').dropdown('clear');
       $('.search.selection .default.text').text('選取分類');

@@ -27,7 +27,7 @@ a:hover {
 
 #class-table td {
 	font-size: 14px;
-	word-wrap:break-word;
+	word-wrap: break-word;
 }
 
 .ui.fluid.selection {
@@ -42,12 +42,12 @@ a:hover {
 	background-color: #F3F4F5;
 }
 
-#now-course {
-	margin-top: 0px;
+#course-search {
+	margin-top: 25px;
 }
 
-#course-now {
-	margin-top: 5px;
+#now-course {
+	margin-top: 0px;
 }
 
 #totle-credits {
@@ -92,14 +92,27 @@ a:hover {
 	padding: 12px 8px;
 }
 
-button.circular {
+/*button.circular {
 	position: absolute;
 	top: -5px;
 	right: 5px;
 	padding: 7px !important;
 	margin-right: 0px !important;
+}*/
+
+button.circular {
+	position: absolute;
+	right: 20px;
+	margin-right: 0px !important;
+	z-index: 1;
 }
 
 .segment .relaxed.divided {
 	margin-top: 0px !important;
+}
+
+#course-search, #course-keep, #course-now   {
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 295px;
 }
