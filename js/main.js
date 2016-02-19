@@ -270,87 +270,84 @@
     function course_search(keyWord, item, detail, time) {
       clear_course_search();
       var search = [];
-      var complete = false;
+      var search_key = [];
 
       if (keyWord[0] != '') {
         $.each(course_code, function(key, val) {
           for (var i = 0; i < keyWord.length; i++) {
             if ((val[0].code).match(keyWord[i]) != null)
-              search.push(val[0]);
+              search.push(val[0].code);
             if ((val[0].professor).match(keyWord[i]) != null)
-              search.push(val[0]);
+              search.push(val[0].code);
             if ((val[0].title_parsed.zh_TW).match(keyWord[i]) != null)
-              search.push(val[0]);
+              search.push(val[0].code);
             for (var j = 0; j < (val[0].location).length; j++) {
               if ((val[0].location[j]).match(keyWord[i]) != null)
-                search.push(val[0]);
-            }
-          }
-        });
-      }
-      console.log(search);
-      if (item != '') {
-        if (keyWord[0] != '') 
-          var search_item = search;
-        else
-          var search_item = course_code;
-        switch(item) {
-          case '0':
-          case '5':
-            $.each(search_item, function(ik, iv) {
-              var type = parse_course_type(iv[0]);
-              if (type == '選修' || type == '必修') {
-                $.each(detail, function(jk, jv) {
-                  if (department_data[item][jv] == iv[0].for_dept) {
-                    search.push(iv[0]);
-                    if (time == '')
-                      complete = true;
-                  }
-                });
-              }
-            });
-            break;
-          case '6':
-          case '7':
-            $.each(search_item, function(ik, iv) {
-              console.log(search_item);
-              var type = parse_course_type(iv[0]);
-              if (type != '選修' && type != '必修') {
-                $.each(detail, function(jk, jv) {
-                  if (department_data[item][jv] == type) {
-                    search.push(iv[0]);
-                    if (time == '')
-                      complete = true;
-                  }
-                });
-              }
-            });
-            break;
-        }
-      }
-      if (time != '') {
-        $.each(search, function(key, val) {
-          if (time != 0) {
-            if (time == val.time_parsed[0].day) {
-              search.push(val);
-              complete = true;
-            }
-          }
-          else if (time == 0) {
-            if(isFree(val)) {
-              search.push(val);
-              complete = true;
+                search.push(val[0].code);
             }
           }
         });
       }
 
-      if (complete) {
-        $.each(search, function(key, val) {
-          console.log(val[0]);
-          add_course_search(val);
-        });
+      if (item != '') {
+        if (keyWord[0] != '') {
+          search_key = search;
+          search = [];
+        }
+        else 
+          search_key = Object.keys(course_code);
+
+        switch(item) {
+          case '0':
+          case '5':
+            for (var i = 0; i < search_key.length; i++) {
+              var type = parse_course_type(course_code[search_key[i]][0]);
+              
+              if (type == '選修' || type == '必修') {
+                $.each(detail, function(key, val) {
+                  
+                  if (department_data[item][val] == course_code[search_key[i]][0].for_dept) {
+                    search.push(course_code[search_key[i]][0].code);
+                  }
+                });
+              }
+            }
+            break;
+          case '6':
+          case '7':
+            for (var i = 0; i < search_key.length; i++) {
+              var type = parse_course_type(course_code[search_key[i]][0]);
+              if (type != '選修' && type != '必修') {
+                $.each(detail, function(key, val) {
+                  if (department_data[item][val] == type) {
+                    search.push(val[0].code);
+                  }
+                });
+              }
+            }
+            break;
+        }
       }
+
+      if (time != '') {
+        search_key = search;
+        search = [];
+        for (var i = 0; i < search.length; i++) {
+          if (time == course_code[search_key[i]][0].day)
+            search.push(search_key[i]);
+          if (time != 0) {
+            if (time == course_code[search_key[i]][0].day)
+              search.push(search_key[i]);
+          }
+          else if (time == 0) {
+            if(isFree(course_code[search_key[i]][0]))
+              search.push(search_key[i]);
+          }
+        }
+      }
+
+      for (var i = 0; i < search.length; i++)
+        add_course_search(course_code[search[i]][0]);
     }
 
     // 判斷課程類型
@@ -359,7 +356,6 @@
                           '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
                           '自然通識': ['生命科學學群', '環境科學學群', '物質科學學群', '數學統計學群', '工程科技學群']};
       var sol = '';
-      console.log(course);
       if(course.discipline != '') {
         $.each(general_type, function(ik, iv) {
           $.each(iv, function(jk, jv) {
