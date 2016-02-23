@@ -309,36 +309,32 @@
         else 
           search_key = Object.keys(course_code);
 
-        switch(item) {
-          case '0':
-          case '5':
-            for (var i = 0; i < search_key.length; i++) {
-              var type = parse_course_type(course_code[search_key[i]][0]);
-              
-              if (type == '選修' || type == '必修') {
-                $.each(detail, function(key, val) {
-                  
-                  if (department_data[item][val] == course_code[search_key[i]][0].for_dept) {
-                    search.push(course_code[search_key[i]][0].code);
-                  }
-                });
-              }
+        if (item == '0' || item == '5') {
+          for (var i = 0; i < search_key.length; i++) {
+            var type = parse_course_type(course_code[search_key[i]][0]);
+            
+            if (type == '選修' || type == '必修') {
+              $.each(detail, function(key, val) {
+                department_data[item][val] = department_data[item][val].replace(' A', '');
+                department_data[item][val] = department_data[item][val].replace(' B', '');
+                if (department_data[item][val] == course_code[search_key[i]][0].for_dept) {
+                  search.push(course_code[search_key[i]][0].code);
+                }
+              });
             }
-            break;
-          case '6':
-          case '7':
-            for (var i = 0; i < search_key.length; i++) {
-              var type = parse_course_type(course_code[search_key[i]][0]);
-              if (type != '選修' && type != '必修') {
-                $.each(detail, function(key, val) {
-                  if (department_data[item][val] == type) {
-                    console.log(course_code[search_key[i]][0]);
-                    search.push(course_code[search_key[i]][0].code);
-                  }
-                });
-              }
+          }
+        }
+        else if (item == '6' || item == '7') {
+          for (var i = 0; i < search_key.length; i++) {
+            var type = parse_course_type(course_code[search_key[i]][0]);
+            if (type != '選修' && type != '必修') {
+              $.each(detail, function(key, val) {
+                if (department_data[item][val] == type) {
+                  search.push(course_code[search_key[i]][0].code);
+                }
+              });
             }
-            break;
+          }
         }
       }
 
@@ -411,11 +407,13 @@
 
     // 以單位尋找
     function department_find(department, level, team) {
+      console.log(department + ',' + level + ',' + team);
+
       clear_table();
       clear_course_now();
       department = department.replace(' A','');
       department = department.replace(' B','');
-
+      console.log(course_department[department]);
       $.each(course_department[department][level+team], function(ik, iv) {
         $.each(course_code[iv], function(jk, jv) {
           if (jv.obligatory_tf){
@@ -548,7 +546,8 @@
     // (標題選擇欄位)根據選取項目改變其他選單內容
     // select_item('部門名稱') => 選取分類欄位載入對應內容
     function degree_change(value) {
-      var level = ['一年級', '二年級', '三年級', '四年級', '五年級',]
+      var level = ['一年級', '二年級', '三年級', '四年級', '五年級',];
+      var department_level = 1;
       var department = 2, html;
 
       $('#select-department .menu').empty();
@@ -558,8 +557,13 @@
       $('#select-department').removeClass('disabled');
       $('#select-level').addClass('disabled');
 
-      if (value == 0 || value == 5)
+      if (value == 0 || value==5)
         department = 5;
+      else if (value == 1 || value == 3 || value == 4)
+        department_level = 6;
+      else if (value == 2)
+        department_level = 8;
+
       // 添加系級至選單
       $.each(department_data[value], function(key, val) {
         html = $.parseHTML("<div class=\"item\" value=\"" + key +"\">" + val + "<\/div>");
@@ -567,7 +571,7 @@
       });
       // 添加年級至選單
       for (var i = 0; i < department; i++) {
-        html = $.parseHTML("<div class=\"item\" value=\"" + (i+1) +"\">" + level[i] + "<\/div>");
+        html = $.parseHTML("<div class=\"item\" value=\"" + (i+department_level) +"\">" + level[i] + "<\/div>");
         $('#select-level .menu').append(html);
       };
     }

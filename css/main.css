@@ -104,18 +104,15 @@ button.circular {
 	margin-top: 0px !important;
 }
 
-#course-search, #course-keep, #course-now   {
+#course-search, #course-keep, #course-now {
 	overflow-x: hidden;
 	overflow-y: auto;
 	max-height: 295px;
 }
 
 .ui.dropdown .menu {
+	overflow-x: hidden;
+	overflow-y: auto;
     left: 0;
     max-height: 30.5rem;
-    overflow-y: auto;
-}
-
-.ui.search.dropdown .menu {
-	max-height: 13.585714rem;
 }
