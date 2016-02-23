@@ -95,6 +95,14 @@
           $('#select-level .text').text('選取年級');
           $('#select-department').addClass('disabled');
           $('#select-level').addClass('disabled');
+          $($('#search-detail').parents('.multiple')).addClass('disabled');
+          $('#search-time').dropdown('restore defaults');
+          $('#search-time').addClass('disabled');
+          $('#search-detail').empty();
+          $('#search-detail').dropdown('clear');
+          $('.search.selection .default.text').text('選取分類');
+          $('#search-keyWord').val('');
+          $('#search-item').dropdown('restore defaults');
           clear_table();
           clear_course_now();
           clear_course_keep();
@@ -320,7 +328,8 @@
               if (type != '選修' && type != '必修') {
                 $.each(detail, function(key, val) {
                   if (department_data[item][val] == type) {
-                    search.push(val[0].code);
+                    console.log(course_code[search_key[i]][0]);
+                    search.push(course_code[search_key[i]][0].code);
                   }
                 });
               }
@@ -332,12 +341,12 @@
       if (time != '') {
         search_key = search;
         search = [];
-        for (var i = 0; i < search.length; i++) {
-          if (time == course_code[search_key[i]][0].day)
-            search.push(search_key[i]);
+        for (var i = 0; i < search_key.length; i++) {
           if (time != 0) {
-            if (time == course_code[search_key[i]][0].day)
-              search.push(search_key[i]);
+            for (var j = 0; j < course_code[search_key[i]][0].time_parsed.length; j++) {
+              if (time == course_code[search_key[i]][0].time_parsed[j].day)
+                search.push(search_key[i]);
+            }
           }
           else if (time == 0) {
             if(isFree(course_code[search_key[i]][0]))
@@ -346,8 +355,9 @@
         }
       }
 
-      for (var i = 0; i < search.length; i++)
+      for (var i = 0; i < search.length; i++) {
         add_course_search(course_code[search[i]][0]);
+      }
     }
 
     // 判斷課程類型
