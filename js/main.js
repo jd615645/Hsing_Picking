@@ -35,7 +35,7 @@
           window.department_data[i][val.value] = val.name;
         });
       }
-      $('.dropdown').dropdown();
+      $('.ui.dropdown').dropdown();
     })
 
     // 依序讀入部門資訊
@@ -140,6 +140,10 @@
     // 更改部門選單事件監聽
     $('#select-degree').on('click', '.item', function() {
       degree_change($(this).attr('value'));
+    });
+    // 更改部門選單事件監聽
+    $('#select-department').on('click', function() {
+      
     });
     // 更改系級選單事件監聽
     $('#select-department').change(function() {

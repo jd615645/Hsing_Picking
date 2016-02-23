@@ -109,3 +109,13 @@ button.circular {
 	overflow-y: auto;
 	max-height: 295px;
 }
+
+.ui.dropdown .menu {
+    left: 0;
+    max-height: 30.5rem;
+    overflow-y: auto;
+}
+
+.ui.search.dropdown .menu {
+	max-height: 13.585714rem;
+}
