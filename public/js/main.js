@@ -23,6 +23,8 @@
     // U->學士班, O->其他(通識等), N->夜校, G->碩班, W->碩專班, D->博班
     window.degree_data = ['U', 'O', 'N', 'G', 'W', 'D'];
 
+    window.now_course = [];
+
     // 引入選單資料
     $.getJSON('json/select.json',function(data) {
       for(var i=0 ; i < data.length ; i++) {
@@ -80,6 +82,7 @@
         case '1':
           break;
         case '2':
+          console.log(now_course);
           break;
         case '3':
           break;
@@ -88,21 +91,16 @@
         case '5':
           break;
         case '6':
-          $('#select-degree').dropdown('restore defaults');
-          $('#select-department .menu').empty();
-          $('#select-department .text').text('選取科系');
-          $('#select-level .menu').empty();
-          $('#select-level .text').text('選取年級');
-          $('#select-department').addClass('disabled');
-          $('#select-level').addClass('disabled');
+          $('#select-degree', '#search-time', '#search-item').dropdown('restore defaults');
+          $('#select-department .menu', '#select-level .menu', '#search-detail').empty();
+          $('#select-department', '#select-level', '#search-time').addClass('disabled');
           $($('#search-detail').parents('.multiple')).addClass('disabled');
-          $('#search-time').dropdown('restore defaults');
-          $('#search-time').addClass('disabled');
-          $('#search-detail').empty();
-          $('#search-detail').dropdown('clear');
+          $('#select-department .text').text('選取科系');
           $('.search.selection .default.text').text('選取分類');
+          $('#select-level .text').text('選取年級');
+          $('#search-detail').dropdown('clear');
           $('#search-keyWord').val('');
-          $('#search-item').dropdown('restore defaults');
+          now_course = [];
           clear_table();
           clear_course_now();
           clear_course_keep();
@@ -221,7 +219,7 @@
     $('#course-search').on('click','.add-btn' , function() {
       var code = $(this).parents('.courseItem').attr('value');
       if(isFree(course_code[code][0])) {
-        add_course2table(course_code[code][0]);
+        now_course.push(code);
         add_course_now(course_code[code][0]);
         $(this).parents('.courseItem').remove();
         highlight_table(code, false, true);
@@ -242,7 +240,7 @@
     $('#course-keep').on('click','.add-btn' , function() {
       var code = $(this).parents('.courseItem').attr('value');
       if(isFree(course_code[code][0])) {
-        add_course2table(course_code[code][0]);
+        now_course.push(code);
         add_course_now(course_code[code][0]);
         $(this).parents('.courseItem').remove();
         highlight_table(code, false, true);
@@ -263,6 +261,7 @@
       var code = $(this).parents('.courseItem').attr('value');
       $(this).parents('.courseItem').remove();
       clear_table_course(code);
+      now_course.splice(now_course.indexOf(code), 1);
     });
 
     // 判斷此課程是否衝堂
@@ -407,23 +406,42 @@
 
     // 以單位尋找
     function department_find(department, level, team) {
-      console.log(department + ',' + level + ',' + team);
-
+      var mul = [];
       clear_table();
       clear_course_now();
       department = department.replace(' A','');
       department = department.replace(' B','');
-      console.log(course_department[department]);
       $.each(course_department[department][level+team], function(ik, iv) {
         $.each(course_code[iv], function(jk, jv) {
-          if (jv.obligatory_tf){
-            add_course2table(jv);
-            add_course_now(jv);
+          if (jv.obligatory_tf) {
+            var isMul = multi_obligatory(jv.code);
+            if (isMul) {
+              mul.push(isMul);
+              add_course_keep(jv);
+            }
+            else {
+              now_course.push(jv.code);
+              add_course_now(jv);
+            }
           }
           else
             course_keep_repeat(jv);
         });
       });
+
+      // mul爆炸中
+      $.each(mul, function(key, val) {
+         console.log(val);
+      });
+      // for (var i = 0; i < mul.length; i++) {
+      //   var code = mul[i];
+      //   console.log(code);
+      //   console.log(course_code.code);
+      //   add_course_keep(course_code[code]);
+      //   $('#course-now .courseItem[value=' + mul[i] + ']').remove;
+      //   clear_table_course(mul[i]);
+      //   now_course.splice(now_course.indexOf(code), 1);
+      // }
     }
 
     // 將內容填入課表
@@ -482,6 +500,7 @@
       var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"><a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div>");
       $('#course-now .ui.relaxed.divided.list').append(html);
       $('.courseItem a').popup({position : 'bottom left'});
+      add_course2table(item);
     }
 
     // 改變網頁上的學分統計
@@ -541,7 +560,27 @@
       });
     }
 
-    
+    // 判斷可選必修
+    function multi_obligatory(code) {
+      var this_course = course_code[code][0].title_parsed.zh_TW;
+      var eng = ['a', 'b', 'c', 'd'];
+
+      for (var i = 0; i < eng.length; i++)
+        this_course = this_course.replace(eng[i], '');
+
+      // console.log(this_course);
+
+      for (i = 0; i < now_course.length; i++) {
+        var this_now_course = course_code[now_course[i]][0].title_parsed.zh_TW;
+        for (var j = 0; j < eng.length; j++)
+          this_now_course = this_now_course.replace(eng[j], '');
+
+        // console.log(this_course + ',' + this_now_course);
+        if (this_course == this_now_course)
+          return now_course;
+      }
+      return false;
+    }
 
     // (標題選擇欄位)根據選取項目改變其他選單內容
     // select_item('部門名稱') => 選取分類欄位載入對應內容
