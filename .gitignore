@@ -1,3 +1,4 @@
 *.html
 url.txt
-*.json
+node_modules
+exmple.json
