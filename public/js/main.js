@@ -6,7 +6,7 @@
     window.credits = 0;
     // 模擬課表內容
     window.class_table = {};
-    
+
     // 以課程代碼為key的物件
     window.course_code = {};
     // 以上課時間為key的物件，其指向課程代碼
@@ -69,7 +69,7 @@
           // 以科系班級建立索引，內容為課程代碼，
           if (typeof(window.course_department[val.for_dept]) == 'undefined')
              window.course_department[val.for_dept] = {};
-          if (typeof(window.course_department[val.for_dept][val.class]) == 'undefined') 
+          if (typeof(window.course_department[val.for_dept][val.class]) == 'undefined')
              window.course_department[val.for_dept][val.class] = [];
           window.course_department[val.for_dept][val.class].push(val.code);
         });
@@ -141,7 +141,7 @@
     });
     // 更改部門選單事件監聽
     $('#select-department').on('click', function() {
-      
+
     });
     // 更改系級選單事件監聽
     $('#select-department').change(function() {
@@ -234,7 +234,7 @@
       course_keep_repeat(course_code[code][0]);
       $(this).parents('.courseItem').remove();
       highlight_table(code, false, true);
-    });    
+    });
 
     // 將保留課程中的課程項目排入課表
     $('#course-keep').on('click','.add-btn' , function() {
@@ -305,13 +305,13 @@
           search_key = search;
           search = [];
         }
-        else 
+        else
           search_key = Object.keys(course_code);
 
         if (item == '0' || item == '5') {
           for (var i = 0; i < search_key.length; i++) {
             var type = parse_course_type(course_code[search_key[i]][0]);
-            
+
             if (type == '選修' || type == '必修') {
               $.each(detail, function(key, val) {
                 department_data[item][val] = department_data[item][val].replace(' A', '');
@@ -452,7 +452,7 @@
           var $td = $('#class-table').find('tr[class-time=' + jv + '] td:eq(' + iv.day + ')');
           if ($td.text() != "")
             have_class = true;
-          if (!have_class) 
+          if (!have_class)
             $td.text(data.title_parsed.zh_TW);
         });
         if (!have_class)
@@ -473,7 +473,7 @@
       $('#course-search .ui.relaxed.divided.list').append(html);
       $('.courseItem a').popup({position : 'bottom left'});
     }
-    
+
     // 新增課程項目至保留課程欄位
     function add_course_keep(item) {
       var type = parse_course_type(item);
@@ -552,7 +552,7 @@
                 $td.css('background-color', 'lightblue');
               else
                 $td.css('background-color', 'lightpink');
-            } 
+            }
             else
                 $td.css('background-color', 'lightgreen');
           }

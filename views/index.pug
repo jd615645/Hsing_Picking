@@ -1,0 +1,236 @@
+extends layout
+block css
+  link(rel='stylesheet', href='./css/main.css')
+block content
+  .ui.grid.stackable.centered
+    .row
+      .seven.wide.column
+        select.selectpicker#test
+          option Mustard
+          option Ketchup
+          option Relish
+        .ui.celled.horizontal.list
+          .item
+            | 104學年度第二學期
+          .item
+            .ui.dropdown#select-degree
+              .text 選取部門
+              input(type='hidden', name='degree')
+              i.dropdown.icon
+              .menu
+                .item(value="0")
+                  | 學士班
+                .item(value="1")
+                  | 碩士班
+                .item(value="2")
+                  | 博士班
+                .item(value="3")
+                  | 產專班
+                .item(value="4")
+                  | 碩專班
+                .item(value="5")
+                  | 進修學士班
+          .item
+            .ui.dropdown.disabled#select-department
+              .text 選取科系
+              input(type='hidden', name='department')
+              i.dropdown.icon
+              .menu
+          .item
+            .ui.dropdown.disabled#select-level
+              .text 選取年級
+              input(type='hidden', name='level')
+              i.dropdown.icon
+              .menu
+
+      .seven.wide.column.right.aligned.container
+
+        .ui.icon.buttons#tools-btn
+          .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini" value="1")
+            i.icon.download
+          .ui.button(data-content="輸出課程代碼" data-variation="mini" value="2")
+            i.icon.save
+          .ui.button(data-content="將課表輸出為QRcode" data-variation="mini" value="3")
+            i.icon.qrcode
+          .ui.button(data-content="切換課表時間顯示" data-variation="mini" value="4")
+            i.icon.wait
+          .ui.button(data-content="切換課表內容顯示項目" data-variation="mini" value="5")
+            i.icon.unhide
+          .ui.button(data-content="清除課表所有內容" data-variation="mini" value="6")
+            i.icon.trash
+
+    .four.wide.column(style="overflow-x:hidden;overflow-y:auto;overflow: auto;height:100%;")
+      .ui.top.attached.block.header
+        | 尋找課程
+      .ui.bottom.attached.segment
+        .ui.fluid.icon.input
+          input.default-font#search-keyWord(type='text', placeholder='請輸入搜尋關鍵字')
+
+        .ui.fluid.selection.dropdown#search-item
+          input(type='hidden', name='search_item')
+          i.dropdown.icon
+          .default.text 選取項目
+          .menu
+            .item(value="0")
+              | 學士班
+            .item(value="5")
+              | 進修學士班
+            .item(value="6")
+              | 通識
+            .item(value="7")
+              | 共同科目
+
+        select.ui.fluid.selection.dropdown.disabled#search-detail(multiple="")
+          option(value="")
+            | 選取分類
+
+        //- select.ui.fluid.search.selection.dropdown#search-level(multiple="")
+        //-   option(value="")
+        //-     | 選擇年級
+        //-   option(value="1")
+        //-     | 一年級
+        //-   option(value="2")
+        //-     | 二年級
+        //-   option(value="3")
+        //-     | 三年級
+        //-   option(value="4")
+        //-     | 四年級
+        //-   option(value="5")
+        //-     | 五年級
+
+        .ui.fluid.selection.dropdown.disabled#search-time
+          input(type='hidden', name='search_item')
+          i.dropdown.icon
+          .default.text 選取時間
+          .menu
+            .item(value="0")
+              | 空堂
+            .item(value="1")
+              | 星期一
+            .item(value="2")
+              | 星期二
+            .item(value="3")
+              | 星期三
+            .item(value="4")
+              | 星期四
+            .item(value="5")
+              | 星期五
+
+        button.ui.fluid.icon.button.default-font#search-btn(style="margin-top: 5px; margin-bottom: 10px;")
+          i.icon.search
+          |  搜尋符合項目
+
+        .ui.container
+          button.ui.grey.circular.icon.button#clear-search
+            i.icon.trash
+
+        .ui.right.aligned.segment#course-search
+          .ui.relaxed.divided.list
+            //- .item.courseItem(value="0")
+            //-   .content
+            //-     .header.default-font.text-left
+            //-       a(target="_blank" href="#") 課程名稱
+            //-       .ui.popup.hidden.text-left
+            //-         .ui.celled.horizontal.list
+            //-           .item 代碼:0000
+            //-           .item 學分:0
+            //-           .item 地點:A000
+            //-     .description.text-right
+            //-       .ui.celled.horizontal.list
+            //-         .item
+            //-           | 老師
+            //-         .item
+            //-           | 課程類型
+            //-         .item
+            //-           .ui.dropdown.item.simple
+            //-             button.blue.ui.button.add-btn 排課
+            //-             .menu
+            //-               .item
+            //-                 button.orange.ui.button.keep-btn 保留
+
+
+      .ui.top.attached.block.header(style="margin-top: 10px;")
+        | 保留課程
+      .ui.bottom.attached.segment
+
+        button.ui.grey.circular.icon.button#clear-keep
+          i.icon.trash
+
+        .ui.segment#course-keep
+          .ui.relaxed.divided.list
+            //- .item.courseItem(value="0")
+            //-   .content
+            //-     .header.default-font.text-left
+            //-       a(target="_blank" href="#") 課程名稱
+            //-       .ui.popup.hidden.text-left
+            //-         .ui.horizontal.list
+            //-           .item 代碼:0000
+            //-           .item 學分:0
+            //-           .item 地點:A000
+            //-     .description.text-right
+            //-       .ui.celled.horizontal.list
+            //-         .item
+            //-           | 老師
+            //-         .item
+            //-           | 課程類型
+            //-         .item
+            //-           .ui.dropdown.item.simple
+            //-             button.blue.ui.button.add-btn 排課
+            //-             .menu
+            //-               .item
+            //-                 button.red.ui.button.del-btn 刪除
+
+      .ui.top.attached.block.header(style="margin-top: 10px;")
+        | 目前課程
+      .ui.bottom.attached.segment
+        .ui.container.text-right
+          .ui.mini.horizontal.statistic#totle-credits
+            .value#totle-credits 0
+            .label.default-font 學分
+
+        .ui.container
+          button.ui.grey.circular.icon.button#clear-now
+            i.icon.trash
+
+        .ui.segment#course-now
+          .ui.relaxed.divided.list
+            //- .item.courseItem(value="0")
+            //-   .content
+            //-     .header.default-font.text-left
+            //-       a(target="_blank" href="#") 課程名稱
+            //-     .description.text-right
+            //-       .ui.celled.horizontal.list
+            //-         .item
+            //-           | 老師
+            //-         .item
+            //-           | 課程類型
+            //-         .item
+            //-           button.red.ui.button.del-btn 刪除
+
+    .ten.wide.column
+      .ui.top.attached.block.header
+        | 模擬課表
+      .ui.bottom.attached.segment
+        table.ui.unstackable.very.basic.fixed.table#class-table
+          thead
+            tr
+              each day in ['', '一', '二', '三', '四', '五']
+                if (day == '')
+                  th.one.wide= day
+                else
+                  th= day
+          tbody
+            each i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+              tr(class-time=i)
+                each j in [0, 1, 2, 3, 4, 5]
+                  if (j != 0)
+                    td(class-day=j)
+                  else
+                    td.one.wide.size-small= i
+      .row.text-right
+        .ui.horizontal.list
+          .item 課程資訊最後更新時間：
+          .item February 6th, 2016, 17:55
+
+block append js
+  script(src="./js/main.js")
