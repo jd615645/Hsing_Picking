@@ -1,0 +1,129 @@
+@baseFont: 'Roboto', '黑體-繁', 'Microsoft JhengHei', sans-serif;
+
+body {
+	font-family: @baseFont;
+	font-size: 16px;
+	padding-top: 50px;
+}
+
+a {
+	color: #252626;
+	margin-right: 0px;
+	&:hover { color: #B9D7EA; }
+}
+
+.ui.top.attached.block.header {
+	text-align: center;
+	font-family: @baseFont;
+	font-size: 16px;
+}
+
+#course_menu {
+	max-height: 665px;
+	overflow: hidden;
+	&:hover {
+		overflow-y: scroll;
+	}
+}
+
+#selectList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	li {
+		float: left;
+	}
+}
+
+#class-table {
+	text-align: center !important;
+	td {
+		font-size: 14px;
+		word-wrap: break-word;
+	}
+	th {
+		text-align: center;
+		font-family: @baseFont;
+		font-size: 16px;
+	}
+}
+
+
+.ui.fluid.selection { margin-top: 5px; }
+
+.size-small{ font-size: 10px !important; }
+
+#course-search, #course-keep, #course-now { background-color: #F3F4F5; }
+
+#course-search { margin-top: 25px; }
+
+#now-course { margin-top: 0px; }
+
+#totle-credits { margin-bottom: 0px; }
+
+.default-font { font-family: @baseFont !important; }
+
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+.text-center {
+	text-align: center;
+}
+
+#course-search .item .button, #course-keep .item .button, #course-now .item .button {
+	margin-right: 0px;
+	padding: 3px 6px;
+	font-family: @baseFont;
+}
+
+.simple.dropdown .menu .item {
+	padding: 5px 0px !important;
+}
+
+.ui.popup {
+	padding: 5px 7px !important;
+	margin-top: 2px !important;
+}
+
+#course-keep .ui.popup .item {
+	margin-left: 0px;
+}
+
+.segment {
+	&#course-search, &#course-keep, &#course-now {
+		padding: 12px 8px;
+	}
+	.relaxed.divided { margin-top: 0px !important; }
+}
+
+button.circular {
+	position: absolute;
+	right: 20px;
+	margin-right: 0px !important;
+	z-index: 1;
+}
+
+#course-search, #course-keep, #course-now {
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-height: 295px;
+}
+
+.ui.dropdown .menu {
+	overflow-x: hidden;
+	overflow-y: auto;
+  left: 0;
+  max-height: 30.5rem;
+}
+
+/*scrollbar css*/
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #F5F5F5;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+}

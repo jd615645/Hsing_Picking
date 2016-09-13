@@ -1,15 +1,22 @@
 extends layout
 block css
-  link(rel='stylesheet', href='./css/main.css')
+  link(rel='stylesheet/less', type='text/css', href='./style/main.less')
 block content
   .ui.grid.stackable.centered
     .row
       .seven.wide.column
-        select.selectpicker#test
-          option Mustard
-          option Ketchup
-          option Relish
+        //-
+        //- ul#selectList
+        //-   li
+        //-   li
+        //- select.selectpicker#test
+        //-   option Mustard
+        //-   option Ketchup
+        //-   option Relish
+
+
         .ui.celled.horizontal.list
+
           .item
             | 104學年度第二學期
           .item
@@ -43,7 +50,7 @@ block content
               i.dropdown.icon
               .menu
 
-      .seven.wide.column.right.aligned.container
+      .seven.wide.column.right.aligned
 
         .ui.icon.buttons#tools-btn
           .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini" value="1")
@@ -59,12 +66,14 @@ block content
           .ui.button(data-content="清除課表所有內容" data-variation="mini" value="6")
             i.icon.trash
 
-    .four.wide.column(style="overflow-x:hidden;overflow-y:auto;overflow: auto;height:100%;")
+    .four.wide.column#course_menu
       .ui.top.attached.block.header
         | 尋找課程
       .ui.bottom.attached.segment
+        .ui.inverted.dimmer
+          .ui.loader
         .ui.fluid.icon.input
-          input.default-font#search-keyWord(type='text', placeholder='請輸入搜尋關鍵字')
+          input.default-font#search-keyWord(type='text', placeholder='搜尋關鍵字...')
 
         .ui.fluid.selection.dropdown#search-item
           input(type='hidden', name='search_item')
@@ -230,7 +239,6 @@ block content
       .row.text-right
         .ui.horizontal.list
           .item 課程資訊最後更新時間：
-          .item February 6th, 2016, 17:55
-
+          .item#lastTime February 6th, 2016, 17:55
 block append js
   script(src="./js/main.js")

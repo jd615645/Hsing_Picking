@@ -45,32 +45,39 @@
       $.getJSON('json/career_' + window.degree_data[i] + '.json', function(data) {
         $.each(data.course, function(key, val) {
           // 以課程代碼建立索引
-          if (typeof(window.course_code[val.code] == 'undefined'))
+          if (typeof(window.course_code[val.code] == 'undefined')) {
             window.course_code[val.code] = [];
+          }
           window.course_code[val.code].push(val);
           // 以上課教師建立索引
-          if (typeof(window.course_sensei[val.professor] == 'undefined'))
+          if (typeof(window.course_sensei[val.professor] == 'undefined')) {
             window.course_sensei[val.professor] = [];
+          }
           window.course_sensei[val.professor].push(val.code);
           // 以課程名稱建立索引
-          if (typeof(window.course_title[val.title_parsed.zh_TW] == 'undefined'))
+          if (typeof(window.course_title[val.title_parsed.zh_TW] == 'undefined')) {
             window.course_title[val.title_parsed.zh_TW] = [];
+          }
           window.course_title[val.title_parsed.zh_TW].push(val.code);
           // 以上課時間建立建立索引
           $.each(val.time_parsed, function(ik, iv) {
             $.each(iv.time, function(jk, jv) {
-              if (typeof(window.course_time[iv.day]) == 'undefined')
+              if (typeof(window.course_time[iv.day]) == 'undefined') {
                 window.course_time[iv.day] = {};
-              if (typeof(window.course_time[iv.day][jv]) == 'undefined')
+              }
+              if (typeof(window.course_time[iv.day][jv]) == 'undefined') {
                 window.course_time[iv.day][jv] = [];
+              }
               window.course_time[iv.day][jv].push(val.code);
             });
           });
           // 以科系班級建立索引，內容為課程代碼，
-          if (typeof(window.course_department[val.for_dept]) == 'undefined')
-             window.course_department[val.for_dept] = {};
-          if (typeof(window.course_department[val.for_dept][val.class]) == 'undefined')
-             window.course_department[val.for_dept][val.class] = [];
+          if (typeof(window.course_department[val.for_dept]) == 'undefined') {
+            window.course_department[val.for_dept] = {};
+          }
+          if (typeof(window.course_department[val.for_dept][val.class]) == 'undefined') {
+            window.course_department[val.for_dept][val.class] = [];
+          }
           window.course_department[val.for_dept][val.class].push(val.code);
         });
       })
@@ -96,7 +103,7 @@
           $('#select-department', '#select-level', '#search-time').addClass('disabled');
           $($('#search-detail').parents('.multiple')).addClass('disabled');
           $('#select-department .text').text('選取科系');
-          $('.search.selection .default.text').text('選取分類');
+          $('#search-detail').parent().find('.default.text').text('選取分類');
           $('#select-level .text').text('選取年級');
           $('#search-detail').dropdown('clear');
           $('#search-keyWord').val('');
@@ -123,7 +130,8 @@
     $('#search-btn').click(function() {
       var get_value = $('#search-detail').dropdown('get value');
 
-      var keyWord = ($('#search-keyWord').val()).split(' ');
+      var keyWord = $('#search-keyWord').val();
+      // var keyWord = ($('#search-keyWord').val()).split(' ');
       var item = $('#search-item .selected').attr('value');
       var detail = get_value[get_value.length-1];
       var time = $('#search-time .selected').attr('value');
@@ -132,7 +140,11 @@
       detail = detail==null ? '' : detail;
       time = time==undefined ? '' : time;
 
-      course_search(keyWord, item, detail, time);
+      $('#search-item').parent().find('.inverted.dimmer').addClass('active');
+      setTimeout(function(){
+        course_search(keyWord, item, detail, time);
+        $('#search-item').parent().find('.inverted.dimmer').removeClass('active');
+      }, 100);
     });
 
     // 更改部門選單事件監聽
@@ -157,10 +169,12 @@
       // var department = $('#select-department .active').attr('value');
       var department = $('#select-department .active').text();
       var level = $(this).attr('value');
-      if (department.slice(-1) == 'A')
+      if (department.slice(-1) == 'A') {
         team = 'A';
-      else if(department.slice(-1) == 'B')
+      }
+      else if(department.slice(-1) == 'B') {
         team = 'B';
+      }
       department_find(department, level, team);
     });
 
@@ -224,8 +238,9 @@
         $(this).parents('.courseItem').remove();
         highlight_table(code, false, true);
       }
-      else
+      else {
         console.log('衝堂');
+      }
     });
 
     // 將尋找課程中的課程項目加至保留課程
@@ -245,8 +260,9 @@
         $(this).parents('.courseItem').remove();
         highlight_table(code, false, true);
       }
-      else
+      else {
         console.log('衝堂');
+      }
     });
 
     // 各別刪除保留課程中的課程項目
@@ -270,8 +286,9 @@
       $.each(course.time_parsed, function(ik, iv) {
         $.each(iv.time, function(jk, jv) {
           var $td = $('#class-table').find('tr[class-time=' + jv + '] td:eq(' + iv.day + ')');
-          if ($td.text() != "")
+          if ($td.text() != "") {
             free = false;
+          }
         });
       });
       return free;
@@ -283,30 +300,38 @@
       var search = [];
       var search_key = [];
 
-      if (keyWord[0] != '') {
-        $.each(course_code, function(key, val) {
-          for (var i = 0; i < keyWord.length; i++) {
-            if ((val[0].code).match(keyWord[i]) != null)
+      if (keyWord != '') {
+        if (keyWord.length > 1) {
+          $.each(course_code, function(key, val) {
+            if ((val[0].code).match(keyWord) != null) {
               search.push(val[0].code);
-            if ((val[0].professor).match(keyWord[i]) != null)
-              search.push(val[0].code);
-            if ((val[0].title_parsed.zh_TW).match(keyWord[i]) != null)
-              search.push(val[0].code);
-            for (var j = 0; j < (val[0].location).length; j++) {
-              if ((val[0].location[j]).match(keyWord[i]) != null)
-                search.push(val[0].code);
             }
-          }
-        });
+            if ((val[0].professor).match(keyWord) != null) {
+              search.push(val[0].code);
+            }
+            if ((val[0].title_parsed.zh_TW).match(keyWord) != null) {
+              search.push(val[0].code);
+            }
+            for (var j = 0; j < (val[0].location).length; j++) {
+              if ((val[0].location[j]).match(keyWord) != null) {
+                search.push(val[0].code);
+              }
+            }
+          });
+        }
+        else {
+          console.log('關鍵字請大於2個字');
+        }
       }
 
       if (item != '') {
-        if (keyWord[0] != '') {
+        if (keyWord != '') {
           search_key = search;
           search = [];
         }
-        else
+        else {
           search_key = Object.keys(course_code);
+        }
 
         if (item == '0' || item == '5') {
           for (var i = 0; i < search_key.length; i++) {
@@ -343,13 +368,15 @@
         for (var i = 0; i < search_key.length; i++) {
           if (time != 0) {
             for (var j = 0; j < course_code[search_key[i]][0].time_parsed.length; j++) {
-              if (time == course_code[search_key[i]][0].time_parsed[j].day)
+              if (time == course_code[search_key[i]][0].time_parsed[j].day) {
                 search.push(search_key[i]);
+              }
             }
           }
           else if (time == 0) {
-            if(isFree(course_code[search_key[i]][0]))
+            if(isFree(course_code[search_key[i]][0])) {
               search.push(search_key[i]);
+            }
           }
         }
       }
@@ -368,26 +395,34 @@
       if(course.discipline != '') {
         $.each(general_type, function(ik, iv) {
           $.each(iv, function(jk, jv) {
-            if (course.discipline == jv)
+            if (course.discipline == jv) {
               sol = ik;
+            }
           });
         });
       }
-      else if (course.department == "通識教育中心" || course.department == "夜中文")
+      else if (course.department == "通識教育中心" || course.department == "夜中文") {
         sol = '大學國文';
+      }
       else if ( course.obligatory == '必修' &&
-                (course.department == "語言中心" || course.department == "夜外文" || (course.department == "夜共同科" && ((course.title_parsed.zh_TW).substr(0,1) == '英文'))))
-        sol = '大一英文';
-      else if (course.department == "體育室" || course.department == "夜共同科")
+                (course.department == "語言中心" || course.department == "夜外文" || (course.department == "夜共同科" && ((course.title_parsed.zh_TW).substr(0,1) == '英文')))) {
+                  sol = '大一英文';
+      }
+      else if (course.department == "體育室" || course.department == "夜共同科") {
         sol = '體育';
-      else if (course.department == "師資培育中心")
+      }
+      else if (course.department == "師資培育中心") {
         sol = '教程';
-      else if (course.department == "教官室")
+      }
+      else if (course.department == "教官室") {
         sol = '國防';
-      else if (course.department == "語言中心")
+      }
+      else if (course.department == "語言中心") {
         sol = '全校外語';
-      else
+      }
+      else {
         sol = course.obligatory;
+      }
       return sol;
     }
 
@@ -424,8 +459,9 @@
               add_course_now(jv);
             }
           }
-          else
+          else {
             course_keep_repeat(jv);
+          }
         });
       });
 
@@ -450,13 +486,16 @@
       $.each(data.time_parsed, function(ik, iv) {
         $.each(iv.time, function(jk, jv) {
           var $td = $('#class-table').find('tr[class-time=' + jv + '] td:eq(' + iv.day + ')');
-          if ($td.text() != "")
+          if ($td.text() != "") {
             have_class = true;
-          if (!have_class)
+          }
+          if (!have_class) {
             $td.text(data.title_parsed.zh_TW);
+          }
         });
-        if (!have_class)
+        if (!have_class) {
           totle_credits(credits += data.credits_parsed);
+        }
       });
     }
 
@@ -466,8 +505,9 @@
       var location = '';
       for (var i = 0; i < item.location.length; i++) {
         location += item.location[i];
-        if(i != item.location.length-1)
+        if(i != item.location.length-1) {
           location += ',';
+        }
       };
       var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"orange ui button keep-btn\">保留<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
       $('#course-search .ui.relaxed.divided.list').append(html);
@@ -480,11 +520,12 @@
       var location = '';
       for (var i = 0; i < item.location.length; i++) {
         location += item.location[i];
-        if(i != item.location.length-1)
+        if(i != item.location.length-1) {
           location += ',';
+        }
       };
       var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"> <a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><div class=\"ui dropdown item simple\"><button class=\"blue ui button add-btn\">排課<\/button><div class=\"menu\"><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div><\/div><\/div><\/div>");
-      $('#course-keep .ui.relaxed.divided.list').append(html);
+      $('#course-keep .ui.relaxed.divided.list').prepend(html);
       $('.courseItem a').popup({position : 'bottom left'});
     }
 
@@ -494,8 +535,9 @@
       var location = '';
       for (var i = 0; i < item.location.length; i++) {
         location += item.location[i];
-        if(i != item.location.length-1)
+        if(i != item.location.length-1) {
           location += ',';
+        }
       };
       var html = $.parseHTML("<div class=\"item courseItem\" value=\"" + item.code + "\"><div class=\"content\"><div class=\"header default-font text-left\"><a target=\"_blank\" href=\"" + (onepice_url+item.url) + "\">" + item.title_parsed.zh_TW + "<\/a><div class=\"ui popup hidden text-left\"><div class=\"ui celled horizontal list\"><div class=\"item\">代碼:" + item.code + "<\/div><div class=\"item\">學分:" + item.credits_parsed + "<\/div><div class=\"item\">地點:" + location + "<\/div><\/div><\/div><\/div><div class=\"description text-right\"><div class=\"ui celled horizontal list\"><div class=\"item\">" + item.professor + "<\/div><div class=\"item\">" + type + "<\/div><div class=\"item\"><button class=\"red ui button del-btn\">刪除<\/button><\/div><\/div><\/div><\/div><\/div>");
       $('#course-now .ui.relaxed.divided.list').append(html);
@@ -522,8 +564,9 @@
 
     // 判斷保留課程欄位內內容不重複
     function course_keep_repeat(course) {
-      if (!$('#course-keep .courseItem[value=' + course.code + ']').length > 0)
+      if (!$('#course-keep .courseItem[value=' + course.code + ']').length > 0) {
         add_course_keep(course);
+      }
     }
 
     function clear_course_search() {
@@ -544,17 +587,21 @@
       $.each(course_code[code][0].time_parsed, function(ik, iv) {
         $.each(iv.time, function(jk, jv) {
           var $td = $('#class-table').find('tr[class-time=' + jv + '] td:eq(' + iv.day + ')');
-          if(clear)
+          if(clear) {
             $td.css('background-color', 'transparent');
+          }
           else {
             if ($td.text() != "") {
-              if(self)
+              if(self) {
                 $td.css('background-color', 'lightblue');
-              else
+              }
+              else {
                 $td.css('background-color', 'lightpink');
+              }
             }
-            else
-                $td.css('background-color', 'lightgreen');
+            else {
+              $td.css('background-color', 'lightgreen');
+            }
           }
         });
       });
@@ -565,19 +612,22 @@
       var this_course = course_code[code][0].title_parsed.zh_TW;
       var eng = ['a', 'b', 'c', 'd'];
 
-      for (var i = 0; i < eng.length; i++)
+      for (var i = 0; i < eng.length; i++) {
         this_course = this_course.replace(eng[i], '');
+      }
 
       // console.log(this_course);
 
       for (i = 0; i < now_course.length; i++) {
         var this_now_course = course_code[now_course[i]][0].title_parsed.zh_TW;
-        for (var j = 0; j < eng.length; j++)
+        for (var j = 0; j < eng.length; j++) {
           this_now_course = this_now_course.replace(eng[j], '');
+        }
 
         // console.log(this_course + ',' + this_now_course);
-        if (this_course == this_now_course)
+        if (this_course == this_now_course) {
           return now_course;
+        }
       }
       return false;
     }
@@ -596,12 +646,15 @@
       $('#select-department').removeClass('disabled');
       $('#select-level').addClass('disabled');
 
-      if (value == 0 || value==5)
+      if (value == 0 || value==5) {
         department = 5;
-      else if (value == 1 || value == 3 || value == 4)
+      }
+      else if (value == 1 || value == 3 || value == 4) {
         department_level = 6;
-      else if (value == 2)
+      }
+      else if (value == 2) {
         department_level = 8;
+      }
 
       // 添加系級至選單
       $.each(department_data[value], function(key, val) {
@@ -624,7 +677,7 @@
 
       $('#search-detail').empty();
       $('#search-detail').dropdown('clear');
-      $('.search.selection .default.text').text('選取分類');
+      $('#search-detail').parent().find('.default.text').text('選取分類');
       $.each(department_data[value], function(key, val) {
         var html = $.parseHTML("<option value=\"" + key +"\">" + val + "<\/option>");
         $('#search-detail').append(html);
