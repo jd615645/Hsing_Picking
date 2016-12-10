@@ -1,51 +1,51 @@
 @baseFont: 'Roboto', '黑體-繁', 'Microsoft JhengHei', sans-serif;
 
 body {
-	font-family: @baseFont;
-	font-size: 16px;
-	padding-top: 50px;
+  font-family: @baseFont;
+  font-size: 16px;
+  padding-top: 50px;
 }
 
 a {
-	color: #252626;
-	margin-right: 0px;
-	&:hover { color: #B9D7EA; }
+  color: #252626;
+  margin-right: 0px;
+  &:hover { color: #B9D7EA; }
 }
 
 .ui.top.attached.block.header {
-	text-align: center;
-	font-family: @baseFont;
-	font-size: 16px;
+  text-align: center;
+  font-family: @baseFont;
+  font-size: 16px;
 }
 
 #course_menu {
-	max-height: 665px;
-	overflow: hidden;
-	&:hover {
-		overflow-y: scroll;
-	}
+  max-height: 665px;
+  overflow: hidden;
+  &:hover {
+    overflow-y: scroll;
+  }
 }
 
 #selectList {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	li {
-		float: left;
-	}
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  li {
+    float: left;
+  }
 }
 
 #class-table {
-	text-align: center !important;
-	td {
-		font-size: 14px;
-		word-wrap: break-word;
-	}
-	th {
-		text-align: center;
-		font-family: @baseFont;
-		font-size: 16px;
-	}
+  text-align: center !important;
+  td {
+    font-size: 14px;
+    word-wrap: break-word;
+  }
+  th {
+    text-align: center;
+    font-family: @baseFont;
+    font-size: 16px;
+  }
 }
 
 
@@ -66,53 +66,68 @@ a {
 .text-right { text-align: right; }
 .text-left { text-align: left; }
 .text-center {
-	text-align: center;
+  text-align: center;
 }
 
 #course-search .item .button, #course-keep .item .button, #course-now .item .button {
-	margin-right: 0px;
-	padding: 3px 6px;
-	font-family: @baseFont;
+  margin-right: 0px;
+  padding: 3px 6px;
+  font-family: @baseFont;
 }
 
 .simple.dropdown .menu .item {
-	padding: 5px 0px !important;
+  padding: 5px 0px !important;
 }
 
 .ui.popup {
-	padding: 5px 7px !important;
-	margin-top: 2px !important;
+  padding: 5px 7px !important;
+  margin-top: 2px !important;
 }
 
 #course-keep .ui.popup .item {
-	margin-left: 0px;
+  margin-left: 0px;
 }
 
 .segment {
-	&#course-search, &#course-keep, &#course-now {
-		padding: 12px 8px;
-	}
-	.relaxed.divided { margin-top: 0px !important; }
+  &#course-search, &#course-keep, &#course-now {
+    padding: 12px 8px;
+  }
+  .relaxed.divided { margin-top: 0px !important; }
 }
 
 button.circular {
-	position: absolute;
-	right: 20px;
-	margin-right: 0px !important;
-	z-index: 1;
+  position: absolute;
+  right: 20px;
+  margin-right: 0px !important;
+  z-index: 1;
 }
 
 #course-search, #course-keep, #course-now {
-	overflow-x: hidden;
-	overflow-y: auto;
-	max-height: 295px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 295px;
 }
 
 .ui.dropdown .menu {
-	overflow-x: hidden;
-	overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   left: 0;
   max-height: 30.5rem;
+}
+
+#saveImg {
+  #tableImg {
+    width: 100%;
+  }
+  #outputLink {
+    display: flex;
+  }
+  #imgQR {
+    margin-right: 15px;
+  }
+  #imgUrl {
+    align-self: flex-end;
+  }
 }
 
 /*scrollbar css*/

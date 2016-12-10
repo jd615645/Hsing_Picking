@@ -53,17 +53,15 @@ block content
       .seven.wide.column.right.aligned
 
         .ui.icon.buttons#tools-btn
-          .ui.button(data-content="輸出課表為圖片存檔" data-variation="mini" value="1")
+          .ui.button(data-content="輸出課表為圖片" data-variation="mini" value="1")
             i.icon.download
           .ui.button(data-content="輸出課程代碼" data-variation="mini" value="2")
             i.icon.save
-          .ui.button(data-content="將課表輸出為QRcode" data-variation="mini" value="3")
-            i.icon.qrcode
-          .ui.button(data-content="切換課表時間顯示" data-variation="mini" value="4")
+          .ui.button(data-content="切換課表時間顯示" data-variation="mini" value="3")
             i.icon.wait
-          .ui.button(data-content="切換課表內容顯示項目" data-variation="mini" value="5")
+          .ui.button(data-content="切換課表內容顯示項目" data-variation="mini" value="4")
             i.icon.unhide
-          .ui.button(data-content="清除課表所有內容" data-variation="mini" value="6")
+          .ui.button(data-content="清除課表所有內容" data-variation="mini" value="5")
             i.icon.trash
 
     .four.wide.column#course_menu
@@ -73,7 +71,7 @@ block content
         .ui.inverted.dimmer
           .ui.loader
         .ui.fluid.icon.input
-          input.default-font#search-keyWord(type='text', placeholder='搜尋關鍵字...')
+          input.default-font#search-keyword(type='text', placeholder='搜尋關鍵字...')
 
         .ui.fluid.selection.dropdown#search-item
           input(type='hidden', name='search_item')
@@ -216,7 +214,7 @@ block content
             //-         .item
             //-           button.red.ui.button.del-btn 刪除
 
-    .ten.wide.column
+    .ten.wide.column#timeTalbe
       .ui.top.attached.block.header
         | 模擬課表
       .ui.bottom.attached.segment
@@ -240,5 +238,22 @@ block content
         .ui.horizontal.list
           .item 課程資訊最後更新時間：
           .item#lastTime February 6th, 2016, 17:55
+    .ui.modal#saveImg
+      i.close.icon
+      .header
+        | 輸出課表為圖片
+      .content
+        img#tableImg(src='#')
+        hr
+        #outputLink
+          #imgQR
+          .ui.action.input#imgUrl
+            input(type='text', value='#')#copyUrl
+            button.ui.right.icon.button(data-clipboard-target='#copyUrl')#copyBtn
+              i.copy.icon
+
 block append js
-  script(src="./js/main.js")
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js')
+  script(src='http://davidshimjs.github.com/qrcodejs/qrcode.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js')
+  script(src='./js/main.js')

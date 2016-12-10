@@ -1,5 +1,18 @@
 (function($) {
   jQuery(document).ready(function($) {
+    //your APIv3 client id
+    var clientId = "30b5b43a2e55afd";
+    // qrcode.js init
+    var qrcode = new QRCode('imgQR', {
+      width: 128,
+      height: 128,
+      colorDark : "#262626",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+    // clipboard init
+    var clipboard = new Clipboard('#copyBtn');
+
     window.department_data = {};
 
     // 學分變數
@@ -9,14 +22,9 @@
 
     // 以課程代碼為key的物件
     window.course_code = {};
-    // 以上課時間為key的物件，其指向課程代碼
-    window.course_time = {};
-    // 以上課教師為key的物件，其指向課程代碼
-    window.course_sensei = {};
+
     // 以科系為key的物件，其指向課程代碼
     window.course_department = {};
-    // 以課程名稱為key的物件，其指向課程代碼
-    window.course_title = {};
 
     window.onepice_url = 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=1042&v_class_nbr=';
 
@@ -49,28 +57,7 @@
             window.course_code[val.code] = [];
           }
           window.course_code[val.code].push(val);
-          // 以上課教師建立索引
-          if (typeof(window.course_sensei[val.professor] == 'undefined')) {
-            window.course_sensei[val.professor] = [];
-          }
-          window.course_sensei[val.professor].push(val.code);
-          // 以課程名稱建立索引
-          if (typeof(window.course_title[val.title_parsed.zh_TW] == 'undefined')) {
-            window.course_title[val.title_parsed.zh_TW] = [];
-          }
-          window.course_title[val.title_parsed.zh_TW].push(val.code);
-          // 以上課時間建立建立索引
-          $.each(val.time_parsed, function(ik, iv) {
-            $.each(iv.time, function(jk, jv) {
-              if (typeof(window.course_time[iv.day]) == 'undefined') {
-                window.course_time[iv.day] = {};
-              }
-              if (typeof(window.course_time[iv.day][jv]) == 'undefined') {
-                window.course_time[iv.day][jv] = [];
-              }
-              window.course_time[iv.day][jv].push(val.code);
-            });
-          });
+
           // 以科系班級建立索引，內容為課程代碼，
           if (typeof(window.course_department[val.for_dept]) == 'undefined') {
             window.course_department[val.for_dept] = {};
@@ -86,18 +73,45 @@
     $('#tools-btn .button').click(function() {
       var tools_value = $(this).attr('value');
       switch(tools_value) {
+        // save img
         case '1':
+          var imgUrl = '';
+          html2canvas($('#timeTalbe'), {
+            onrendered: function(canvas) {
+              var canvasUrl = canvas.toDataURL("image/png");
+              $("#postImg").attr('src', canvasUrl);
+              uploadImg(canvasUrl).then(
+                function(response) {
+                  console.log(response);
+                  if(response.success) {
+                    imgUrl = response.data.link;
+                    $('#tableImg').attr('src', imgUrl);
+                    qrcode.makeCode(imgUrl);
+                    $('#imgUrl input').attr('value', imgUrl);
+                    $('#tableImg').load(function() {
+                      $('#saveImg').modal('show');
+                    })
+                  }
+                  else {
+                    console.error('upload error');
+                  }
+                }
+              );
+            }
+          });
           break;
+        // save class code
         case '2':
           console.log(now_course);
           break;
+        // change syllabus time
         case '3':
           break;
+        // change syllabus view type
         case '4':
           break;
+        // clear syllabus
         case '5':
-          break;
-        case '6':
           $('#select-degree', '#search-time', '#search-item').dropdown('restore defaults');
           $('#select-department .menu', '#select-level .menu', '#search-detail').empty();
           $('#select-department', '#select-level', '#search-time').addClass('disabled');
@@ -106,7 +120,7 @@
           $('#search-detail').parent().find('.default.text').text('選取分類');
           $('#select-level .text').text('選取年級');
           $('#search-detail').dropdown('clear');
-          $('#search-keyWord').val('');
+          $('#search-keyword').val('');
           now_course = [];
           clear_table();
           clear_course_now();
@@ -130,8 +144,8 @@
     $('#search-btn').click(function() {
       var get_value = $('#search-detail').dropdown('get value');
 
-      var keyWord = $('#search-keyWord').val();
-      // var keyWord = ($('#search-keyWord').val()).split(' ');
+      var keyword = $('#search-keyword').val();
+      // var keyword = ($('#search-keyword').val()).split(' ');
       var item = $('#search-item .selected').attr('value');
       var detail = get_value[get_value.length-1];
       var time = $('#search-time .selected').attr('value');
@@ -142,7 +156,7 @@
 
       $('#search-item').parent().find('.inverted.dimmer').addClass('active');
       setTimeout(function(){
-        course_search(keyWord, item, detail, time);
+        course_search(keyword, item, detail, time);
         $('#search-item').parent().find('.inverted.dimmer').removeClass('active');
       }, 100);
     });
@@ -295,25 +309,25 @@
     }
 
     // 搜尋課程
-    function course_search(keyWord, item, detail, time) {
+    function course_search(keyword, item, detail, time) {
       clear_course_search();
       var search = [];
       var search_key = [];
 
-      if (keyWord != '') {
-        if (keyWord.length > 1) {
+      if (keyword != '') {
+        if (keyword.length > 1) {
           $.each(course_code, function(key, val) {
-            if ((val[0].code).match(keyWord) != null) {
+            if ((val[0].code).match(keyword) != null) {
               search.push(val[0].code);
             }
-            if ((val[0].professor).match(keyWord) != null) {
+            if ((val[0].professor).match(keyword) != null) {
               search.push(val[0].code);
             }
-            if ((val[0].title_parsed.zh_TW).match(keyWord) != null) {
+            if ((val[0].title_parsed.zh_TW).match(keyword) != null) {
               search.push(val[0].code);
             }
             for (var j = 0; j < (val[0].location).length; j++) {
-              if ((val[0].location[j]).match(keyWord) != null) {
+              if ((val[0].location[j]).match(keyword) != null) {
                 search.push(val[0].code);
               }
             }
@@ -325,7 +339,7 @@
       }
 
       if (item != '') {
-        if (keyWord != '') {
+        if (keyword != '') {
           search_key = search;
           search = [];
         }
@@ -684,8 +698,48 @@
       });
     }
 
+    function uploadImg(canvasUrl) {
+      return $.ajax({
+        url: 'https://api.imgur.com/3/image',
+        type: 'post',
+        headers: {
+          Authorization: 'Client-ID ' + clientId
+        },
+        data: {
+          image: canvasUrl.split(',').pop()
+        },
+        dataType: 'json'
+      });
+    }
+
+    $('#copyBtn')
+      .popup({
+        content: 'Copied!',
+        variation: 'inverted',
+        on: 'manual'
+        // variation: 'basic'
+      })
+      .click(function() {
+        $(this).popup('show');
+      })
+      .mouseout(function() {
+        $(this).popup('hide');
+      })
+
+    clipboard.on('success', function(e) {
+      e.clearSelection();
+    });
+
+    clipboard.on('error', function(e) {
+      console.error('Action:', e.action);
+      console.error('Trigger:', e.trigger);
+    });
+
     // 提示訊息元件初始化
     $('#tools-btn .ui.button').popup();
     $('.courseItem a').popup({position : 'top left'});
+    // modal init
+    $('#saveImg').modal();
+
   });
 })(jQuery);
