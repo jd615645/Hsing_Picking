@@ -4,6 +4,9 @@ body {
   font-family: @baseFont;
   font-size: 16px;
 }
+h2 {
+  margin: 0px;
+}
 // input style
 .form-control {
   height: 30px;
@@ -98,6 +101,7 @@ body {
   #nowCourseTab {
     #totle-credits {
       text-align: right;
+      margin-bottom: 5px;
     }
   }
 }
@@ -129,6 +133,7 @@ body {
       background-color: #2b303a;
       span {
         margin-left: 10px;
+        font-family: @baseFont;
       }
       #timeSwitch {
         width: 80px;
@@ -137,7 +142,14 @@ body {
           &.active {
             display: block;
           }
-
+        }
+      }
+      #viewSwitch {
+        i {
+          display: none;
+          &.active {
+            display: block;
+          }
         }
       }
     }
@@ -152,6 +164,7 @@ body {
       width: 98%;
       background-color: #fff;
       th {
+        text-align: center;
         padding: 10px;
         &:first-child {
           width: 7%;
@@ -175,6 +188,9 @@ ul.tab-nav {
   overflow: hidden;
 
   background-color: #22262e;
+  a {
+    text-decoration: none;
+  }
   li {
     float: left;
     text-align: center;

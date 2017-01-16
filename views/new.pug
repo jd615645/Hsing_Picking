@@ -1,7 +1,7 @@
 extends layout
 block css
-  link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-  link(rel='stylesheet/less', type='text/css', href='./style/new.less')
+  link(rel='stylesheet', href='/css/bootstrap.min.css')
+  link(rel='stylesheet/less', type='text/css', href='./styles/new.less')
 block content
   #menu
     #sidebarProfile
@@ -23,10 +23,8 @@ block content
       h4(value='3') 目前課程
     #toolTab
       #searchTab.tool-tab.active(value='1')
-        h2 searchTab
         input#search-keyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字')
       #keepTab.tool-tab(value='2')
-        h2 keepTab
         ul#keepList.course-list
           li
             .list-item
@@ -93,12 +91,15 @@ block content
             i.fa.fa-moon-o(type='night')
               span 13堂
         li#viewSwitch.right
-          a(href='#' title='切換課表內容顯示項目')
-            i.fa.fa-eye
+          a(href='#' title='切換課表內容顯示項目', view='1')
+            i.fa.fa-eye.active(value='1')
               span 全部顯示
-              //- span 僅顯示課名
-              //- span 顯示課名及教師
-              //- span 顯示課名及教室
+            i.fa.fa-eye(value='2')
+              span 僅顯示課名
+            i.fa.fa-eye(value='3')
+              span 顯示課名及教師
+            i.fa.fa-eye(value='4')
+              span 顯示課名及教室
     #scheduleBlock
       table#scheduleTable
         thead

@@ -1,6 +1,7 @@
 extends layout
 block css
-  link(rel='stylesheet/less', type='text/css', href='./style/main.less')
+  link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css')
+  link(rel='stylesheet/less', href='./styles/main.less')
 block content
   .ui.grid.stackable.centered
     .row
@@ -254,6 +255,7 @@ block content
               i.copy.icon
 
 block append js
+  script(src='./js/semanticui.js')
   script(src='./js/html2canvas.js')
   script(src='./js/qrcode.js')
   script(src='./js/clipboard.js')
