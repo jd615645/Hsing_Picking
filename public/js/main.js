@@ -6,12 +6,14 @@
     var qrcode = new QRCode('imgQR', {
       width: 128,
       height: 128,
-      colorDark : "#262626",
-      colorLight : "#ffffff",
+      colorDark : '#262626',
+      colorLight : '#ffffff',
       correctLevel : QRCode.CorrectLevel.H
     });
     // clipboard init
     var clipboard = new Clipboard('#copyBtn');
+
+    var thisYear = 1052;
 
     window.department_data = {};
 
@@ -26,7 +28,7 @@
     // 以科系為key的物件，其指向課程代碼
     window.course_department = {};
 
-    window.onepice_url = 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=1052&v_class_nbr=';
+    window.onepice_url = 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=' + thisYear + '&v_class_nbr=';
 
     // U->學士班, O->其他(通識等), N->夜校, G->碩班, W->碩專班, D->博班
     window.degree_data = ['U', 'O', 'N', 'G', 'W', 'D'];
@@ -50,7 +52,7 @@
 
     // 依序讀入部門資訊
     for (var i = 0 ; i <  (window.degree_data).length  ; i++) {
-      $.getJSON('json/1052/career_' + window.degree_data[i] + '.json', function(data) {
+      $.getJSON('json/' + thisYear + '/career_' + window.degree_data[i] + '.json', function(data) {
         $.each(data.course, function(key, val) {
           // 以課程代碼建立索引
           if (typeof(window.course_code[val.code] == 'undefined')) {

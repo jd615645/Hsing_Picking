@@ -1,0 +1,123 @@
+extends layout
+block css
+  link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+  link(rel='stylesheet/less', type='text/css', href='./style/new.less')
+block content
+  #menu
+    #sidebarProfile
+      img#profileImg(src='/img/pic.jpg')
+      h3 Sakamoto
+    #courseTab
+      ul.tab-nav
+        li.active(value='1')
+          i.fa.fa-search
+        li(value='2')
+          i.fa.fa-shopping-basket
+          span#keepNum.notify 1
+        li(value='3')
+          i.fa.fa-list-ul
+          span#courseNum.notify 1
+    #title
+      h4.active(value='1') 搜尋課程
+      h4(value='2') 保留課程
+      h4(value='3') 目前課程
+    #toolTab
+      #searchTab.tool-tab.active(value='1')
+        h2 searchTab
+        input#search-keyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字')
+      #keepTab.tool-tab(value='2')
+        h2 keepTab
+        ul#keepList.course-list
+          li
+            .list-item
+              i.fa.fa-circle-o
+            .list-text
+              p.course-title 普通物理學e
+              p.course-detail
+                span 劉瑞堂
+                span 必修
+                span 3學分
+                span S102
+            .add-del
+              i.fa.fa-plus
+            .list-del
+              i.fa.fa-times
+      #nowCourseTab.tool-tab(value='3')
+        h2#totle-credits
+          span 0
+          | 學分
+        ul#nowList.course-list
+          li
+            .list-item
+              i.fa.fa-circle-o
+            .list-text
+              p.course-title 普通物理學e
+              p.course-detail
+                span 劉瑞堂
+                span 必修
+                span 3學分
+                span S102
+            .list-del
+              i.fa.fa-times
+          li
+            .list-item
+              i.fa.fa-circle-o
+            .list-text
+              p.course-title 普通物理學e
+              p.course-detail
+                span 劉瑞堂
+                span 必修
+                span 3學分
+                span S102
+            .list-del
+              i.fa.fa-times
+
+  #schedule
+    #titleBar
+      ul.tab-nav
+        li.right
+          a(href='#' title='清除課表所有內容')
+            i.fa.fa-trash
+        li.right
+          a(href='#' title='輸出課程代碼')
+            i.fa.fa-floppy-o
+        li.right
+          a(href='#' title='輸出課表為圖片')
+            i.fa.fa-download
+    #scheduleType
+      ul.tab-nav
+        li#timeSwitch.right
+          a(href='#' title='切換課表時間顯示', view='day')
+            i.fa.fa-sun-o.active(type='day')
+              span 8堂
+            i.fa.fa-moon-o(type='night')
+              span 13堂
+        li#viewSwitch.right
+          a(href='#' title='切換課表內容顯示項目')
+            i.fa.fa-eye
+              span 全部顯示
+              //- span 僅顯示課名
+              //- span 顯示課名及教師
+              //- span 顯示課名及教室
+    #scheduleBlock
+      table#scheduleTable
+        thead
+          tr
+            each day in ['', '一', '二', '三', '四', '五']
+              if (day == '')
+                th= day
+              else
+                th= day
+        tbody
+          each i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+            tr(class-time=i)
+              each j in [0, 1, 2, 3, 4, 5]
+                if (j != 0)
+                  td(class-day=j)
+                else
+                  td= i
+block append js
+  script(src='./js/html2canvas.js')
+  script(src='./js/qrcode.js')
+  script(src='./js/clipboard.js')
+  script(src='./js/new.js')

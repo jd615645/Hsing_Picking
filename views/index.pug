@@ -5,20 +5,21 @@ block content
   .ui.grid.stackable.centered
     .row
       .seven.wide.column
-        //-
-        //- ul#selectList
-        //-   li
-        //-   li
-        //- select.selectpicker#test
-        //-   option Mustard
-        //-   option Ketchup
-        //-   option Relish
-
-
         .ui.celled.horizontal.list
-
           .item
-            | 105學年度第2學期
+            .ui.dropdown#select-year
+              .text 年份
+              input(type='hidden', name='degree')
+              i.dropdown.icon
+              .menu
+                .item(value="10502")
+                  | 105學年度第2學期
+                .item(value="10501")
+                  | 105學年度第1學期
+                .item(value="10402")
+                  | 104學年度第2學期
+                .item(value="10501")
+                  | 104學年度第1學期
           .item
             .ui.dropdown#select-degree
               .text 選取部門
