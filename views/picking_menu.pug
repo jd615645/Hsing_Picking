@@ -1,0 +1,87 @@
+#menu
+  #sidebarProfile
+    img#profileImg(src='./img/pic.jpg')
+    h3 Sakamoto
+  #courseTab
+    ul.tab-nav
+      li(v-bind:class='{ active: tabView == 0 }', v-on:click='tabView = 0')
+        i.fa.fa-search
+      li(v-bind:class='{ active: tabView == 1 }', v-on:click='tabView = 1')
+        i.fa.fa-shopping-basket
+        span#keepNum.notify {{ notifyKeep }}
+      li(v-bind:class='{ active: tabView == 2 }', v-on:click='tabView = 2')
+        i.fa.fa-list-ul
+        span#courseNum.notify {{ notifyCourse }}
+  #title
+    h4(v-bind:class='{ active: tabView == 0 }') 搜尋課程
+    h4(v-bind:class='{ active: tabView == 1 }') 保留課程
+    h4(v-bind:class='{ active: tabView == 2 }') 目前課程
+  #toolTab
+    #searchTab.tool-tab(v-bind:class='{ active: tabView == 0 }')
+      input#search-keyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字')
+      select#selectItem.form-control(v-model='selectItem', v-on:change='changeItem(selectItem)')
+        option(value='-1', disabled) 選擇項目
+        option(value='0') 學士班
+        option(value='5') 進修學士班
+        option(value='6', selected) 通識
+        option(value='7', selected) 共同科目
+      select#selectdDetail.form-control(v-model='selectDetail', v-on:change='changeDetail(selectdDetail)')
+        option(value='-1', disabled) 選擇分類
+        option(v-bind:value='dept.code', v-for='dept in detailData') {{ dept.dept }}
+      select#selectdTime.form-control(v-model='selectTime', v-on:change='changeTime(selectdTime)')
+        option(value='-1', disabled) 選擇時間
+        option(value='0') 空堂
+        option(value='1') 星期一
+        option(value='2') 星期二
+        option(value='3') 星期三
+        option(value='4') 星期四
+        option(value='5') 星期五
+      #searchBtn
+        i.fa.fa-search 搜尋符合項目
+
+
+    #keepTab.tool-tab(v-bind:class='{ active: tabView == 1 }')
+      ul#keepList.course-list
+        li
+          .list-item
+            i.fa.fa-circle-o
+          .list-text
+            p.course-title 普通物理學e
+            p.course-detail
+              span 劉瑞堂
+              span 必修
+              span 3學分
+              span S102
+          .add-del
+            i.fa.fa-plus
+          .list-del
+            i.fa.fa-times
+    #nowCourseTab.tool-tab(v-bind:class="{ active: tabView == 2 }")
+      h2#totleCredits
+        span {{ credits }}
+        | 學分
+      ul#nowList.course-list
+        li
+          .list-item
+            i.fa.fa-circle-o
+          .list-text
+            p.course-title 普通物理學e
+            p.course-detail
+              span 劉瑞堂
+              span 必修
+              span 3學分
+              span S102
+          .list-del
+            i.fa.fa-times
+        li
+          .list-item
+            i.fa.fa-circle-o
+          .list-text
+            p.course-title 普通物理學e
+            p.course-detail
+              span 劉瑞堂
+              span 必修
+              span 3學分
+              span S102
+          .list-del
+            i.fa.fa-times

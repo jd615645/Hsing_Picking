@@ -1,145 +1,15 @@
 extends layout
 block css
   link(rel='stylesheet', href='/css/bootstrap.min.css')
+  link(rel='stylesheet', href='./styles/bootstrap-select.min.css')
   link(rel='stylesheet/less', type='text/css', href='./styles/new.less')
 block content
   #app(v-cloak)
-    #menu
-      #sidebarProfile
-        img#profileImg(src='./img/pic.jpg')
-        h3 Sakamoto
-      #courseTab
-        ul.tab-nav
-          li(v-bind:class='{ active: tabView == 0 }', v-on:click='tabView = 0')
-            i.fa.fa-search
-          li(v-bind:class='{ active: tabView == 1 }', v-on:click='tabView = 1')
-            i.fa.fa-shopping-basket
-            span#keepNum.notify {{ notifyKeep }}
-          li(v-bind:class='{ active: tabView == 2 }', v-on:click='tabView = 2')
-            i.fa.fa-list-ul
-            span#courseNum.notify {{ notifyCourse }}
-      #title
-        h4(v-bind:class='{ active: tabView == 0 }') 搜尋課程
-        h4(v-bind:class='{ active: tabView == 1 }') 保留課程
-        h4(v-bind:class='{ active: tabView == 2 }') 目前課程
-      #toolTab
-        #searchTab.tool-tab(v-bind:class='{ active: tabView == 0 }')
-          input#search-keyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字')
-        #keepTab.tool-tab(v-bind:class='{ active: tabView == 1 }')
-          ul#keepList.course-list
-            li
-              .list-item
-                i.fa.fa-circle-o
-              .list-text
-                p.course-title 普通物理學e
-                p.course-detail
-                  span 劉瑞堂
-                  span 必修
-                  span 3學分
-                  span S102
-              .add-del
-                i.fa.fa-plus
-              .list-del
-                i.fa.fa-times
-        #nowCourseTab.tool-tab(v-bind:class="{ active: tabView == 2 }")
-          h2#totleCredits
-            span {{ credits }}
-            | 學分
-          ul#nowList.course-list
-            li
-              .list-item
-                i.fa.fa-circle-o
-              .list-text
-                p.course-title 普通物理學e
-                p.course-detail
-                  span 劉瑞堂
-                  span 必修
-                  span 3學分
-                  span S102
-              .list-del
-                i.fa.fa-times
-            li
-              .list-item
-                i.fa.fa-circle-o
-              .list-text
-                p.course-title 普通物理學e
-                p.course-detail
-                  span 劉瑞堂
-                  span 必修
-                  span 3學分
-                  span S102
-              .list-del
-                i.fa.fa-times
+    include ./picking_menu.pug
+    include ./picking_schedule.pug
 
-    #schedule
-      #titleBar
-        ul.tab-nav
-          li.left
-            select#selectYear.form-control
-              option(value='0', disabled) 選擇學期
-              option(value='10401') 104學年度第1學期
-              option(value='10402') 104學年度第2學期
-              option(value='10501') 105學年度第1學期
-              option(value='10502', selected) 105學年度第2學期
-          li.left
-            select#selectDegree.form-control
-              option(value='0', disabled) 選取部門
-              option(value='1', selected) 學士班
-              option(value='2') 進修學士班
-              option(value='3') 碩士班
-          li.left
-            select#selectDepartment.form-control
-              option(value='0', disabled, selected) 選取科系
-              option(v-bind:value="dept.key", v-for="dept in selectedDept") {{ dept.name }}
-          li.left
-            select#selectlevel.form-control
-              option(value='0', disabled, selected) 選取年級
-
-          li.right
-            a(href='#' title='清除課表所有內容')
-              i.fa.fa-trash
-          li.right
-            a(href='#' title='輸出課程代碼')
-              i.fa.fa-floppy-o
-          li.right
-            a(href='#' title='輸出課表為圖片')
-              i.fa.fa-download
-      #scheduleType
-        ul.tab-nav
-          li#timeSwitch.right
-            a(href='#' title='切換課表時間顯示', view='day')
-              i.fa.fa-sun-o.active(type='day')
-                span 8堂
-              i.fa.fa-moon-o(type='night')
-                span 13堂
-          li#viewSwitch.right
-            a(href='#' title='切換課表內容顯示項目', view='1')
-              i.fa.fa-eye.active(value='1')
-                span 全部顯示
-              i.fa.fa-eye(value='2')
-                span 僅顯示課名
-              i.fa.fa-eye(value='3')
-                span 顯示課名及教師
-              i.fa.fa-eye(value='4')
-                span 顯示課名及教室
-      #scheduleBlock
-        table#scheduleTable
-          thead
-            tr
-              each day in ['', '一', '二', '三', '四', '五']
-                if (day == '')
-                  th= day
-                else
-                  th= day
-          tbody
-            each i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-              tr(class-time=i)
-                each j in [0, 1, 2, 3, 4, 5]
-                  if (j != 0)
-                    td(class-day=j)
-                  else
-                    td= i
 block append js
+  script(src='./js/bootstrap-select.min.js')
   script(src='./js/html2canvas.js')
   script(src='./js/qrcode.js')
   script(src='./js/clipboard.js')

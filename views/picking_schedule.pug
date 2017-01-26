@@ -1,0 +1,72 @@
+#schedule
+  #titleBar
+    ul.tab-nav
+      li.left
+        select#selectYear.form-control(v-model='selectYear', v-on:change='changeYear(selectYear)')
+          option(value='-1', disabled) 選擇學期
+          option(value='1042') 104學年度第2學期
+          option(value='1051') 105學年度第1學期
+          option(value='1052', selected) 105學年度第2學期
+      li.left
+        select#selectDegree.form-control(v-model='selectDegree', v-on:change='changeDegree(selectDegree)')
+          option(value='-1', disabled) 選取部門
+          option(value='0') 學士班
+          option(value='5') 進修學士班
+          option(value='1') 碩士班
+      li.left
+        select#selectDepartment.form-control(v-model='selectDepartment', v-on:change='changeDepartment(selectDepartment)')
+          option(value='-1', disabled) 選取科系
+          option(v-bind:value='dept.code', v-for='dept in deptData') {{ dept.dept }}
+      li.left
+        select#selectlevel.form-control(v-model='selectlevel', v-on:change='changeSelectLevel(selectLevel)', v-bind='{ disabled: selectDepartment == -1 }')
+          option(value='-1', disabled) 選取年級
+          option(value='1', v-if='selectDegree != -1') 一年級
+          option(value='2', v-if='selectDegree != -1') 二年級
+          option(value='3', v-if='selectDegree == 0 || selectDegree == 5') 三年級
+          option(value='4', v-if='selectDegree == 0 || selectDegree == 5') 四年級
+          option(value='5', v-if='selectDegree == 0 || selectDegree == 5') 五年級
+
+      li.right
+        a(href='#' title='清除課表所有內容')
+          i.fa.fa-trash
+      li.right
+        a(href='#' title='輸出課程代碼')
+          i.fa.fa-floppy-o
+      li.right
+        a(href='#' title='輸出課表為圖片')
+          i.fa.fa-download
+  #scheduleType
+    ul.tab-nav
+      li#timeSwitch.right
+        a(href='#' title='切換課表時間顯示', view='day')
+          i.fa.fa-sun-o.active(type='day')
+            span 8堂
+          i.fa.fa-moon-o(type='night')
+            span 13堂
+      li#viewSwitch.right
+        a(href='#' title='切換課表內容顯示項目', view='1')
+          i.fa.fa-eye.active(value='1')
+            span 全部顯示
+          i.fa.fa-eye(value='2')
+            span 僅顯示課名
+          i.fa.fa-eye(value='3')
+            span 顯示課名及教師
+          i.fa.fa-eye(value='4')
+            span 顯示課名及教室
+  #scheduleBlock
+    table#scheduleTable
+      thead
+        tr
+          each day in ['', '一', '二', '三', '四', '五']
+            if (day == '')
+              th= day
+            else
+              th= day
+      tbody
+        tr(v-for='(course, index) in schedule')
+          td {{ index }}
+          td(v-for='item in course')
+            .course(v-if='item != ""')
+              p {{ item['title_parsed']['zh_TW'] }}
+              p {{ item['professor'] }}
+              p {{ item['location'][0] }}
