@@ -14,11 +14,11 @@
           option(value='5') 進修學士班
           option(value='1') 碩士班
       li.left
-        select#selectDepartment.form-control(v-model='selectDepartment', v-on:change='changeDepartment(selectDepartment)')
+        select#selectDept.form-control(v-model='selectDept', v-on:change='changeDepartment(selectDept)')
           option(value='-1', disabled) 選取科系
-          option(v-bind:value='dept.code', v-for='dept in deptData') {{ dept.dept }}
+          option(v-for='dept in deptData') {{ dept.dept }}
       li.left
-        select#selectlevel.form-control(v-model='selectlevel', v-on:change='changeSelectLevel(selectLevel)', v-bind='{ disabled: selectDepartment == -1 }')
+        select#selectlevel.form-control(v-model='selectLevel', v-on:change='changeLevel(selectLevel)', v-bind='{ disabled: selectDept == -1 }')
           option(value='-1', disabled) 選取年級
           option(value='1', v-if='selectDegree != -1') 一年級
           option(value='2', v-if='selectDegree != -1') 二年級
@@ -27,32 +27,32 @@
           option(value='5', v-if='selectDegree == 0 || selectDegree == 5') 五年級
 
       li.right
-        a(href='#' title='清除課表所有內容')
+        a(href='#', title='清除課表所有內容', v-on:click='clrBtn()')
           i.fa.fa-trash
       li.right
-        a(href='#' title='輸出課程代碼')
+        a(href='#', title='輸出課程代碼')
           i.fa.fa-floppy-o
       li.right
-        a(href='#' title='輸出課表為圖片')
+        a(href='#', title='輸出課表為圖片')
           i.fa.fa-download
   #scheduleType
     ul.tab-nav
-      li#timeSwitch.right
-        a(href='#' title='切換課表時間顯示', view='day')
-          i.fa.fa-sun-o.active(type='day')
+      li#timeSwitch.right(v-on:click='tableView = (tableView==8?13:8)')
+        a(href='#' title='切換課表時間顯示')
+          i.fa.fa-sun-o(v-if='tableView==8')
             span 8堂
-          i.fa.fa-moon-o(type='night')
+          i.fa.fa-moon-o(v-if='tableView==13')
             span 13堂
-      li#viewSwitch.right
+      li#viewSwitch.right(v-on:click='viewSwitch = (viewSwitch+1)%4')
         a(href='#' title='切換課表內容顯示項目', view='1')
-          i.fa.fa-eye.active(value='1')
-            span 全部顯示
-          i.fa.fa-eye(value='2')
+          i.fa.fa-eye(v-if='viewSwitch==0')
             span 僅顯示課名
-          i.fa.fa-eye(value='3')
+          i.fa.fa-eye(v-if='viewSwitch==1')
             span 顯示課名及教師
-          i.fa.fa-eye(value='4')
+          i.fa.fa-eye(v-if='viewSwitch==2')
             span 顯示課名及教室
+          i.fa.fa-eye(v-if='viewSwitch==3')
+            span 全部顯示
   #scheduleBlock
     table#scheduleTable
       thead
@@ -63,10 +63,10 @@
             else
               th= day
       tbody
-        tr(v-for='(course, index) in schedule')
-          td {{ index }}
+        tr(v-for='(course, index) in schedule', v-if='index < tableView')
+          td {{ index+1 }}
           td(v-for='item in course')
             .course(v-if='item != ""')
-              p {{ item['title_parsed']['zh_TW'] }}
-              p {{ item['professor'] }}
-              p {{ item['location'][0] }}
+              p {{ item.title_parsed.zh_TW }}
+              p(v-if='viewSwitch==1 && viewSwitch==3') {{ item.professor }}
+              p(v-if='viewSwitch<=2') {{ item.location[0] }}

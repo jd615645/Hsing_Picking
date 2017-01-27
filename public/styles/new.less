@@ -90,24 +90,16 @@ select {
     h4 {
       margin: 0;
       padding: 10px 15px;
-      display: none;
 
       font-family: @baseFont;
       background-color: #2d323d;
       color: #4d5669;
-
-      &.active {
-        display: block;
-      }
     }
   }
   #toolTab {
+    height: calc(~"100% - 187px");
     .tool-tab {
-      display: none;
       padding: 10px;
-      &.active {
-        display: block;
-      }
     }
     #searchTab {
       .form-control {
@@ -126,10 +118,20 @@ select {
       }
     }
   }
+  #keepTab {
+    height: 100%;
+  }
   #nowCourseTab {
-    #totle-credits {
+    height: 100%;
+    #totleCredits {
+      height: 35px;
       text-align: right;
       margin-bottom: 5px;
+      border-bottom: 1px solid #fff;
+    }
+    #nowList {
+      height: calc(~"100% - 35px");
+      overflow-y: auto;
     }
   }
 }
@@ -169,20 +171,6 @@ select {
       }
       #timeSwitch {
         width: 80px;
-        i {
-          display: none;
-          &.active {
-            display: block;
-          }
-        }
-      }
-      #viewSwitch {
-        i {
-          display: none;
-          &.active {
-            display: block;
-          }
-        }
       }
     }
   }
@@ -275,10 +263,16 @@ ul.tab-nav {
     .list-text {
       width: 100%;
 
+      color: #eee;
+      text-decoration: none;
       position: relative;
       padding: 5px;
 
       background-color: #262b34;
+      &:hover {
+        color: #3D84A8;
+        text-decoration: none;
+      }
       p {
         margin: 0;
       }

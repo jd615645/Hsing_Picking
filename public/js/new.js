@@ -7,36 +7,37 @@ var courseCode = [];
 // window.courseDept = [];
 var courseDept = [];
 
-// window.schedule = [];
-var schedule = [];
-
-while(schedule.push([]) < 13);
-$.each(schedule, (key, val) => {
-  while(schedule[key].push([]) < 5);
-});
 
 var vm = new Vue({
   el: '#app',
   data() {
     return {
-      notifyKeep: 0,
-      notifyCourse: 0,
-      credits: 0,
-      deptData: [''],
-      tabView: 0,
-      selectYear: '1052',
-      selectDegree: '0',
-      selectDepartment: '-1',
-      selectlevel: '-1',
-      schedule: schedule,
+      // tab-nav
       selectItem: '-1',
       selectDetail: '-1',
       detailData: [''],
       selectTime: '-1',
+      // 顯示堂數
+      tableView: 8,
+      viewSwitch: 0,
+      // keepTab
+      keepCourse: [],
+      // courseTab
+      credits: 0,
+      pickingCourse: [],
+      // tab切換
+      tabView: 0,
+      // 科系下拉選單
+      deptData: [''],
+      // titleBar
+      selectYear: '1052',
+      selectDegree: '0',
+      selectDept: '-1',
+      selectLevel: '-1',
+      schedule: [],
     }
   },
   mounted() {
-    var my = this;
     $.when(
       $.getJSON('./json/select.json')
     ).then((data) => {
@@ -45,9 +46,14 @@ var vm = new Vue({
             detail = val['detail'];
         departmentData[key] = detail;
       });
-      my.deptData = departmentData[0];
+      this.deptData = departmentData[0];
     });
     this.getCareer(1052);
+
+    while(this.schedule.push([]) < 13);
+    $.each(this.schedule, (key, val) => {
+      while(this.schedule[key].push([]) < 5);
+    });
   },
   methods: {
     getCareer(selectYear) {
@@ -82,25 +88,41 @@ var vm = new Vue({
           });
       }
     },
-    changeYear(year) {
-      console.log(year);
-      this.getCareer(year);
+    changeYear(num) {
+      this.getCareer(num);
       this.selectDegree = 0;
-      this.selectDepartment = -1;
-      this.selectlevel = -1;
+      this.selectDept = -1;
+      this.selectLevel = -1;
     },
-    changeDegree(degree) {
-      console.log(degree);
-      this.deptData = departmentData[degree];
-      this.selectDepartment = -1;
-      this.selectlevel = -1;
+    changeDegree(num) {
+      this.deptData = departmentData[num];
+      this.selectDept = -1;
+      this.selectLevel = -1;
     },
-    changeDepartment(department) {
-      console.log(department);
-      this.selectlevel = -1;
+    changeDepartment(num) {
+      this.selectLevel = -1;
     },
-    changeLevel(level) {
-      console.log(level);
+    changeLevel(num) {
+      var year = this.selectYear,
+          dept = this.selectDept,
+          level = this.selectLevel;
+
+      this.clearSelected();
+      if (dept.slice(-1) == 'A' || dept.slice(-1) == 'B') {
+        level = level + dept.slice(-1);
+        dept = dept.replace(/ A| B/g,'');
+      }
+
+      this.pickingCourse = [];
+      this.credits = 0;
+      $.each(departmentData[year][dept][level], (key, code) => {
+        if (courseCode[year][code]['obligatory_tf']) {
+          this.addSelected(code);
+        }
+        else {
+          this.addKeep(code);
+        }
+      });
     },
     changeItem(item) {
       console.log(item);
@@ -111,7 +133,41 @@ var vm = new Vue({
     },
     changeTime(time) {
       console.log(time);
+    },
+    addSelected(code) {
+      var year = this.selectYear;
 
-    }
+      this.credits += courseCode[year][code]['credits_parsed'];
+      this.pickingCourse.push(courseCode[year][code]);
+      $.each(courseCode[year][code]['time_parsed'], (ik, iv) => {
+        $.each(iv.time, (jk, jv) => {
+          var day = iv.day,
+              time = jv;
+          // console.log('day:' + day);
+          // console.log(jv);
+          this.schedule[time-1][day-1] = courseCode[year][code];
+        });
+      });
+    },
+    addKeep(code) {
+      var year = this.selectYear;
+      this.keepCourse.push(courseCode[year][code]);
+    },
+    clearSelected() {
+      this.credits = 0;
+      this.pickingCourse = [];
+
+      $.each(this.schedule, (ik, iv) => {
+        $.each(iv, (jk, jv) => {
+          this.schedule[ik][jk] = [];
+        });
+      });
+    },
+    clrBtn() {
+
+    },
+    getOnepiceUrl(num) {
+      return 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=' + this.selectYear + '&v_class_nbr=' + num;
+    },
   }
 });
