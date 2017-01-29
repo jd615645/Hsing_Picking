@@ -1,11 +1,26 @@
 @baseFont: 'Roboto', '黑體-繁', 'Microsoft JhengHei', sans-serif;
 
-body {
+html, body {
+  height: 100%;
+  width:  100%;
   font-family: @baseFont;
   font-size: 16px;
+  background-color: #edf0f5;
 }
 h2 {
   margin: 0px;
+}
+p {
+  color: #eee;
+}
+a {
+  color: #eee;
+  &:hover {
+    color: #3D84A8;
+  }
+}
+#app {
+  height: 100%;
 }
 [v-cloak] { display: none; }
 // input style
@@ -101,9 +116,16 @@ select {
     .tool-tab {
       padding: 10px;
     }
+    #clearKeep {
+      background-color: #2d323d;
+      padding: 5px 15px;
+    }
     #searchTab {
       .form-control {
         margin-bottom: 5px;
+      }
+      hr {
+        margin: 5px 0px;
       }
       #searchBtn {
         width: 100%;
@@ -140,6 +162,7 @@ select {
   height: 100%;
   padding: 0;
   margin-left: 350px;
+  position: relative;
 
   background-color: #edf0f5;
   .tab-nav {
@@ -150,7 +173,21 @@ select {
       }
       &.right {
         float: right;
+
+        padding: 8px;
+        i {
+          padding: 0px !important;
+        }
+        p {
+          margin: 0px;
+        }
       }
+      &:hover {
+        i, p {
+          color: #3D84A8;
+        }
+      }
+
       border-bottom: 0px;
     }
   }
@@ -159,7 +196,7 @@ select {
       padding: 16px;
     }
     .tab-nav .left {
-      margin: 8px 0px 0px 10px;
+      margin: 13px 0px 0px 10px;
     }
   }
   #scheduleType {
@@ -191,6 +228,9 @@ select {
           width: 5%;
         }
         border-bottom: 1px solid rgba(34,36,38,.1);
+      }
+      tr {
+        height: 60px;
       }
       td {
         text-align: center;
@@ -239,6 +279,17 @@ ul.tab-nav {
     }
   }
 }
+#contentInfo {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  a {
+    margin-left: 5px;
+  }
+}
+
 .course-list {
   list-style-type: none;
   margin: 0;
@@ -285,7 +336,7 @@ ul.tab-nav {
         padding: 0px 5px;
       }
     }
-    .add-del {
+    .list-btn {
       width: 40px;
 
       margin-right: 3px;
@@ -295,22 +346,34 @@ ul.tab-nav {
       align-items: center;
 
       background-color: #2b303a;
-      &:hover {
+      &.keep-btn:hover {
         color: #16a085;
       }
-    }
-    .list-del {
-      width: 40px;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      background-color: #2b303a;
-      &:hover {
+      &.add-btn:hover {
+        color: #16a085;
+      }
+      &.del-btn:hover {
         color: #e26a6a;
       }
     }
+  }
+}
+.clearBtn {
+  display: block;
+  margin-left: auto;
+  margin-bottom: 5px;
+
+  background-color: #2d323d;
+  border: 0px;
+  padding: 5px 10px;
+  i {
+    margin-right: 5px;
+  }
+  &:focus {
+    outline: -webkit-focus-ring-color auto 1px;
+  }
+  &:hover {
+    color: #3d84a8;
   }
 }
 

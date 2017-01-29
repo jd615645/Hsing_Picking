@@ -18,17 +18,17 @@
     h4(v-if='tabView == 2') 目前課程
   #toolTab
     #searchTab.tool-tab(v-if='tabView == 0')
-      input#search-keyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字')
-      select#selectItem.form-control(v-model='selectItem', v-on:change='changeItem(selectItem)')
+      input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword')
+      select#changeItem.form-control(v-model='searchItem', v-on:change='changeItem(searchItem)')
         option(value='-1', disabled) 選擇項目
         option(value='0') 學士班
         option(value='5') 進修學士班
         option(value='6') 通識
         option(value='7') 共同科目
-      select#selectdDetail.form-control(v-model='selectDetail', v-on:change='changeDetail(selectdDetail)')
+      select#searchDetail.form-control(v-model='searchDetail', v-on:change='changeDetail(searchDetail)', v-bind='{ disabled: searchItem == -1 }')
         option(value='-1', disabled) 選擇分類
-        option(v-bind:value='dept.code', v-for='dept in detailData') {{ dept.dept }}
-      select#selectdTime.form-control(v-model='selectTime', v-on:change='changeTime(selectdTime)')
+        option(v-for='dept in detailData') {{ dept.dept }}
+      select#searchTime.form-control(v-model='searchTime', v-on:change='changeTime(searchTime)')
         option(value='-1', disabled) 選擇時間
         option(value='0') 空堂
         option(value='1') 星期一
@@ -36,11 +36,35 @@
         option(value='3') 星期三
         option(value='4') 星期四
         option(value='5') 星期五
-      #searchBtn
+      #searchBtn(v-on:click='searchData()')
         i.fa.fa-search 搜尋符合項目
-
+      hr
+      button.clearBtn(v-on:click='clearSearch()')
+        i.fa.fa-trash
+        | 清除以下項目
+      ul#keepList.course-list
+        li(v-for='course in searchCourse')
+          .list-item
+            i.fa.fa-circle-o
+          a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
+            p.course-title {{ course.title_parsed.zh_TW }}
+            p.course-detail
+              span {{ course.professor }}
+              span {{ course.obligatory }}
+              span {{ course.credits }}學分
+              span(v-if='course.location[0]') {{ course.location[0] }}
+              span(v-if='course.location[1]') {{ course.location[1] }}
+          .list-btn.keep-btn(v-on:click='addKeep(course.code)')
+            i.fa.fa-shopping-basket
+          .list-btn.add-btn(v-on:click='addCourse(course.code)')
+            i.fa.fa-plus
+          .list-btn.del-btn(v-on:click='removeCourse(course.code, "search")')
+            i.fa.fa-times
 
     #keepTab.tool-tab(v-if='tabView == 1')
+      button.clearBtn(v-on:click='clearKeep()')
+        i.fa.fa-trash
+        | 清除以下項目
       ul#keepList.course-list
         li(v-for='course in keepCourse')
           .list-item
@@ -53,14 +77,17 @@
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
-          .add-del(v-on:click='console.log(course.code)')
+          .add-btn(v-on:click='addCourse(course.code)')
             i.fa.fa-plus
-          .list-del(v-on:click='console.log(course.code)')
+          .list-del(v-on:click='removeCourse(course.code, "keep")')
             i.fa.fa-times
     #nowCourseTab.tool-tab(v-if='tabView == 2')
       h2#totleCredits
         span {{ credits }}
         | 學分
+      button.clearBtn(v-on:click='clearCourse()')
+        i.fa.fa-trash
+        | 清除以下項目
       ul#nowList.course-list
         li(v-for='course in pickingCourse')
           .list-item
@@ -73,5 +100,5 @@
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
-          .list-del(v-on:click='console.log(course.code)')
+          .list-del(v-on:click='removeCourse(course.code, "now")')
             i.fa.fa-times
