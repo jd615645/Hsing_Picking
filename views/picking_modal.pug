@@ -1,9 +1,48 @@
 #modal
-  #checkClr.modal.fade(tabindex='-1', role='dialog')
+  #saveSchedule.modal.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
       .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-download
+            | 課表輸出
         .modal-body
-          p 確定刪除課表？
+          img(src='https://i.imgur.com/pAHuQF9.png')
+          img(src='https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=https%3A//i.imgur.com/pAHuQF9.png&chld=H|0')
+          br
+          .input-group
+            input.form-control(type='text', placeholder='Search for...')
+            span.input-group-btn
+              button.btn.btn-default(type='button')
+                i.fa.fa-files-o
+  #outputCourse.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-floppy-o
+            | 課程代碼輸出
+        .modal-body
+          ul(v-if='pickingCourse.length != 0')
+            li(v-for='course in pickingCourse')
+              | {{ course.title_parsed.zh_TW }}
+              span {{ course.code }}
+          h3(v-else) 目前尚無選擇的課程
+          p 選課時直接複製課程代碼，使用Ctrl+F方便搜尋以加快選課速度
+
+  #checkClear.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-trash
+            | 重置課表
+        .modal-body
+          p 確定刪除課表及其他內容？
+          p 確定後所有欄位的內容將被清除。若要儲存請善用將課表匯出為圖片的功能。
         .modal-footer
-          button.btn.btn-warring(type='button', data-dismiss='modal') 是，刪除
-          button.btn(type='button') 否
+          button.btn.btn-danger(type='button', data-dismiss='modal', v-on:click='clearAll()') 是，刪除
+          button.btn(type='button', data-dismiss='modal') 否

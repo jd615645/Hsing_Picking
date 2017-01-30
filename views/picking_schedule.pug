@@ -27,15 +27,15 @@
           option(value='5', v-if='selectDegree == 0 || selectDegree == 5') 五年級
 
       li.right
-        a(href='#', title='清除所有內容(初始化)', v-on:click='clearAll()')
+        a(href='#', title='清除所有內容(初始化)', v-on:click='checkClear()')
           i.fa.fa-trash
           p 重置課表
       li.right
-        a(href='#', title='輸出課程代碼(方便選課查詢)')
+        a(href='#', title='輸出課程代碼(方便選課查詢)', v-on:click='outputCourse()')
           i.fa.fa-floppy-o
           p 輸出課碼
       li.right
-        a(href='#', title='輸出課表為圖片')
+        a(href='#', title='輸出課表為圖片', v-on:click='saveSchedule()')
           i.fa.fa-download
           p 另存圖片
   #scheduleType

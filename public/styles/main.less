@@ -1,0 +1,96 @@
+html, body {
+  height: 100%;
+  width:  100%;
+  font-family: 'Roboto', '黑體-繁', 'Microsoft JhengHei', sans-serif;
+  font-size: 16px;
+  background-color: #edf0f5;
+}
+h2 {
+  margin: 0px;
+}
+a {
+  color: #eee;
+  &:hover {
+    color: #3D84A8;
+  }
+}
+#app { height: 100%; }
+[v-cloak] { display: none; }
+
+// input style
+.form-control {
+  border-radius: 0;
+  box-shadow: none;
+  font-weight: 400;
+  background: none;
+  border-color: #333945;
+  &:focus {
+    box-shadow: none;
+  }
+}
+select {
+  &[disabled='disabled'] {
+    background-color: #2b303a !important;
+    color: #777777 !important;
+  }
+  &.form-control {
+    color: #fff;
+    option {
+      color: #333945;
+    }
+  }
+}
+
+#main {
+  height: 100%;
+  margin: 0;
+}
+
+
+ul.tab-nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  background-color: #22262e;
+  a {
+    text-decoration: none;
+  }
+  li {
+    float: left;
+    text-align: center;
+    position: relative;
+
+    position: relative;
+
+    border-bottom: 2px solid;
+    border-color: #2d323d;
+    i {
+      padding: 15px 10px;
+      color: #fff;
+      &:hover {
+        color: #3D84A8;
+      }
+    }
+    &.active {
+      border-color: #3D84A8;
+      i {
+        color: #3D84A8;
+      }
+    }
+  }
+}
+
+/*scrollbar css*/
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px #F5F5F5;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+}

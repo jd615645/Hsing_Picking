@@ -5,8 +5,8 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
   res.render('index');
 });
-router.get('/new', function(req, res, next) {
-  res.render('new');
+router.get('/old', function(req, res, next) {
+  res.render('old');
 });
 
 module.exports = router;

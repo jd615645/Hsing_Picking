@@ -42,7 +42,7 @@
       button.clearBtn(v-on:click='clearSearch()')
         i.fa.fa-trash
         | 清除以下項目
-      ul#keepList.course-list
+      ul#searchList.course-list
         li(v-for='course in searchCourse')
           .list-item
             i.fa.fa-circle-o
@@ -77,9 +77,9 @@
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
-          .add-btn(v-on:click='addCourse(course.code)')
+          .list-btn.add-btn(v-on:click='addCourse(course.code)')
             i.fa.fa-plus
-          .list-del(v-on:click='removeCourse(course.code, "keep")')
+          .list-btn.list-del(v-on:click='removeCourse(course.code, "keep")')
             i.fa.fa-times
     #nowCourseTab.tool-tab(v-if='tabView == 2')
       h2#totleCredits
@@ -100,5 +100,5 @@
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
-          .list-del(v-on:click='removeCourse(course.code, "now")')
+          .list-btn.list-del(v-on:click='removeCourse(course.code, "now")')
             i.fa.fa-times
