@@ -20,23 +20,24 @@
     #searchTab.tool-tab(v-if='tabView == 0')
       input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword')
       select#changeItem.form-control(v-model='searchItem', v-on:change='changeItem(searchItem)')
-        option(value='-1', disabled) 選擇項目
+        option(value='-1') 選擇項目
         option(value='0') 學士班
         option(value='5') 進修學士班
+        option(value='1') 碩士班
         option(value='6') 通識
         option(value='7') 共同科目
       select#searchDetail.form-control(v-model='searchDetail', v-on:change='changeDetail(searchDetail)', v-bind='{ disabled: searchItem == -1 }')
-        option(value='-1', disabled) 選擇分類
+        option(value='-1') 選擇分類
         option(v-for='dept in detailData') {{ dept.dept }}
-      select#searchTime.form-control(v-model='searchTime', v-on:change='changeTime(searchTime)')
-        option(value='-1', disabled) 選擇時間
+      select#searchTime.form-control(v-model='searchTime', v-on:change='changeTime(searchTime)', v-bind='{ disabled: searchItem == -1 && searchKeyword == "" }')
+        option(value='-1') 選擇時間
         option(value='0') 空堂
         option(value='1') 星期一
         option(value='2') 星期二
         option(value='3') 星期三
         option(value='4') 星期四
         option(value='5') 星期五
-      #searchBtn(v-on:click='searchData()')
+      button.btn#searchBtn(v-on:click='searchData()')
         i.fa.fa-search 搜尋符合項目
       hr
       button.clearBtn(v-on:click='clearSearch()')
@@ -56,7 +57,7 @@
               span(v-if='course.location[1]') {{ course.location[1] }}
           .list-btn.keep-btn(v-on:click='addKeep(course.code)')
             i.fa.fa-shopping-basket
-          .list-btn.add-btn(v-on:click='addCourse(course.code)')
+          .list-btn.add-btn(v-on:click='addCourse(course.code, "search")')
             i.fa.fa-plus
           .list-btn.del-btn(v-on:click='removeCourse(course.code, "search")')
             i.fa.fa-times
@@ -77,7 +78,7 @@
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
-          .list-btn.add-btn(v-on:click='addCourse(course.code)')
+          .list-btn.add-btn(v-on:click='addCourse(course.code, "keep")')
             i.fa.fa-plus
           .list-btn.list-del(v-on:click='removeCourse(course.code, "keep")')
             i.fa.fa-times

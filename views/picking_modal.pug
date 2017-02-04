@@ -1,6 +1,6 @@
 #modal
   #saveSchedule.modal.fade(tabindex='-1', role='dialog')
-    .modal-dialog(role='document')
+    .modal-dialog.modal-lg(role='document')
       .modal-content
         .modal-header
           button.close(type='button', data-dismiss='modal') ×
@@ -8,13 +8,13 @@
             i.fa.fa-fw.fa-download
             | 課表輸出
         .modal-body
-          img(src='https://i.imgur.com/pAHuQF9.png')
-          img(src='https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=https%3A//i.imgur.com/pAHuQF9.png&chld=H|0')
+          img#scheduleImg(v-bind:src='imgUrl')
           br
-          .input-group
-            input.form-control(type='text', placeholder='Search for...')
-            span.input-group-btn
-              button.btn.btn-default(type='button')
+          #qrImg
+            img(v-bind:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
+            #copyLink
+              span {{ imgUrl }}
+              button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
                 i.fa.fa-files-o
   #outputCourse.modal.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')

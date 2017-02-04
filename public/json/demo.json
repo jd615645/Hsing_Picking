@@ -1,0 +1,46 @@
+[
+  {
+    "hours_parsed": "2",
+    "number": "15",
+    "location": [
+      "A810"
+    ],
+    "code": "6008",
+    "professor": "林仁昱",
+    "obligatory_tf": false,
+    "hours": "2",
+    "time_parsed": [
+      {
+        "time": [
+          3,
+          4
+        ],
+        "day": 5
+      }
+    ],
+    "title": "兒童與青少年文學研究 `Study of the Children and Teenager Literature",
+    "number_parsed": 15,
+    "language": "中文",
+    "credits_parsed": 2,
+    "title_parsed": {
+      "en_US": "Study of the Children and Teenager Literature",
+      "zh_TW": "兒童與青少年文學研究"
+    },
+    "department": "中國文學系碩士班",
+    "for_dept": "中國文學系碩士班",
+    "note": "",
+    "url": "5131",
+    "intern_time": "",
+    "discipline": "",
+    "intern_location": [
+      ""
+    ],
+    "obligatory": "選修",
+    "year": "全",
+    "enrolled_num": "0",
+    "credits": "2",
+    "time": "534",
+    "prerequisite": "",
+    "class": "6"
+  }
+]
