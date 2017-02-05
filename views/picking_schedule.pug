@@ -18,7 +18,7 @@
           option(value='-1', disabled) 選取科系
           option(v-for='dept in deptData') {{ dept.dept }}
       li.left
-        select#selectlevel.form-control(v-model='selectLevel', v-on:change='changeLevel(selectLevel)', v-bind='{ disabled: selectDept == -1 }')
+        select#selectlevel.form-control(v-model='selectLevel', v-on:change='warningAdd()', v-bind='{ disabled: selectDept == -1 }')
           option(value='-1', disabled) 選取年級
           option(value='1', v-if='selectDegree != -1') 一年級
           option(value='2', v-if='selectDegree != -1') 二年級
@@ -38,10 +38,10 @@
         a(href='#', title='輸出課表為圖片', v-on:click='saveSchedule()')
           i.fa.fa-download
           p 另存圖片
-      li.right
-        a(href='#', title='手動新增課程', v-on:click='$("#selfAdd").modal()')
-          i.fa.fa-plus
-          p 手動新增
+      //- li.right
+      //-   a(href='#', title='手動新增課程', v-on:click='$("#selfAdd").modal()')
+      //-     i.fa.fa-plus
+      //-     p 手動新增
   #scheduleType
     ul.tab-nav
       li#timeSwitch.right(v-on:click='tableView = (tableView==8?13:8)')

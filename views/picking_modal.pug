@@ -85,9 +85,9 @@
             i.fa.fa-fw.fa-exclamation-triangle
             | 切換科系確定
         .modal-body
-          p 確定要切換科系，必修的課程將會被替換
+          p 確定要切換科系？必修的課程將會被替換
         .modal-footer
-          button.btn.btn-success(type='button', data-dismiss='modal') 是
+          button.btn.btn-success(type='button', data-dismiss='modal', v-on:click='changeLevel()') 是
           button.btn(type='button', data-dismiss='modal') 否
 
   #selfAdd.modal.fade(tabindex='-1', role='dialog')
@@ -103,19 +103,19 @@
             label
               | 課程名稱
               span *
-            input.form-control(type='text', placeholder='必填欄位')
+            input.form-control(type='text', placeholder='必填欄位', v-model='selfTitle')
           .form-group
             label 教授
-            input.form-control(type='text')
+            input.form-control(type='text', v-model='selfProfessor')
           .form-group
             label 教室
-            input.form-control(type='text')
+            input.form-control(type='text', v-model='selfLocation')
           .form-group
             label 學分
-            input.form-control(type='text', placeholder='預設為0學分')
+            input.form-control(type='text', placeholder='預設為0學分', v-model='selfCredits')
           .form-group
             label 上課時間
-            input.form-control(type='text')
+            input.form-control(type='text', placeholder='ex: 312(星期三 1、2節課)，41011(星期四 10、11節課)', v-model='selfTime')
           p.warning-text 上課時間衝堂，請再確認上課時間
         .modal-footer
-          button.btn.btn-success(type='button', data-dismiss='modal') 確定新增
+          button.btn.btn-success(type='button', v-on:click='addSelf()') 確定新增

@@ -57,6 +57,12 @@ var vm = new Vue({
       imgUrl: '#',
       startUpload: false,
       warningType: 1,
+      // addSelf
+      selfTitle: '',
+      selfProfessor: '',
+      selfLocation: '',
+      selfCredits: '',
+      selfTime: '',
     }
   },
   mounted() {
@@ -125,10 +131,10 @@ var vm = new Vue({
       this.selectDept = -1;
       this.selectLevel = -1;
     },
-    changeDepartment(num) {
+    changeDepartment() {
       this.selectLevel = -1;
     },
-    changeLevel(num) {
+    changeLevel() {
       var year = this.selectYear,
           dept = this.selectDept,
           level = this.selectLevel;
@@ -140,6 +146,7 @@ var vm = new Vue({
         dept = dept.replace(/ A| B/g,'');
       }
 
+      this.keepCourse = [];
       this.pickingCourse = [];
       this.credits = 0;
       $.each(departmentData[year][dept][level], (key, code) => {
@@ -169,6 +176,14 @@ var vm = new Vue({
     },
     changeTime(time) {
       // console.log(time);
+    },
+    warningAdd() {
+      if(_.isUndefined(this.pickingCourse[0])) {
+        this.changeLevel();
+      }
+      else {
+        $('#warningAdd').modal();
+      }
     },
     addCourse(code, type) {
       if(this.isFree(code)) {
@@ -370,7 +385,7 @@ var vm = new Vue({
       $('#saveSchedule').modal();
       if(!savedImg) {
         this.startUpload = true;
-        html2canvas($('#scheduleTable'), {
+        html2canvas($('#scheduleBlock'), {
           onrendered: (canvas) => {
             var canvasUrl = canvas.toDataURL('image/png');
 
@@ -422,8 +437,31 @@ var vm = new Vue({
       this.selectDept = '-1';
       this.selectLevel = '-1';
     },
-    warningModal(type) {
-
+    addSelf() {
+      var title = this.selfTitle,
+          professor = this.selfProfessor,
+          location = this.selfLocation,
+          credits = this.selfCredits,
+          time = this.selfTime;
+      var course = {
+        "title_parsed": {
+          "zh_TW": title
+        },
+        "professor": professor,
+        "location": [
+          location
+        ],
+        "credits_parsed": credits,
+        "time_parsed": [
+          {
+            "time": [
+              3,
+              4
+            ],
+            "day": 5
+          }
+        ],
+      }
     },
     courseType(code) {
       var year = this.selectYear;
