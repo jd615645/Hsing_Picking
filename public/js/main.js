@@ -32,6 +32,7 @@ var vm = new Vue({
       detailData: [],
       searchTime: '-1',
       searchCourse: [],
+      startSearch: false,
       // 顯示節數
       tableView: 8,
       viewSwitch: 0,
@@ -50,8 +51,9 @@ var vm = new Vue({
       selectDept: '-1',
       selectLevel: '-1',
       schedule: [],
-      // uploadImg
+      // modal
       imgUrl: '#',
+      warningType: 1,
     }
   },
   mounted() {
@@ -239,94 +241,100 @@ var vm = new Vue({
     },
     // 課程搜尋
     searchData() {
-      var deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同'];
+      this.startSearch=true;
+      setTimeout( ()=> {
+        var deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同'];
 
-      var year = this.selectYear;
-          keyword = this.searchKeyword,
-          item = this.searchItem,
-          detail = this.searchDetail,
-          time = this.searchTime;
-      var filteredCourse = [];
+        var year = this.selectYear;
+        keyword = this.searchKeyword,
+        item = this.searchItem,
+        detail = this.searchDetail,
+        time = this.searchTime;
+        var filteredCourse = [];
 
-      if (keyword != '') {
-        if (keyword.length >1) {
-          var filtered = [];
-          filtered = _.filter(courseCode[year], (course) => {
+        if (keyword != '') {
+          if (keyword.length >1) {
+            var filtered = [];
+            filtered = _.filter(courseCode[year], (course) => {
+              if (!(_.isUndefined(course))) {
+                return course['code'] == keyword ||
+                course['professor'].indexOf(keyword) > -1 ||
+                course['title_parsed']['zh_TW'].indexOf(keyword) > -1;
+              }
+            });
+
+            filteredCourse = filtered;
+          }
+          else {
+            $('#warningModal').modal();
+          }
+        }
+
+        // 尚未寫無keyword
+        if (item != -1) {
+          var src = filteredCourse;
+          if (keyword == '') {
+            src = courseCode[year];
+          }
+          filtered = _.filter(src, (course) => {
             if (!(_.isUndefined(course))) {
-              return course['code'] == keyword ||
-                     course['professor'].indexOf(keyword) > -1 ||
-                     course['title_parsed']['zh_TW'].indexOf(keyword) > -1;
+              var dept = course['for_dept'];
+              if (dept == '全校共同' && course['department'] == '通識教育中心') {
+                dept = '通識教育中心';
+              }
+              return dept.indexOf(deptMap[item]) > -1;
             }
           });
-
           filteredCourse = filtered;
         }
-        else {
-          alert('關鍵字請大於2個字');
-        }
-      }
 
-      // 尚未寫無keyword
-      if (item != -1) {
-        var tempFilter = filteredCourse;
+        if (detail != -1) {
+          var filtered = [];
 
-        filtered = _.filter(filteredCourse, (course) => {
-          if (!(_.isUndefined(course))) {
-            var dept = course['for_dept'];
-            if (dept == '全校共同' && course['department'] == '通識教育中心') {
-              dept = '通識教育中心';
+          if (item < 6) {
+            if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
+              level = level + detail.slice(-1);
+              detail = dept.replace(/ A| B/g,'');
             }
-            return dept.indexOf(deptMap[item]) > -1;
+
+            filtered = _.filter(filteredCourse, (course) => {
+              if (!(_.isUndefined(course))) {
+                return course['for_dept'].indexOf(detail) > -1;
+              }
+            });
           }
-        });
-        filteredCourse = filtered;
-      }
-
-      if (detail != -1) {
-        var filtered = [];
-
-        if (item < 6) {
-          if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
-            level = level + detail.slice(-1);
-            detail = dept.replace(/ A| B/g,'');
-          }
-
-          filtered = _.filter(filteredCourse, (course) => {
-            if (!(_.isUndefined(course))) {
-              return course['for_dept'].indexOf(detail) > -1;
-            }
-          });
-        }
-        else {
-          $.each(filteredCourse, (key, val) => {
-            var code = parseInt(val.code),
-                type = this.courseType(code);
-            if (detail == type) {
-              filtered.push(val);
-            }
-          });
-        }
-        filteredCourse = filtered;
-      }
-
-      if (time != -1) {
-        var filtered = [];
-        if (time != 0) {
-          $.each(filteredCourse, (key, val) => {
-            if (!(_.isUndefined(val['time_parsed'][0]['day']))) {
-              if(_.has(val['time_parsed'][0]['day'], time)) {
+          else {
+            $.each(filteredCourse, (key, val) => {
+              var code = parseInt(val.code),
+              type = this.courseType(code);
+              if (detail == type) {
                 filtered.push(val);
               }
-            }
-          });
+            });
+          }
+          filteredCourse = filtered;
         }
-        else {
-          // find空堂
-        }
-        filteredCourse = filtered;
-      }
 
-      this.searchCourse = filteredCourse;
+        if (time != -1) {
+          var filtered = [];
+          if (time != 0) {
+            $.each(filteredCourse, (key, val) => {
+              if (!(_.isUndefined(val['time_parsed'][0]['day']))) {
+                if(_.has(val['time_parsed'][0]['day'], time)) {
+                  filtered.push(val);
+                }
+              }
+            });
+          }
+          else {
+            // find空堂
+          }
+          filteredCourse = filtered;
+        }
+
+        this.searchCourse = filteredCourse;
+        this.startSearch = false;
+      }, 10);
     },
     highlightSchedule(code, clear) {
       if (clear) {
@@ -371,12 +379,6 @@ var vm = new Vue({
       });
       // $('#saveSchedule').modal();
     },
-    outputCourse() {
-      $('#outputCourse').modal();
-    },
-    checkClear() {
-      $('#checkClear').modal();
-    },
     clearSearch() {
       this.searchCourse = [];
     },
@@ -406,6 +408,9 @@ var vm = new Vue({
       this.selectDegree = '0';
       this.selectDept = '-1';
       this.selectLevel = '-1';
+    },
+    warningModal(type) {
+
     },
     courseType(code) {
       var year = this.selectYear;

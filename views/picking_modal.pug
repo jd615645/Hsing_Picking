@@ -16,6 +16,7 @@
               span {{ imgUrl }}
               button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
                 i.fa.fa-files-o
+
   #outputCourse.modal.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
       .modal-content
@@ -46,3 +47,72 @@
         .modal-footer
           button.btn.btn-danger(type='button', data-dismiss='modal', v-on:click='clearAll()') 是，刪除
           button.btn(type='button', data-dismiss='modal') 否
+
+  #warningModal.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-exclamation-triangle
+            | 警告
+        .modal-body
+          p(v-if='warningType == 1') 關鍵字輸入請大於2個字
+
+  #warningSearch.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-exclamation-triangle
+            | 警告
+        .modal-body
+          p 確定僅用項目搜尋？這樣的搜尋結果會非常大量
+        .modal-footer
+          button.btn.btn-success(type='button', data-dismiss='modal') 是，我要繼續搜尋
+          button.btn(type='button', data-dismiss='modal') 否
+
+  #warningAdd.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-exclamation-triangle
+            | 切換科系確定
+        .modal-body
+          p 確定要切換科系，必修的課程將會被替換
+        .modal-footer
+          button.btn.btn-success(type='button', data-dismiss='modal') 是
+          button.btn(type='button', data-dismiss='modal') 否
+
+  #selfAdd.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal') ×
+          h4.modal-title
+            i.fa.fa-fw.fa-pencil
+            | 手動新增課程
+        .modal-body
+          .form-group
+            label
+              | 課程名稱
+              span *
+            input.form-control(type='text', placeholder='必填欄位')
+          .form-group
+            label 教授
+            input.form-control(type='text')
+          .form-group
+            label 教室
+            input.form-control(type='text')
+          .form-group
+            label 學分
+            input.form-control(type='text', placeholder='預設為0學分')
+          .form-group
+            label 上課時間
+            input.form-control(type='text')
+          p.warning-text 上課時間衝堂，請再確認上課時間
+        .modal-footer
+          button.btn.btn-success(type='button', data-dismiss='modal') 確定新增

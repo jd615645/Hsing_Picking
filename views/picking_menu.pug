@@ -1,7 +1,7 @@
 #menu
   #sidebarProfile
-    img#profileImg(src='./img/pic.jpg')
-    h3 Sakamoto
+    img#profileImg(src='./img/logo.png')
+    h3 中興選課輔助系統
   #courseTab
     ul.tab-nav
       li(v-bind:class='{ active: tabView == 0 }', v-on:click='tabView = 0')
@@ -37,12 +37,14 @@
         option(value='3') 星期三
         option(value='4') 星期四
         option(value='5') 星期五
-      button.btn#searchBtn(v-on:click='searchData()')
+      button.btn#searchBtn(v-on:click='searchData();')
         i.fa.fa-search 搜尋符合項目
       hr
       button.clearBtn(v-on:click='clearSearch()')
         i.fa.fa-trash
         | 清除以下項目
+      i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startSearch == true')
+        span.sr-only Loading...
       ul#searchList.course-list
         li(v-for='course in searchCourse')
           .list-item
