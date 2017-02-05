@@ -8,6 +8,8 @@ var courseCode = [];
 // window.courseDept = [];
 var courseDept = [];
 
+var savedImg = false;
+
 //your APIv3 client id
 var clientId = '30b5b43a2e55afd';
 // clipboard init
@@ -53,6 +55,7 @@ var vm = new Vue({
       schedule: [],
       // modal
       imgUrl: '#',
+      startUpload: false,
       warningType: 1,
     }
   },
@@ -169,6 +172,7 @@ var vm = new Vue({
     },
     addCourse(code, type) {
       if(this.isFree(code)) {
+        savedImg = false;
         var year = this.selectYear;
 
         // add credits
@@ -223,6 +227,8 @@ var vm = new Vue({
         this.keepCourse.splice(removeSpace, 1);
       }
       else if (type == 'now') {
+        savedImg = false;
+
         var removeSpace = _.findIndex(this.pickingCourse, {code: code});
 
         this.pickingCourse.splice(removeSpace, 1);
@@ -361,23 +367,28 @@ var vm = new Vue({
       return free;
     },
     saveSchedule() {
-      html2canvas($('#scheduleTable'), {
-        onrendered: (canvas) => {
-          var canvasUrl = canvas.toDataURL('image/png');
+      $('#saveSchedule').modal();
+      if(!savedImg) {
+        this.startUpload = true;
+        html2canvas($('#scheduleTable'), {
+          onrendered: (canvas) => {
+            var canvasUrl = canvas.toDataURL('image/png');
 
-          this.uploadImg(canvasUrl).then((response) => {
-            console.log(response);
-            if(response.success) {
-              this.imgUrl = response.data.link;
-              $('#saveSchedule').modal();
-            }
-            else {
-              console.error('upload error');
-            }
-          });
-        }
-      });
-      // $('#saveSchedule').modal();
+            this.uploadImg(canvasUrl).then((response) => {
+              console.log(response);
+              if(response.success) {
+                this.imgUrl = response.data.link;
+                // $('#saveSchedule').modal();
+              }
+              else {
+                console.error('upload error');
+              }
+              this.startUpload = false;
+            });
+          }
+        });
+        savedImg = true;
+      }
     },
     clearSearch() {
       this.searchCourse = [];
@@ -386,6 +397,8 @@ var vm = new Vue({
       this.keepCourse = [];
     },
     clearCourse() {
+      savedImg = false;
+
       this.credits = 0;
       this.pickingCourse = [];
 

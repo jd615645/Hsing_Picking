@@ -8,14 +8,17 @@
             i.fa.fa-fw.fa-download
             | 課表輸出
         .modal-body
-          img#scheduleImg(v-bind:src='imgUrl')
-          br
-          #qrImg
-            img(v-bind:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
-            #copyLink
-              span {{ imgUrl }}
-              button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
-                i.fa.fa-files-o
+          i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startUpload == true')
+            span.sr-only Loading...
+          #uploadSol(v-else)
+            img#scheduleImg(v-bind:src='imgUrl')
+            br
+            #qrImg
+              img(v-bind:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
+              #copyLink
+                span {{ imgUrl }}
+                button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
+                  i.fa.fa-files-o
 
   #outputCourse.modal.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
