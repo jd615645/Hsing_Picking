@@ -8,17 +8,19 @@
             i.fa.fa-fw.fa-download
             | 課表輸出
         .modal-body
-          i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startUpload == true')
-            span.sr-only Loading...
-          #uploadSol(v-else)
-            img#scheduleImg(v-bind:src='imgUrl')
-            br
-            #qrImg
-              img(v-bind:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
-              #copyLink
-                span {{ imgUrl }}
-                button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
-                  i.fa.fa-files-o
+          #uploadBlock(v-if='pickingCourse.length != 0')
+            i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startUpload == true')
+              span.sr-only Loading...
+            #uploadSol(v-else)
+              img#scheduleImg(v-bind:src='imgUrl')
+              br
+              #qrImg
+                img(v-bind:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
+                #copyLink
+                  span {{ imgUrl }}
+                  button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
+                    i.fa.fa-files-o
+          h3(v-else) 目前尚無選擇的課程
 
   #outputCourse.modal.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
@@ -29,12 +31,43 @@
             i.fa.fa-fw.fa-floppy-o
             | 課程代碼輸出
         .modal-body
-          ul(v-if='pickingCourse.length != 0')
-            li(v-for='course in pickingCourse')
-              | {{ course.title_parsed.zh_TW }}
-              span {{ course.code }}
+          #outputList(v-if='pickingCourse.length != 0')
+            table
+              thead
+                tr
+                  th 課程名稱
+                  th 選課代碼
+                  th 課程代碼
+              tbody
+                tr(v-for='course in pickingCourse')
+                  td {{ course.title_parsed.zh_TW }}
+                  td {{ course.code }}
+                  td {{ course.url }}
+            p 選課時直接複製課程代碼，使用Ctrl+F方便搜尋以加快選課速度
+            hr
+          #quickPicking(v-if='pickingCourse.length != 0')
+            h4 不保證有用的快速選課方法
+              a(href='https://www.facebook.com/hashtag/%E9%9D%A0%E5%8C%97%E4%B8%AD%E8%88%8817432?source=feed_text&story_id=1461890130502589', target='_blank') 來源
+            ol
+              li 請在登入興大入口的情況下使用
+              li 要在自己選課時段使用
+              li 打別人學號不會幫人選課
+              li
+                | 將下列網址填寫後使用
+                pre
+                  code https://onepiece2.nchu.edu.tw/cofsys/plsql/enro_nomo3_dml?p_stud_no=輸入自己的學號&v_tick=課程編號&v_tick=課程編號
+              li
+                | 上述的課程編號不是選課號碼，要到教學大綱頁面找尋
+                code v_class_nbr=xxx
+                | 填入，下方有做簡易的整理
+
+            input(type='text', placeholder='請在此處填入學號', v-model='studentID')
+            pre
+              code
+                | https://onepiece2.nchu.edu.tw/cofsys/plsql/enro_nomo3_dml?p_stud_no={{ studentID }}
+                span(v-for='course in pickingCourse')
+                  | &v_tick={{ course.url }}
           h3(v-else) 目前尚無選擇的課程
-          p 選課時直接複製課程代碼，使用Ctrl+F方便搜尋以加快選課速度
 
   #checkClear.modal.fade(tabindex='-1', role='dialog')
     .modal-dialog(role='document')

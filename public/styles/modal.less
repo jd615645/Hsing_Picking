@@ -17,8 +17,43 @@
       text-align: right;
       color: #666;
     }
+    hr {
+      border-top: 1px solid #777;
+    }
+    a {
+      color: #337ab7;
+      text-decoration: none;
+      margin-left: 5px;
+    }
     h3 {
       margin-top: 0px;
+    }
+  }
+  #outputList {
+    span {
+      margin-left: 5px;
+    }
+    table {
+      width: 100%;
+    }
+    th {
+      text-align: center;
+      &:first-child {
+        text-align: left;;
+      }
+    }
+    tr {
+      td {
+        text-align: center;
+        &:first-child {
+          text-align: left;;
+        }
+      }
+    }
+  }
+  #quickPicking {
+    input {
+      margin-bottom: 5px;
     }
   }
   .input-group {
@@ -31,7 +66,6 @@
   }
   #saveSchedule {
     #scheduleImg {
-      max-width: 568px;
       width: 100%;
       display: block;
       margin: 5px auto 0px;

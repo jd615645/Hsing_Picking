@@ -57,6 +57,7 @@ var vm = new Vue({
       imgUrl: '#',
       startUpload: false,
       warningType: 1,
+      studentID: '',
       // addSelf
       selfTitle: '',
       selfProfessor: '',
@@ -189,9 +190,9 @@ var vm = new Vue({
       if(this.isFree(code)) {
         savedImg = false;
         var year = this.selectYear;
-
+        var thisCode = parseInt(code);
         // add credits
-        this.credits += courseCode[year][code]['credits_parsed'];
+        this.credits += courseCode[year][thisCode]['credits_parsed'];
 
         if(type == 'search') {
           var removeSpace = _.findIndex(this.searchCourse, {code: code});
@@ -203,12 +204,12 @@ var vm = new Vue({
         }
 
         // add course to picking list
-        this.pickingCourse.push(courseCode[year][code]);
-        $.each(courseCode[year][code]['time_parsed'], (ik, iv) => {
+        this.pickingCourse.push(courseCode[year][thisCode]);
+        $.each(courseCode[year][thisCode]['time_parsed'], (ik, iv) => {
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
-            time = jv;
-            this.schedule[time-1][day-1] = courseCode[year][code];
+                time = jv;
+            this.schedule[time-1][day-1] = courseCode[year][thisCode];
           });
         });
       }
@@ -219,16 +220,18 @@ var vm = new Vue({
     addKeep(code) {
       var year = this.selectYear;
       var removeSpace = _.findIndex(this.searchCourse, {code: code});
+      var thisCode = parseInt(code);
 
       // if sourse is keep remove item
       if(removeSpace != -1) {
         this.searchCourse.splice(removeSpace, 1);
       }
 
-      this.keepCourse.push(courseCode[year][code]);
+      this.keepCourse.push(courseCode[year][thisCode]);
     },
     removeCourse(code, type) {
       var year = this.selectYear;
+      var thisCode = parseInt(code);
 
       if (type == 'search') {
         // remove list course
@@ -378,21 +381,31 @@ var vm = new Vue({
     isFree(code) {
       var year = this.selectYear;
       var free = true;
-      $.each(courseCode[year][code]['time_parsed'], (ik, iv) => {
-        $.each(iv.time, (jk, jv) => {
-          var day = iv.day,
-              time = jv;
-          if(_.isUndefined((this.schedule[time-1][day-1]).length)) {
-            free = false;
-          }
-        });
-      });
+      var thisCode = parseInt(code);
+      try {
+        var thisCourse = courseCode[year][thisCode];
+
+        if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
+          $.each(thisCourse['time_parsed'], (ik, iv) => {
+            $.each(iv.time, (jk, jv) => {
+              var day = iv.day,
+                  time = jv;
+              if(_.isUndefined((this.schedule[time-1][day-1]).length)) {
+                free = false;
+              }
+            });
+          });
+        }
+      }
+      catch (e) {
+        console.error(thisCourse);
+      }
       console.log(free);
       return free;
     },
     saveSchedule() {
       $('#saveSchedule').modal();
-      if(!savedImg) {
+      if(!savedImg || pickingCourse.length != 0) {
         this.startUpload = true;
         html2canvas($('#scheduleBlock'), {
           onrendered: (canvas) => {
@@ -474,7 +487,8 @@ var vm = new Vue({
     },
     courseType(code) {
       var year = this.selectYear;
-      var course = courseCode[year][code];
+      var thisCode = parseInt(code);
+      var course = courseCode[year][thisCode];
       var generalType = {
         '人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
         '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
