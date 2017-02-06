@@ -42,5 +42,55 @@
     "time": "534",
     "prerequisite": "",
     "class": "6"
+  },
+  {
+    "number": "75",
+    "class": "2",
+    "obligatory_tf": true,
+    "intern_location": [
+      ""
+    ],
+    "hours_parsed": "3",
+    "time": "34,423",
+    "number_parsed": 75,
+    "for_dept": "材料科學與工程學系學士班",
+    "hours": "3",
+    "enrolled_num": "0",
+    "note": "",
+    "year": "全",
+    "time_parsed": [
+      {
+        "time": [
+          4
+        ],
+        "day": 3
+      },
+      {
+        "time": [
+          2,
+          3
+        ],
+        "day": 4
+      }
+    ],
+    "language": "中文",
+    "title": "物理冶金 `Physical Metallurgy",
+    "discipline": "",
+    "location": [
+      "ME203"
+    ],
+    "url": "2328",
+    "prerequisite": "",
+    "credits": "3",
+    "obligatory": "必修",
+    "department": "材料科學與工程學系學士班",
+    "code": "2407",
+    "intern_time": "",
+    "credits_parsed": 3,
+    "title_parsed": {
+      "en_US": "Physical Metallurgy",
+      "zh_TW": "物理冶金"
+    },
+    "professor": "宋振銘"
   }
 ]

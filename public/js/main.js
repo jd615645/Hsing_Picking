@@ -339,10 +339,19 @@ var vm = new Vue({
         if (time != -1) {
           var filtered = [];
           if (time != 0) {
-            $.each(filteredCourse, (key, val) => {
-              if (!(_.isUndefined(val['time_parsed'][0]['day']))) {
-                if(_.has(val['time_parsed'][0]['day'], time)) {
-                  filtered.push(val);
+            $.each(filteredCourse, (ik, course) => {
+              if (!(_.isUndefined(course))) {
+                if (course['time'] != '*' && course['time'] != '') {
+                  try {
+                    $.each(course['time_parsed'], (jk, ji) => {
+                      var courseDay = ji['day'];
+                      if(courseDay == time) {
+                        filtered.push(course);
+                      }
+                    });
+                  } catch (e) {
+                    console.error(course);
+                  }
                 }
               }
             });
