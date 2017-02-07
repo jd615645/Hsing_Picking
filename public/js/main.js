@@ -81,7 +81,10 @@ var vm = new Vue({
 
     while(this.schedule.push([]) < 13);
     $.each(this.schedule, (key, val) => {
-      while(this.schedule[key].push([]) < 5);
+      // while(this.schedule[key].push([]) < 5);
+      for (var i = 0; i < 5; i++) {
+        this.schedule[key][i] = [[], 0];
+      }
     });
     $('[data-toggle="popover"]').popover({delay: {'hide': 100 }});
   },
@@ -102,8 +105,12 @@ var vm = new Vue({
             $.each(careerData, (ik, iv) => {
               $.each(iv[0]['course'], (jk, jv) => {
                 var code = parseInt(jv.code);
+                var course = jv;
+                course['highlight'] = 0;
+
                 courseCode[selectYear][code] = jv;
                 // console.log(courseCode[selectYear][jv.code]);
+
                 // 以科系班級建立索引，內容為課程資訊
                 if (_.isUndefined(departmentData[selectYear][jv.for_dept])) {
                   departmentData[selectYear][jv.for_dept] = {};
@@ -191,6 +198,7 @@ var vm = new Vue({
         savedImg = false;
         var year = this.selectYear;
         var thisCode = parseInt(code);
+
         // add credits
         this.credits += courseCode[year][thisCode]['credits_parsed'];
 
@@ -209,7 +217,7 @@ var vm = new Vue({
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
                 time = jv;
-            this.schedule[time-1][day-1] = courseCode[year][thisCode];
+            this.schedule[time-1][day-1][0] = courseCode[year][thisCode];
           });
         });
       }
@@ -255,7 +263,7 @@ var vm = new Vue({
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
             time = jv;
-            this.schedule[time-1][day-1] = [];
+            this.schedule[time-1][day-1][0] = [][0];
           });
         });
 
@@ -352,7 +360,8 @@ var vm = new Vue({
                         filtered.push(course);
                       }
                     });
-                  } catch (e) {
+                  }
+                  catch (e) {
                     console.error(course);
                   }
                 }
@@ -370,12 +379,53 @@ var vm = new Vue({
       }, 10);
     },
     highlightSchedule(code, clear) {
-      if (clear) {
+      var year = this.selectYear;
+      var thisCode = parseInt(code);
 
-      }
-      else {
+      try {
+        var thisCourse = courseCode[year][thisCode];
+        if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
+          $.each(thisCourse['time_parsed'], (ik, iv) => {
+            $.each(iv.time, (jk, jv) => {
+              var day = iv.day,
+                  time = jv;
+              var schedule = this.schedule[time-1][day-1][0];
+              console.log(schedule);
 
+              if (clear) {
+                console.log('clear: day-' + day + ', time-' + time);
+                // this.schedule[time-1][day-1][1] = 0;
+              }
+              else {
+                if (_.isUndefined(schedule.length)) {
+                  var scheduleCode = this.schedule[time-1][day-1][0]['code'];
+                  console.log('nofree: day-' + day + ', time-' + time);
+
+                  if (scheduleCode == code) {
+                    // self
+                    this.schedule[time-1][day-1][1] = 3;
+                  }
+                  else {
+                    // no free
+                    this.schedule[time-1][day-1][1] = 2;
+                  }
+                }
+                else {
+                  // free
+                  console.log('free: day-' + day + ', time-' + time);
+                  this.schedule[time-1][day-1][1] = 1;
+                }
+              }
+
+              console.log('highlight: ' + this.schedule[time-1][day-1][1]);
+            });
+          });
+        }
       }
+      catch (e) {
+        console.error(thisCourse);
+      }
+
     },
     // 判斷是否衝堂
     isFree(code) {
@@ -390,7 +440,7 @@ var vm = new Vue({
             $.each(iv.time, (jk, jv) => {
               var day = iv.day,
                   time = jv;
-              if(_.isUndefined((this.schedule[time-1][day-1]).length)) {
+              if(_.isUndefined((this.schedule[time-1][day-1][0]).length)) {
                 free = false;
               }
             });
@@ -400,7 +450,6 @@ var vm = new Vue({
       catch (e) {
         console.error(thisCourse);
       }
-      console.log(free);
       return free;
     },
     saveSchedule() {
@@ -441,7 +490,7 @@ var vm = new Vue({
 
       $.each(this.schedule, (ik, iv) => {
         $.each(iv, (jk, jv) => {
-          this.schedule[ik][jk] = [];
+          this.schedule[ik][jk][0] = [];
         });
       });
     },

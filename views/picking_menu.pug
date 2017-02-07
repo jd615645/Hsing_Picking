@@ -46,7 +46,7 @@
       i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startSearch == true')
         span.sr-only Loading...
       ul#searchList.course-list
-        li(v-for='course in searchCourse')
+        li(v-for='course in searchCourse', @mouseenter='highlightSchedule(course.code, false)', @mouseleave='highlightSchedule(course.code, true)')
           .list-item
             i.fa.fa-circle-o
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
@@ -69,7 +69,7 @@
         i.fa.fa-trash
         | 清除以下項目
       ul#keepList.course-list
-        li(v-for='course in keepCourse')
+        li(v-for='course in keepCourse', @mouseenter='highlightSchedule(course.code, false)', @mouseleave='highlightSchedule(course.code, true)')
           .list-item
             i.fa.fa-circle-o
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
@@ -92,7 +92,7 @@
         i.fa.fa-trash
         | 清除以下項目
       ul#nowList.course-list
-        li(v-for='course in pickingCourse')
+        li(v-for='course in pickingCourse', @mouseenter='highlightSchedule(course.code, false)', @mouseleave='highlightSchedule(course.code, true)')
           .list-item
             i.fa.fa-circle-o
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
