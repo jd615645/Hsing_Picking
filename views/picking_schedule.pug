@@ -16,7 +16,7 @@
       li.left
         select#selectDept.form-control(v-model='selectDept', v-on:change='changeDepartment(selectDept)')
           option(value='-1', disabled) 選取科系
-          option(v-for='dept in deptData') {{ dept.dept }}
+          option(v-for='dept in deptDropdown') {{ dept.dept }}
       li.left
         select#selectlevel.form-control(v-model='selectLevel', v-on:change='warningAdd()', v-bind='{ disabled: selectDept == -1 }')
           option(value='-1', disabled) 選取年級
