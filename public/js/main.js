@@ -1,8 +1,9 @@
 // 學士班->U, 碩班->G, 夜校->N, 其他->O
 var careerType = ['U', 'G', 'N', 'O'];
 
-// window.departmentData = {};
-var departmentData = {};
+window.departmentData = {};
+// var departmentData = {};
+
 // window.courseCode = [];
 var courseCode = [];
 // window.courseDept = [];
@@ -29,10 +30,10 @@ var vm = new Vue({
     return {
       // search
       searchKeyword: '',
-      searchItem: '-1',
-      searchDetail: '-1',
+      searchItem: -1,
+      searchDetail: -1,
       detailData: [],
-      searchTime: '-1',
+      searchTime: -1,
       searchCourse: [],
       startSearch: false,
       // 顯示節數
@@ -48,10 +49,10 @@ var vm = new Vue({
       // 科系下拉選單
       deptData: [],
       // titleBar
-      selectYear: '1052',
-      selectDegree: '0',
-      selectDept: '-1',
-      selectLevel: '-1',
+      selectYear: 1052,
+      selectDegree: 0,
+      selectDept: -1,
+      selectLevel: -1,
       schedule: [],
       // modal
       imgUrl: '#',
@@ -92,7 +93,7 @@ var vm = new Vue({
     getCareer(selectYear) {
       if (_.isEmpty(courseCode[selectYear])) {
         courseCode[selectYear] = [];
-        departmentData[selectYear] = [];
+        courseDept[selectYear] = [];
 
         var careerRequest = [];
         $.each(careerType, (key, val) => {
@@ -104,27 +105,25 @@ var vm = new Vue({
             var careerData = [career_U, career_G, career_N, career_O];
             $.each(careerData, (ik, iv) => {
               $.each(iv[0]['course'], (jk, jv) => {
-                var code = parseInt(jv.code);
-                var course = jv;
-                course['highlight'] = 0;
+                var code = parseInt(jv.code, 10);
+                jv['highlight'] = 0;
 
                 courseCode[selectYear][code] = jv;
-                // console.log(courseCode[selectYear][jv.code]);
 
                 // 以科系班級建立索引，內容為課程資訊
-                if (_.isUndefined(departmentData[selectYear][jv.for_dept])) {
-                  departmentData[selectYear][jv.for_dept] = {};
+                if (_.isUndefined(courseDept[selectYear][jv.for_dept])) {
+                  courseDept[selectYear][jv.for_dept] = {};
                 }
                 // 以部門建立索引，內容為課程代碼
-                if (_.isUndefined(departmentData[selectYear][jv.for_dept][jv.class])) {
-                  departmentData[selectYear][jv.for_dept][jv.class] = [];
+                if (_.isUndefined(courseDept[selectYear][jv.for_dept][jv.class])) {
+                  courseDept[selectYear][jv.for_dept][jv.class] = [];
                 }
-                departmentData[selectYear][jv.for_dept][jv.class].push(jv.code);
+                courseDept[selectYear][jv.for_dept][jv.class].push(jv.code);
               })
             });
 
             // console.log(courseCode[selectYear]);
-            // console.log(departmentData[selectYear]);
+            // console.log(courseDept[selectYear]);
           });
       }
     },
@@ -157,7 +156,7 @@ var vm = new Vue({
       this.keepCourse = [];
       this.pickingCourse = [];
       this.credits = 0;
-      $.each(departmentData[year][dept][level], (key, code) => {
+      $.each(courseDept[year][dept][level], (key, code) => {
         //  確認是否必修
         if (courseCode[year][code]['obligatory_tf']) {
           if (courseCode[year][code]['title'].match('專題') == null) {
@@ -197,7 +196,7 @@ var vm = new Vue({
       if(this.isFree(code)) {
         savedImg = false;
         var year = this.selectYear;
-        var thisCode = parseInt(code);
+        var thisCode = parseInt(code, 10);
 
         // add credits
         this.credits += courseCode[year][thisCode]['credits_parsed'];
@@ -228,7 +227,7 @@ var vm = new Vue({
     addKeep(code) {
       var year = this.selectYear;
       var removeSpace = _.findIndex(this.searchCourse, {code: code});
-      var thisCode = parseInt(code);
+      var thisCode = parseInt(code, 10);
 
       // if sourse is keep remove item
       if(removeSpace != -1) {
@@ -239,7 +238,7 @@ var vm = new Vue({
     },
     removeCourse(code, type) {
       var year = this.selectYear;
-      var thisCode = parseInt(code);
+      var thisCode = parseInt(code, 10);
 
       if (type == 'search') {
         // remove list course
@@ -337,7 +336,7 @@ var vm = new Vue({
           }
           else {
             $.each(filteredCourse, (key, val) => {
-              var code = parseInt(val.code),
+              var code = parseInt(val.code, 10),
               type = this.courseType(code);
               if (detail == type) {
                 filtered.push(val);
@@ -380,7 +379,7 @@ var vm = new Vue({
     },
     highlightSchedule(code, clear) {
       var year = this.selectYear;
-      var thisCode = parseInt(code);
+      var thisCode = parseInt(code, 10);
 
       try {
         var thisCourse = courseCode[year][thisCode];
@@ -431,7 +430,7 @@ var vm = new Vue({
     isFree(code) {
       var year = this.selectYear;
       var free = true;
-      var thisCode = parseInt(code);
+      var thisCode = parseInt(code, 10);
       try {
         var thisCourse = courseCode[year][thisCode];
 
@@ -499,14 +498,14 @@ var vm = new Vue({
       this.clearKeep();
       this.clearCourse();
       this.searchKeyword = '';
-      this.searchItem = '-1';
-      this.searchDetail = '-1';
+      this.searchItem = -1;
+      this.searchDetail = -1;
       this.detailData = [];
-      this.searchTime = '-1';
-      this.selectYear = '1052';
-      this.selectDegree = '0';
-      this.selectDept = '-1';
-      this.selectLevel = '-1';
+      this.searchTime = -1;
+      this.selectYear = 1052;
+      this.selectDegree = 0;
+      this.selectDept = -1;
+      this.selectLevel = -1;
     },
     addSelf() {
       var title = this.selfTitle,
@@ -536,7 +535,7 @@ var vm = new Vue({
     },
     courseType(code) {
       var year = this.selectYear;
-      var thisCode = parseInt(code);
+      var thisCode = parseInt(code, 10);
       var course = courseCode[year][thisCode];
       var generalType = {
         '人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
