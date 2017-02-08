@@ -86,7 +86,7 @@
             i.fa.fa-times
     #nowCourseTab.tool-tab(v-if='tabView == 2')
       h2#totleCredits
-        span {{ credits }}
+        span {{ calcCredits }}
         | 學分
       button.clearBtn(v-on:click='clearCourse()')
         i.fa.fa-trash
