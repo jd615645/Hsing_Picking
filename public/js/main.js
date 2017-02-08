@@ -22,7 +22,6 @@ var vm = new Vue({
       // keepTab
       keepCourse: [],
       // courseTab
-      credits: 0,
       pickingCourse: [],
       // tab切換
       tabView: 0,
@@ -68,7 +67,6 @@ var vm = new Vue({
     this.schedule = _.map(Array(13), () => {
       return _.map(Array(5), () => [[], 0]);
     });
-    $('[data-toggle="popover"]').popover({delay: {'hide': 100 }});
 
     // clipboard init
     this.clipboard
@@ -79,6 +77,15 @@ var vm = new Vue({
         console.error('Action:', e.action);
         console.error('Trigger:', e.trigger);
       });
+  },
+  computed: {
+    calcCredits() {
+      var credits = 0;
+      $.each(this.pickingCourse, (key, course) => {
+        credits += course['credits_parsed'];
+      });
+      return credits;
+    }
   },
   methods: {
     getCareer(selectYear) {
@@ -95,8 +102,8 @@ var vm = new Vue({
         });
         $.when
           .apply($, careerRequest)
-          .then((career_U, career_G, career_N, career_O) => {
-            var careerData = [career_U, career_G, career_N, career_O];
+          .then((...careerData) => {
+            // var careerData = [career_U, career_G, career_N, career_O];
             $.each(careerData, (ik, iv) => {
               $.each(iv[0]['course'], (jk, jv) => {
                 var course = jv;
@@ -186,9 +193,6 @@ var vm = new Vue({
         var year = this.selectYear;
         var thisCode = parseInt(code, 10);
 
-        // add credits
-        this.credits += this.courseCode[year][thisCode]['credits_parsed'];
-
         if(type == 'search') {
           var removeSpace = _.findIndex(this.searchCourse, {code: code});
           this.searchCourse.splice(removeSpace, 1);
@@ -209,7 +213,7 @@ var vm = new Vue({
         });
       }
       else {
-        alert('衝堂');
+        console.warn('code: ' + code + ',衝堂');
       }
     },
     addKeep(code) {
@@ -228,6 +232,7 @@ var vm = new Vue({
       var year = this.selectYear;
       var thisCode = parseInt(code, 10);
 
+      console.log(thisCode);
       if (type == 'search') {
         // remove list course
         var removeSpace = _.findIndex(this.searchCourse, {code: code});
@@ -246,16 +251,13 @@ var vm = new Vue({
 
         this.pickingCourse.splice(removeSpace, 1);
         // remove table course
-        $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
+        $.each(this.courseCode[year][thisCode]['time_parsed'], (ik, iv) => {
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
             time = jv;
-            this.schedule[time-1][day-1][0] = [][0];
+            this.schedule[time-1][day-1][0] = [];
           });
         });
-
-        // less credits
-        this.credits -= this.courseCode[year][code]['credits_parsed'];
       }
     },
     // 課程搜尋
@@ -277,8 +279,8 @@ var vm = new Vue({
             filtered = _.filter(this.courseCode[year], (course) => {
               if (!(_.isUndefined(course))) {
                 return course['code'] == keyword ||
-                course['professor'].indexOf(keyword) > -1 ||
-                course['title_parsed']['zh_TW'].indexOf(keyword) > -1;
+                       course['professor'].indexOf(keyword) > -1 ||
+                       course['title_parsed']['zh_TW'].indexOf(keyword) > -1;
               }
             });
 
@@ -472,7 +474,6 @@ var vm = new Vue({
     clearCourse() {
       this.savedImg = false;
 
-      this.credits = 0;
       this.pickingCourse = [];
 
       $.each(this.schedule, (ik, iv) => {
@@ -495,32 +496,32 @@ var vm = new Vue({
       this.selectDept = -1;
       this.selectLevel = -1;
     },
-    addSelf() {
-      var title = this.selfTitle,
-          professor = this.selfProfessor,
-          location = this.selfLocation,
-          credits = this.selfCredits,
-          time = this.selfTime;
-      var course = {
-        "title_parsed": {
-          "zh_TW": title
-        },
-        "professor": professor,
-        "location": [
-          location
-        ],
-        "credits_parsed": credits,
-        "time_parsed": [
-          {
-            "time": [
-              3,
-              4
-            ],
-            "day": 5
-          }
-        ],
-      }
-    },
+    // addSelf() {
+    //   var title = this.selfTitle,
+    //       professor = this.selfProfessor,
+    //       location = this.selfLocation,
+    //       credits = this.selfCredits,
+    //       time = this.selfTime;
+    //   var course = {
+    //     'title_parsed': {
+    //       'zh_TW': title
+    //     },
+    //     'professor': professor,
+    //     'location': [
+    //       location
+    //     ],
+    //     'credits_parsed': credits,
+    //     'time_parsed': [
+    //       {
+    //         'time': [
+    //           3,
+    //           4
+    //         ],
+    //         'day': 5
+    //       }
+    //     ],
+    //   }
+    // },
     courseType(code) {
       var year = this.selectYear;
       var thisCode = parseInt(code, 10);
