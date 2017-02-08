@@ -29,6 +29,7 @@ var vm = new Vue({
       selectDegree: '',
       selectDept: '',
       selectLevel: '',
+      // timeTable
       schedule: [],
       // modal
       imgUrl: '#',
@@ -61,7 +62,7 @@ var vm = new Vue({
 
     // init timetable
     this.schedule = _.map(Array(13), () => {
-      return _.map(Array(5), () => [[], 0]);
+      return _.map(Array(5), () => [{}, 0]);
     });
 
     // clipboard init
@@ -84,6 +85,7 @@ var vm = new Vue({
     },
     deptDropdown() {
       this.selectDept = '';
+      this.selectLevel = '';
       return _.get(this.departmentData, [this.selectDegree], []);
     },
     detailDropdown() {
@@ -108,8 +110,6 @@ var vm = new Vue({
             // var careerData = [career_U, career_G, career_N, career_O];
             $.each(careerData, (ik, iv) => {
               $.each(iv[0]['course'], (jk, course) => {
-                course['highlight'] = 0;
-
                 _.setWith(this.courseCode, [selectYear, course.code], course, Object);
 
                 // 依照this.courseDept[學年度][科系][班級]建立索引，內容微課程代碼
@@ -233,7 +233,7 @@ var vm = new Vue({
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
             time = jv;
-            this.schedule[time-1][day-1][0] = [];
+            this.schedule[time-1][day-1][0] = {};
           });
         });
       }
@@ -303,11 +303,10 @@ var vm = new Vue({
             });
           }
           else {
-            $.each(filteredCourse, (key, val) => {
-              var code = parseInt(val.code, 10),
-              type = this.courseType(code);
+            $.each(filteredCourse, (key, course) => {
+              type = this.courseType(course.code);
               if (detail == type) {
-                filtered.push(val);
+                filtered.push(course);
               }
             });
           }
@@ -355,35 +354,37 @@ var vm = new Vue({
             $.each(iv.time, (jk, jv) => {
               var day = iv.day,
                   time = jv;
-              var schedule = this.schedule[time-1][day-1][0];
-              console.log(schedule);
+
+              var course = this.schedule[time-1][day-1];
 
               if (clear) {
-                console.log('clear: day-' + day + ', time-' + time);
-                // this.schedule[time-1][day-1][1] = 0;
+                console.log('clear');
+
+                this.schedule[time-1][day-1][1] = 0;
               }
               else {
-                if (_.isUndefined(schedule.length)) {
+                console.log('in');
+
+                if (_.isEmpty(course[0])) {
+                  // is free
+                  this.schedule[time-1][day-1][1] = 1;
+                }
+                else {
+                  // not free
                   var scheduleCode = this.schedule[time-1][day-1][0]['code'];
-                  console.log('nofree: day-' + day + ', time-' + time);
 
                   if (scheduleCode == code) {
                     // self
                     this.schedule[time-1][day-1][1] = 3;
                   }
                   else {
-                    // no free
                     this.schedule[time-1][day-1][1] = 2;
                   }
                 }
-                else {
-                  // free
-                  console.log('free: day-' + day + ', time-' + time);
-                  this.schedule[time-1][day-1][1] = 1;
-                }
               }
 
-              console.log('highlight: ' + this.schedule[time-1][day-1][1]);
+              var highlight = this.schedule[time-1][day-1][1];
+              console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight);
             });
           });
         }
@@ -405,7 +406,7 @@ var vm = new Vue({
             $.each(iv.time, (jk, jv) => {
               var day = iv.day,
                   time = jv;
-              if(_.isUndefined((this.schedule[time-1][day-1][0]).length)) {
+              if(_.isEmpty(this.schedule[time-1][day-1][0])) {
                 free = false;
               }
             });

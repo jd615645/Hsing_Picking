@@ -2,22 +2,22 @@
   #titleBar
     ul.tab-nav
       li.left
-        select#selectYear.form-control(v-model='selectYear', v-on:change='changeYear(selectYear)')
+        select.form-control(v-model='selectYear', v-on:change='changeYear(selectYear)')
           option(value='1042') 104學年度第2學期
           option(value='1051') 105學年度第1學期
           option(value='1052') 105學年度第2學期
       li.left
-        select#selectDegree.form-control(v-model='selectDegree')
+        select.form-control(v-model='selectDegree')
           option(value='', disabled) 選取部門
           option(value='0') 學士班
           option(value='5') 進修學士班
           option(value='1') 碩士班
       li.left
-        select#selectDept.form-control(v-model='selectDept', v-on:change='changeDepartment(selectDept)')
+        select.form-control(v-model='selectDept', v-on:change='changeDepartment(selectDept)')
           option(value='', disabled) 選取科系
           option(v-for='dept in deptDropdown') {{ dept.dept }}
       li.left
-        select#selectlevel.form-control(v-model='selectLevel', v-on:change='warningAdd()', v-bind='{ disabled: selectDept == -1 }')
+        select.form-control(v-model='selectLevel', v-on:change='warningAdd()', v-bind='{ disabled: selectDept == -1 }')
           option(value='', disabled) 選取年級
           option(value='1', v-if='selectDegree != -1') 一年級
           option(value='2', v-if='selectDegree != -1') 二年級
@@ -65,14 +65,20 @@
         tr
           th(v-for='day in ["", "一", "二", "三", "四", "五"]') {{ day }}
       tbody
-        tr(v-for='(course, index) in schedule', v-if='index < tableView')
-          td {{ index+1 }}
-          td(v-for='(item, key) in course', v-bind:class='{free: item[1]==1, notfree: item[1]==2, self: item[1]==3}')
-            p ({{ index }}, {{ key }}) {{ schedule[index][key][1] }}
-            .course(v-if='item[0] != ""')
-              p {{ item[0].title_parsed.zh_TW }}
-              p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}
-              p(v-if='viewSwitch>=2') {{ item[0].location[0] }}
+        tr(v-for='period in 13')
+          td {{ period }}
+          td(v-for='day in 5')
+            p ({{ period-1 }}, {{ day-1 }})
+
+        //- tr(v-for='(course, index) in schedule', v-if='index < tableView')
+        //-   td {{ index+1 }}
+        //-   td(v-for='(item, key) in course', v-bind:class='{free: item[1]==1, notfree: item[1]==2, self: item[1]==3}')
+        //-     p ({{ index }}, {{ key }}) {{ schedule[index][key][1] }}
+        //-     p {{ item[0] }}
+        //-     .course(v-if='!_.isEmpty(item[0])')
+        //-       p {{ item[0].title_parsed.zh_TW }}
+        //-       p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}
+        //-       p(v-if='viewSwitch>=2') {{ item[0].location[0] }}
   //- #contentInfo
   //-   | Sakamoto © 2016
   //-   a(href='#', target='_blank') About this Website
