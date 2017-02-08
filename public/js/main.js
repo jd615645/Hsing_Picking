@@ -10,10 +10,9 @@ var vm = new Vue({
       savedImg: false,
       // search
       searchKeyword: '',
-      searchItem: -1,
-      searchDetail: -1,
-      detailData: [],
-      searchTime: -1,
+      searchItem: '',
+      searchDetail: '',
+      searchTime: '',
       searchCourse: [],
       startSearch: false,
       // 顯示節數
@@ -25,13 +24,11 @@ var vm = new Vue({
       pickingCourse: [],
       // tab切換
       tabView: 0,
-      // 科系下拉選單
-      deptDropdown: [],
       // titleBar
-      selectYear: 1052,
-      selectDegree: 0,
-      selectDept: -1,
-      selectLevel: -1,
+      selectYear: '1052',
+      selectDegree: '',
+      selectDept: '',
+      selectLevel: '',
       schedule: [],
       // modal
       imgUrl: '#',
@@ -59,7 +56,6 @@ var vm = new Vue({
             detail = val['detail'];
         this.departmentData[key] = detail;
       });
-      this.deptDropdown = this.departmentData[0];
     });
     this.getCareer(1052);
 
@@ -85,7 +81,16 @@ var vm = new Vue({
         credits += course['credits_parsed'];
       });
       return credits;
+    },
+    deptDropdown() {
+      selectDept = '';
+      return _.get(this.departmentData, [this.selectDegree], []);
+    },
+    detailDropdown() {
+      searchDetail = '';
+      return _.get(this.departmentData, [this.searchItem], []);
     }
+
   },
   methods: {
     getCareer(selectYear) {
@@ -129,16 +134,11 @@ var vm = new Vue({
     changeYear(num) {
       this.getCareer(num);
       this.selectDegree = 0;
-      this.selectDept = -1;
-      this.selectLevel = -1;
-    },
-    changeDegree(num) {
-      this.deptDropdown = this.departmentData[num];
-      this.selectDept = -1;
-      this.selectLevel = -1;
+      this.selectDept = '';
+      this.selectLevel = '';
     },
     changeDepartment() {
-      this.selectLevel = -1;
+      this.selectLevel = '';
     },
     changeLevel() {
       var year = this.selectYear,
@@ -165,19 +165,6 @@ var vm = new Vue({
           this.addKeep(code);
         }
       });
-    },
-    // tool menu change selected
-    changeItem(item) {
-      // console.log(item);
-      this.detailData = this.departmentData[item];
-      this.searchDetail = -1;
-      this.searchTime = -1;
-    },
-    changeDetail(detail) {
-      // console.log(detail);
-    },
-    changeTime(time) {
-      // console.log(time);
     },
     warningAdd() {
       if(_.isUndefined(this.pickingCourse[0])) {
@@ -232,7 +219,6 @@ var vm = new Vue({
       var year = this.selectYear;
       var thisCode = parseInt(code, 10);
 
-      console.log(thisCode);
       if (type == 'search') {
         // remove list course
         var removeSpace = _.findIndex(this.searchCourse, {code: code});
@@ -292,7 +278,7 @@ var vm = new Vue({
         }
 
         // 尚未寫無keyword
-        if (item != -1) {
+        if (item != '') {
           var src = filteredCourse;
           if (keyword == '') {
             src = this.courseCode[year];
@@ -309,7 +295,7 @@ var vm = new Vue({
           filteredCourse = filtered;
         }
 
-        if (detail != -1) {
+        if (detail != '') {
           var filtered = [];
 
           if (item < 6) {
@@ -336,7 +322,7 @@ var vm = new Vue({
           filteredCourse = filtered;
         }
 
-        if (time != -1) {
+        if (time != '') {
           var filtered = [];
           if (time != 0) {
             $.each(filteredCourse, (ik, course) => {
@@ -450,7 +436,6 @@ var vm = new Vue({
             var canvasUrl = canvas.toDataURL('image/png');
 
             this.uploadImg(canvasUrl).then((response) => {
-              console.log(response);
               if(response.success) {
                 this.imgUrl = response.data.link;
                 // $('#saveSchedule').modal();
@@ -486,15 +471,16 @@ var vm = new Vue({
       this.clearSearch();
       this.clearKeep();
       this.clearCourse();
+
       this.searchKeyword = '';
-      this.searchItem = -1;
-      this.searchDetail = -1;
-      this.detailData = [];
-      this.searchTime = -1;
-      this.selectYear = 1052;
-      this.selectDegree = 0;
-      this.selectDept = -1;
-      this.selectLevel = -1;
+      this.searchItem = '';
+      this.searchDetail = '';
+      this.searchTime = '';
+
+      this.selectYear = '1052';
+      this.selectDegree = '';
+      this.selectDept = '';
+      this.selectLevel = '';
     },
     // addSelf() {
     //   var title = this.selfTitle,
