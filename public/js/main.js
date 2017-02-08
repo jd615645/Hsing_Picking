@@ -64,12 +64,9 @@ var vm = new Vue({
     });
     this.getCareer(1052);
 
-    while(this.schedule.push([]) < 13);
-    $.each(this.schedule, (key, val) => {
-      // while(this.schedule[key].push([]) < 5);
-      for (var i = 0; i < 5; i++) {
-        this.schedule[key][i] = [[], 0];
-      }
+    // init timetable
+    this.schedule = _.map(Array(13), () => {
+      return _.map(Array(5), () => [[], 0]);
     });
     $('[data-toggle="popover"]').popover({delay: {'hide': 100 }});
 
@@ -154,15 +151,10 @@ var vm = new Vue({
 
       $.each(this.courseDept[year][dept][level], (key, code) => {
         //  確認是否必修
-        if (this.courseCode[year][code]['obligatory_tf']) {
-          if (this.courseCode[year][code]['title'].match('專題') == null) {
+        if (this.courseCode[year][code]['obligatory_tf']
+            && this.courseCode[year][code]['title'].match('專題') == null) {
             this.addCourse(code);
-          }
-          else {
-            this.addKeep(code);
-          }
-        }
-        else {
+        } else {
           this.addKeep(code);
         }
       });
