@@ -360,14 +360,14 @@ var vm = new Vue({
               if (clear) {
                 console.log('clear');
 
-                this.schedule[time-1][day-1][1] = 0;
+                this.$set(this.schedule[time-1][day-1], '1', 0);
               }
               else {
                 console.log('in');
 
                 if (_.isEmpty(course[0])) {
                   // is free
-                  this.schedule[time-1][day-1][1] = 1;
+                  this.$set(this.schedule[time-1][day-1], '1', 1);
                 }
                 else {
                   // not free
@@ -375,10 +375,10 @@ var vm = new Vue({
 
                   if (scheduleCode == code) {
                     // self
-                    this.schedule[time-1][day-1][1] = 3;
+                    this.$set(this.schedule[time-1][day-1], '1', 3);
                   }
                   else {
-                    this.schedule[time-1][day-1][1] = 2;
+                    this.$set(this.schedule[time-1][day-1], '1', 2);
                   }
                 }
               }
@@ -406,7 +406,7 @@ var vm = new Vue({
             $.each(iv.time, (jk, jv) => {
               var day = iv.day,
                   time = jv;
-              if(_.isEmpty(this.schedule[time-1][day-1][0])) {
+              if(!_.isEmpty(this.schedule[time-1][day-1][0])) {
                 free = false;
               }
             });
