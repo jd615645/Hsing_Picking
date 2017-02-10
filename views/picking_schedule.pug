@@ -43,10 +43,10 @@
       //-     p 手動新增
   #scheduleType
     ul.tab-nav
-      li#timeSwitch.right(v-on:click='tableView = (tableView==8?13:8)')
+      li#timeSwitch.right(v-on:click='tableView = (tableView==9?13:9)')
         a(href='#' title='切換課表時間顯示')
-          i.fa.fa-sun-o(v-if='tableView==8')
-            span 8堂
+          i.fa.fa-sun-o(v-if='tableView==9')
+            span 9堂
           i.fa.fa-moon-o(v-if='tableView==13')
             span 13堂
       li#viewSwitch.right(v-on:click='viewSwitch = (viewSwitch+1)%4')

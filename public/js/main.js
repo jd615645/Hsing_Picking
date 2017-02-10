@@ -16,7 +16,7 @@ var vm = new Vue({
       searchCourse: [],
       startSearch: false,
       // 顯示節數
-      tableView: 8,
+      tableView: 9,
       viewSwitch: 0,
       // keepTab
       keepCourse: [],
