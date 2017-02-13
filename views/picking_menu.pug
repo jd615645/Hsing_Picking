@@ -31,7 +31,7 @@
         option(v-for='dept in detailDropdown') {{ dept.dept }}
       select#searchTime.form-control(v-model='searchTime', v-bind='{ disabled: searchItem == -1 && searchKeyword == "" }')
         option(value='') 選擇時間
-        //- option(value='0') 空堂
+        option(value='0') 空堂
         option(value='1') 星期一
         option(value='2') 星期二
         option(value='3') 星期三

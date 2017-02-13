@@ -338,6 +338,11 @@ var vm = new Vue({
           }
           else {
             // find空堂
+            $.each(filteredCourse, (ik, course) => {
+              if (this.isFree(course['code'])) {
+                filtered.push(course);
+              }
+            });
           }
           filteredCourse = filtered;
         }
