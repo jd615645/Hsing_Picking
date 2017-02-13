@@ -192,6 +192,7 @@ var vm = new Vue({
             this.schedule[time-1][day-1][0] = this.courseCode[year][code];
           });
         });
+        this.highlightSchedule(code, true);
       }
       else {
         console.warn('code: ' + code + ',衝堂');
@@ -237,6 +238,7 @@ var vm = new Vue({
           });
         });
       }
+      this.highlightSchedule(code, true);
     },
     // 課程搜尋
     searchData() {
@@ -358,13 +360,9 @@ var vm = new Vue({
               var course = this.schedule[time-1][day-1];
 
               if (clear) {
-                console.log('clear');
-
                 this.$set(this.schedule[time-1][day-1], '1', 0);
               }
               else {
-                console.log('in');
-
                 if (_.isEmpty(course[0])) {
                   // is free
                   this.$set(this.schedule[time-1][day-1], '1', 1);
@@ -384,7 +382,7 @@ var vm = new Vue({
               }
 
               var highlight = this.schedule[time-1][day-1][1];
-              console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight);
+              // console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight);
             });
           });
         }
@@ -473,6 +471,12 @@ var vm = new Vue({
       this.selectDept = '';
       this.selectLevel = '';
     },
+    outputCourse() {
+      $("#outputCourse").modal();
+    },
+    checkClear() {
+      $("#checkClear").modal();
+    },
     // addSelf() {
     //   var title = this.selfTitle,
     //       professor = this.selfProfessor,
@@ -550,7 +554,7 @@ var vm = new Vue({
         url: 'https://api.imgur.com/3/image',
         type: 'post',
         headers: {
-          Authorization: 'Client-ID ' + imgurAPI
+          Authorization: 'Client-ID ' + this.imgurAPI
         },
         data: {
           image: canvasUrl.split(',').pop()

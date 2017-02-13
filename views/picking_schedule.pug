@@ -26,11 +26,11 @@
           option(value='5', v-if='selectDegree == 0 || selectDegree == 5') 五年級
 
       li.right
-        a(href='#', title='清除所有內容(初始化)', v-on:click='$("#checkClear").modal()')
+        a(href='#', title='清除所有內容(初始化)', v-on:click='checkClear()')
           i.fa.fa-trash
           p 重置課表
       li.right
-        a(href='#', title='輸出課程代碼(方便選課查詢)', v-on:click='$("#outputCourse").modal()')
+        a(href='#', title='輸出課程代碼(方便選課查詢)', v-on:click='outputCourse()')
           i.fa.fa-floppy-o
           p 輸出課碼
       li.right
