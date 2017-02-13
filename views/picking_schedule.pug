@@ -37,10 +37,6 @@
         a(href='#', title='輸出課表為圖片', v-on:click='saveSchedule()')
           i.fa.fa-download
           p 另存圖片
-      //- li.right
-      //-   a(href='#', title='手動新增課程', v-on:click='$("#selfAdd").modal()')
-      //-     i.fa.fa-plus
-      //-     p 手動新增
   #scheduleType
     ul.tab-nav
       li#timeSwitch.right(v-on:click='tableView = (tableView==9?13:9)')

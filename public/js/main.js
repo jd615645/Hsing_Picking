@@ -477,32 +477,6 @@ var vm = new Vue({
     checkClear() {
       $("#checkClear").modal();
     },
-    // addSelf() {
-    //   var title = this.selfTitle,
-    //       professor = this.selfProfessor,
-    //       location = this.selfLocation,
-    //       credits = this.selfCredits,
-    //       time = this.selfTime;
-    //   var course = {
-    //     'title_parsed': {
-    //       'zh_TW': title
-    //     },
-    //     'professor': professor,
-    //     'location': [
-    //       location
-    //     ],
-    //     'credits_parsed': credits,
-    //     'time_parsed': [
-    //       {
-    //         'time': [
-    //           3,
-    //           4
-    //         ],
-    //         'day': 5
-    //       }
-    //     ],
-    //   }
-    // },
     courseType(code) {
       var year = this.selectYear;
       var course = this.courseCode[year][code];
