@@ -2,6 +2,7 @@ var vm = new Vue({
   el: '#app',
   data() {
     return {
+      exception: [],
       departmentData: {},
       // 課程代碼索引
       courseCode: {},
@@ -50,14 +51,19 @@ var vm = new Vue({
   },
   mounted() {
     $.when(
-      $.getJSON('./json/select.json')
-    ).then((data) => {
-      $.each(data, (key, val) => {
+      $.getJSON('./json/select.json'),
+      $.getJSON('./json/exception.json')
+    ).then((selectData, exception) => {
+      $.each(selectData[0], (key, val) => {
         var item = val['item'],
             detail = val['detail'];
         this.departmentData[key] = detail;
       });
+      $.each(exception[0][0]['exception'], (key, val) => {
+        this.exception.push(val);
+      })
     });
+
     this.getCareer(1052);
 
     // init timetable
@@ -151,12 +157,22 @@ var vm = new Vue({
       this.pickingCourse = [];
       this.credits = 0;
 
+
       $.each(this.courseDept[year][dept][level], (key, code) => {
         //  確認是否必修
-        if (this.courseCode[year][code]['obligatory_tf']
-            && this.courseCode[year][code]['title'].match('專題') == null) {
-            this.addCourse(code);
-        } else {
+        var title = this.courseCode[year][code]['title'],
+            isObligatory = true;
+
+        _.forEach(this.exception, (val)=> {
+          if(!_.isNull(title.match(val))) {
+            isObligatory = false;
+          }
+        });
+
+        if (this.courseCode[year][code]['obligatory_tf'] && isObligatory) {
+          this.addCourse(code);
+        }
+        else {
           this.addKeep(code);
         }
       });
