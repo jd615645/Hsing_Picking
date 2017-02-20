@@ -456,6 +456,9 @@ var vm = new Vue({
               this.startUpload = false;
             });
           }
+        },
+        {
+          width: 600
         });
         this.savedImg = true;
       }
