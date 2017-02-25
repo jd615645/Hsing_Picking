@@ -2,6 +2,7 @@ var vm = new Vue({
   el: '#app',
   data() {
     return {
+      waitLoading: true,
       exception: [],
       departmentData: {},
       // 課程代碼索引
@@ -61,7 +62,8 @@ var vm = new Vue({
       });
       $.each(exception[0][0]['exception'], (key, val) => {
         this.exception.push(val);
-      })
+      });
+      this.waitLoading = false;
     });
 
     this.getCareer(1052);
