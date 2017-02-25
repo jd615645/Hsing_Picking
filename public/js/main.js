@@ -80,6 +80,7 @@ var vm = new Vue({
         console.error('Action:', e.action);
         console.error('Trigger:', e.trigger);
       });
+    this.loadStorage();
   },
   computed: {
     calcCredits() {
@@ -225,6 +226,7 @@ var vm = new Vue({
       else {
         console.warn('code: ' + code + ',衝堂');
       }
+      this.saveToStorage();
     },
     addKeep(code) {
       var year = this.selectYear;
@@ -236,6 +238,7 @@ var vm = new Vue({
       }
 
       this.keepCourse.push(this.courseCode[year][code]);
+      this.saveToStorage();
     },
     removeCourse(code, type) {
       var year = this.selectYear;
@@ -378,6 +381,7 @@ var vm = new Vue({
         this.searchCourse = filteredCourse;
         this.startSearch = false;
       }, 10);
+      this.saveToStorage();
     },
     highlightSchedule(code, clear) {
       var year = this.selectYear;
@@ -474,9 +478,11 @@ var vm = new Vue({
     },
     clearSearch() {
       this.searchCourse = [];
+      this.saveToStorage();
     },
     clearKeep() {
       this.keepCourse = [];
+      this.saveToStorage();
     },
     clearCourse() {
       this.savedImg = false;
@@ -488,6 +494,7 @@ var vm = new Vue({
           this.schedule[ik][jk][0] = [];
         });
       });
+      this.saveToStorage();
     },
     clearAll() {
       this.clearSearch();
@@ -503,6 +510,8 @@ var vm = new Vue({
       this.selectDegree = '';
       this.selectDept = '';
       this.selectLevel = '';
+
+      this.saveToStorage();
     },
     outputCourse() {
       $("#outputCourse").modal();
@@ -570,8 +579,24 @@ var vm = new Vue({
       });
     },
     saveToStorage() {
+      window.localStorage['searchCourse'] = JSON.stringify(this.searchCourse);
+      window.localStorage['keepCourse'] = JSON.stringify(this.keepCourse);
+      window.localStorage['pickingCourse'] = JSON.stringify(this.pickingCourse);
+      window.localStorage['schedule'] = JSON.stringify(this.schedule);
     },
     loadStorage() {
+      if(!_.isUndefined(window.localStorage['searchCourse'])) {
+        this.searchCourse = JSON.parse(window.localStorage['searchCourse']);
+      }
+      if(!_.isUndefined(window.localStorage['keepCourse'])) {
+        this.keepCourse = JSON.parse(window.localStorage['keepCourse']);
+      }
+      if(!_.isUndefined(window.localStorage['pickingCourse'])) {
+        this.pickingCourse = JSON.parse(window.localStorage['pickingCourse']);
+      }
+      if(!_.isUndefined(window.localStorage['schedule'])) {
+        this.schedule = JSON.parse(window.localStorage['schedule']);
+      }
     }
   }
 });
