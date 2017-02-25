@@ -48,12 +48,12 @@
       ul#searchList.course-list
         li(v-for='course in searchCourse', @mouseenter='highlightSchedule(course.code, false)', @mouseleave='highlightSchedule(course.code, true)')
           .list-item
-            i.fa.fa-circle-o
+            span(v-show='course.obligatory_tf') 必
+            span(v-show='!course.obligatory_tf') 選
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
-            p.course-title {{ course.title_parsed.zh_TW }}
+            p.course-title {{ course.title_parsed.zh_TW | titleShort }}
             p.course-detail
               span {{ course.professor }}
-              span {{ course.obligatory }}
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
@@ -71,12 +71,12 @@
       ul#keepList.course-list
         li(v-for='course in keepCourse', @mouseenter='highlightSchedule(course.code, false)', @mouseleave='highlightSchedule(course.code, true)')
           .list-item
-            i.fa.fa-circle-o
+            span(v-show='course.obligatory_tf') 必
+            span(v-show='!course.obligatory_tf') 選
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
-            p.course-title {{ course.title_parsed.zh_TW }}
+            p.course-title {{ course.title_parsed.zh_TW | titleShort }}
             p.course-detail
               span {{ course.professor }}
-              span {{ course.obligatory }}
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}
@@ -95,12 +95,12 @@
 
         li(v-for='course in pickingCourse', @mouseenter='highlightSchedule(course.code, false)', @mouseleave='highlightSchedule(course.code, true)')
           .list-item
-            i.fa.fa-circle-o
+            span(v-show='course.obligatory_tf') 必
+            span(v-show='!course.obligatory_tf') 選
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
-            p.course-title {{ course.title_parsed.zh_TW }}
+            p.course-title {{ course.title_parsed.zh_TW | titleShort }}
             p.course-detail
               span {{ course.professor }}
-              span {{ course.obligatory }}
               span {{ course.credits }}學分
               span(v-if='course.location[0]') {{ course.location[0] }}
               span(v-if='course.location[1]') {{ course.location[1] }}

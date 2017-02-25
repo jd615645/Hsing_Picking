@@ -97,8 +97,20 @@ var vm = new Vue({
     detailDropdown() {
       this.searchDetail = '';
       return _.get(this.departmentData, [this.searchItem], []);
+    },
+    obligatoryIcon(inputText) {
+      console.log(inputText);
+      return inputText.slice(0,1);
     }
-
+  },
+  filters: {
+    titleShort: (title) => {
+      if (!title) return ''
+      if (title.length > 11) {
+        title = title.substr(0,13) + '…';
+      }
+      return title;
+    }
   },
   methods: {
     getCareer(selectYear) {
@@ -456,9 +468,6 @@ var vm = new Vue({
               this.startUpload = false;
             });
           }
-        },
-        {
-          width: 600
         });
         this.savedImg = true;
       }
@@ -560,5 +569,9 @@ var vm = new Vue({
         dataType: 'json'
       });
     },
+    saveToStorage() {
+    },
+    loadStorage() {
+    }
   }
 });
