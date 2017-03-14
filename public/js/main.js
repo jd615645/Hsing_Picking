@@ -46,8 +46,8 @@ var vm = new Vue({
       selfTime: '',
       // clipboard init
       clipboard: new Clipboard('#copyLink button'),
-      //imgpur APIv3 client id
-      imgurAPI: '30b5b43a2e55afd',
+      // imgpur APIv3 client id
+      imgurAPI: '30b5b43a2e55afd'
     }
   },
   mounted() {
@@ -57,515 +57,499 @@ var vm = new Vue({
     ).then((selectData, exception) => {
       $.each(selectData[0], (key, val) => {
         var item = val['item'],
-            detail = val['detail'];
-        this.departmentData[key] = detail;
-      });
+          detail = val['detail']
+        this.departmentData[key] = detail
+      })
       $.each(exception[0][0]['exception'], (key, val) => {
-        this.exception.push(val);
-      });
-      this.waitLoading = false;
-    });
+        this.exception.push(val)
+      })
+      this.waitLoading = false
+    })
 
-    this.getCareer(1052);
+    this.getCareer(1052)
 
     // init timetable
     this.schedule = _.map(Array(13), () => {
-      return _.map(Array(5), () => [{}, 0]);
-    });
+      return _.map(Array(5), () => [{}, 0])
+    })
 
     // clipboard init
     this.clipboard
       .on('success', (e) => {
-        e.clearSelection();
+        e.clearSelection()
       })
       .on('error', (e) => {
-        console.error('Action:', e.action);
-        console.error('Trigger:', e.trigger);
-      });
-    this.loadStorage();
+        console.error('Action:', e.action)
+        console.error('Trigger:', e.trigger)
+      })
+    this.loadStorage()
   },
   computed: {
     calcCredits() {
-      var credits = 0;
+      var credits = 0
       $.each(this.pickingCourse, (key, course) => {
-        credits += course['credits_parsed'];
-      });
-      return credits;
+        credits += course['credits_parsed']
+      })
+      return credits
     },
     deptDropdown() {
-      this.selectDept = '';
-      this.selectLevel = '';
-      return _.get(this.departmentData, [this.selectDegree], []);
+      this.selectDept = ''
+      this.selectLevel = ''
+      return _.get(this.departmentData, [this.selectDegree], [])
     },
     detailDropdown() {
-      this.searchDetail = '';
-      return _.get(this.departmentData, [this.searchItem], []);
+      this.searchDetail = ''
+      return _.get(this.departmentData, [this.searchItem], [])
     },
     obligatoryIcon(inputText) {
-      console.log(inputText);
-      return inputText.slice(0,1);
+      console.log(inputText)
+      return inputText.slice(0, 1)
     }
   },
   filters: {
     titleShort: (title) => {
       if (!title) return ''
       if (title.length > 11) {
-        title = title.substr(0,13) + '…';
+        title = title.substr(0, 13) + '…'
       }
-      return title;
+      return title
     }
   },
   methods: {
     getCareer(selectYear) {
       if (_.isEmpty(this.courseCode[selectYear])) {
         // 學士班->U, 碩班->G, 夜校->N, 其他->O
-        var careerType = ['U', 'G', 'N', 'O'];
-        var careerRequest = [];
+        var careerType = ['U', 'G', 'N', 'O']
+        var careerRequest = []
 
         $.each(careerType, (key, val) => {
-          careerRequest.push($.getJSON('./json/' + selectYear + '/career_' + val + '.json'));
-        });
+          careerRequest.push($.getJSON('./json/' + selectYear + '/career_' + val + '.json'))
+        })
         $.when
           .apply($, careerRequest)
           .then((...careerData) => {
-            // var careerData = [career_U, career_G, career_N, career_O];
+            // var careerData = [career_U, career_G, career_N, career_O]
             $.each(careerData, (ik, iv) => {
               $.each(iv[0]['course'], (jk, course) => {
-                _.setWith(this.courseCode, [selectYear, course.code], course, Object);
+                _.setWith(this.courseCode, [selectYear, course.code], course, Object)
 
                 // 依照this.courseDept[學年度][科系][班級]建立索引，內容微課程代碼
                 // https://lodash.com/docs/4.17.4#setWith
                 if (!_.has(this.courseDept, [selectYear, course.for_dept, course.class])) {
-                  _.setWith(this.courseDept, [selectYear, course.for_dept, course.class], [], Object);
+                  _.setWith(this.courseDept, [selectYear, course.for_dept, course.class], [], Object)
                 }
-                this.courseDept[selectYear][course.for_dept][course.class].push(course.code);
+                this.courseDept[selectYear][course.for_dept][course.class].push(course.code)
               })
-            });
+            })
 
-            // console.log(this.courseCode[selectYear]);
-            // console.log(this.courseDept[selectYear]);
-          });
+          // console.log(this.courseCode[selectYear])
+          // console.log(this.courseDept[selectYear])
+          })
       }
     },
     changeYear(num) {
-      this.getCareer(num);
-      this.selectDegree = 0;
-      this.selectDept = '';
-      this.selectLevel = '';
+      this.getCareer(num)
+      this.selectDegree = 0
+      this.selectDept = ''
+      this.selectLevel = ''
     },
     changeDepartment() {
-      this.selectLevel = '';
+      this.selectLevel = ''
     },
     changeLevel() {
       var year = this.selectYear,
-          dept = this.selectDept,
-          level = this.selectLevel;
+        dept = this.selectDept,
+        level = this.selectLevel
 
-      this.clearCourse();
+      this.clearCourse()
       // 區分AB班
       if (dept.slice(-1) == 'A' || dept.slice(-1) == 'B') {
-        level = level + dept.slice(-1);
-        dept = dept.replace(/ A| B/g,'');
+        level = level + dept.slice(-1)
+        dept = dept.replace(/ A| B/g, '')
       }
 
-      this.keepCourse = [];
-      this.pickingCourse = [];
-      this.credits = 0;
-
+      this.keepCourse = []
+      this.pickingCourse = []
+      this.credits = 0
 
       $.each(this.courseDept[year][dept][level], (key, code) => {
         //  確認是否必修
         var title = this.courseCode[year][code]['title'],
-            isObligatory = true;
+          isObligatory = true
 
-        _.forEach(this.exception, (val)=> {
-          if(!_.isNull(title.match(val))) {
-            isObligatory = false;
+        _.forEach(this.exception, (val) => {
+          if (!_.isNull(title.match(val))) {
+            isObligatory = false
           }
-        });
+        })
 
         if (this.courseCode[year][code]['obligatory_tf'] && isObligatory) {
-          this.addCourse(code);
+          this.addCourse(code)
+        }else {
+          this.addKeep(code)
         }
-        else {
-          this.addKeep(code);
-        }
-      });
+      })
     },
     warningAdd() {
-      if(_.isUndefined(this.pickingCourse[0])) {
-        this.changeLevel();
-      }
-      else {
-        $('#warningAdd').modal();
+      if (_.isUndefined(this.pickingCourse[0])) {
+        this.changeLevel()
+      }else {
+        $('#warningAdd').modal()
       }
     },
     addCourse(code, type) {
-      if(this.isFree(code)) {
-        this.savedImg = false;
-        var year = this.selectYear;
+      if (this.isFree(code)) {
+        this.savedImg = false
+        var year = this.selectYear
 
-        if(type == 'search') {
-          var removeSpace = _.findIndex(this.searchCourse, {code: code});
-          this.searchCourse.splice(removeSpace, 1);
+        if (type == 'search') {
+          var removeSpace = _.findIndex(this.searchCourse, {code: code})
+          this.searchCourse.splice(removeSpace, 1)
         }
-        else if(type == 'keep') {
-          var removeSpace = _.findIndex(this.keepCourse, {code: code});
-          this.keepCourse.splice(removeSpace, 1);
+        else if (type == 'keep') {
+          var removeSpace = _.findIndex(this.keepCourse, {code: code})
+          this.keepCourse.splice(removeSpace, 1)
         }
 
         // add course to picking list
-        this.pickingCourse.push(this.courseCode[year][code]);
+        this.pickingCourse.push(this.courseCode[year][code])
         $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
-                time = jv;
-            this.schedule[time-1][day-1][0] = this.courseCode[year][code];
-          });
-        });
-        this.highlightSchedule(code, true);
+              time = jv
+            this.schedule[time - 1][day - 1][0] = this.courseCode[year][code]
+          })
+        })
+        this.highlightSchedule(code, true)
+      }else {
+        console.warn('code: ' + code + ',衝堂')
       }
-      else {
-        console.warn('code: ' + code + ',衝堂');
-      }
-      this.saveToStorage();
+      this.saveToStorage()
     },
     addKeep(code) {
-      var year = this.selectYear;
-      var removeSpace = _.findIndex(this.searchCourse, {code: code});
+      var year = this.selectYear
+      var removeSpace = _.findIndex(this.searchCourse, {code: code})
 
       // if sourse is keep remove item
-      if(removeSpace != -1) {
-        this.searchCourse.splice(removeSpace, 1);
+      if (removeSpace != -1) {
+        this.searchCourse.splice(removeSpace, 1)
       }
 
-      this.keepCourse.push(this.courseCode[year][code]);
-      this.saveToStorage();
+      this.keepCourse.push(this.courseCode[year][code])
+      this.saveToStorage()
     },
     removeCourse(code, type) {
-      var year = this.selectYear;
+      var year = this.selectYear
 
       if (type == 'search') {
         // remove list course
-        var removeSpace = _.findIndex(this.searchCourse, {code: code});
+        var removeSpace = _.findIndex(this.searchCourse, {code: code})
 
-        this.searchCourse.splice(removeSpace, 1);
+        this.searchCourse.splice(removeSpace, 1)
       }
       else if (type == 'keep') {
-        var removeSpace = _.findIndex(this.keepCourse, {code: code});
+        var removeSpace = _.findIndex(this.keepCourse, {code: code})
 
-        this.keepCourse.splice(removeSpace, 1);
+        this.keepCourse.splice(removeSpace, 1)
       }
       else if (type == 'now') {
-        this.savedImg = false;
+        this.savedImg = false
 
-        var removeSpace = _.findIndex(this.pickingCourse, {code: code});
+        var removeSpace = _.findIndex(this.pickingCourse, {code: code})
 
-        this.pickingCourse.splice(removeSpace, 1);
+        this.pickingCourse.splice(removeSpace, 1)
         // remove table course
         $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
           $.each(iv.time, (jk, jv) => {
             var day = iv.day,
-            time = jv;
-            this.schedule[time-1][day-1][0] = {};
-          });
-        });
+              time = jv
+            this.schedule[time - 1][day - 1][0] = {}
+          })
+        })
       }
-      this.highlightSchedule(code, true);
+      this.highlightSchedule(code, true)
     },
     // 課程搜尋
     searchData() {
-      this.startSearch=true;
-      setTimeout( ()=> {
-        var deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同'];
+      this.startSearch = true
+      setTimeout(() => {
+        var deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同']
 
-        var year = this.selectYear;
+        var year = this.selectYear
         keyword = this.searchKeyword,
         item = this.searchItem,
         detail = this.searchDetail,
-        time = this.searchTime;
-        var filteredCourse = [];
+        time = this.searchTime
+        var filteredCourse = []
 
         if (keyword != '') {
-          if (keyword.length >1) {
-            var filtered = [];
+          if (keyword.length > 1) {
+            var filtered = []
             filtered = _.filter(this.courseCode[year], (course) => {
               if (!(_.isUndefined(course))) {
                 return course['code'] == keyword ||
-                       course['professor'].indexOf(keyword) > -1 ||
-                       course['title_parsed']['zh_TW'].indexOf(keyword) > -1;
+                  course['professor'].indexOf(keyword) > -1 ||
+                  course['title_parsed']['zh_TW'].indexOf(keyword) > -1
               }
-            });
+            })
 
-            filteredCourse = filtered;
-          }
-          else {
-            $('#warningModal').modal();
+            filteredCourse = filtered
+          }else {
+            $('#warningModal').modal()
           }
         }
 
         // 尚未寫無keyword
         if (item != '') {
-          var src = filteredCourse;
+          var src = filteredCourse
           if (keyword == '') {
-            src = this.courseCode[year];
+            src = this.courseCode[year]
           }
           filtered = _.filter(src, (course) => {
             if (!(_.isUndefined(course))) {
-              var dept = course['for_dept'];
+              var dept = course['for_dept']
               if (dept == '全校共同' && course['department'] == '通識教育中心') {
-                dept = '通識教育中心';
+                dept = '通識教育中心'
               }
-              return dept.indexOf(deptMap[item]) > -1;
+              return dept.indexOf(deptMap[item]) > -1
             }
-          });
-          filteredCourse = filtered;
+          })
+          filteredCourse = filtered
         }
 
         if (detail != '') {
-          var filtered = [];
+          var filtered = []
 
           if (item < 6) {
             if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
-              level = level + detail.slice(-1);
-              detail = dept.replace(/ A| B/g,'');
+              level = level + detail.slice(-1)
+              detail = dept.replace(/ A| B/g, '')
             }
 
             filtered = _.filter(filteredCourse, (course) => {
               if (!(_.isUndefined(course))) {
-                return course['for_dept'].indexOf(detail) > -1;
+                return course['for_dept'].indexOf(detail) > -1
               }
-            });
-          }
-          else {
+            })
+          }else {
             $.each(filteredCourse, (key, course) => {
-              type = this.courseType(course.code);
+              type = this.courseType(course.code)
               if (detail == type) {
-                filtered.push(course);
+                filtered.push(course)
               }
-            });
+            })
           }
-          filteredCourse = filtered;
+          filteredCourse = filtered
         }
 
         if (time != '') {
-          var filtered = [];
+          var filtered = []
           if (time != 0) {
             $.each(filteredCourse, (ik, course) => {
               if (!(_.isUndefined(course))) {
                 if (course['time'] != '*' && course['time'] != '') {
                   try {
                     $.each(course['time_parsed'], (jk, ji) => {
-                      var courseDay = ji['day'];
-                      if(courseDay == time) {
-                        filtered.push(course);
+                      var courseDay = ji['day']
+                      if (courseDay == time) {
+                        filtered.push(course)
                       }
-                    });
-                  }
-                  catch (e) {
-                    console.error(course);
+                    })
+                  } catch (e) {
+                    console.error(course)
                   }
                 }
               }
-            });
-          }
-          else {
+            })
+          }else {
             // find空堂
             $.each(filteredCourse, (ik, course) => {
               if (this.isFree(course['code'])) {
-                filtered.push(course);
+                filtered.push(course)
               }
-            });
+            })
           }
-          filteredCourse = filtered;
+          filteredCourse = filtered
         }
 
-        this.searchCourse = filteredCourse;
-        this.startSearch = false;
-      }, 10);
-      this.saveToStorage();
+        this.searchCourse = filteredCourse
+        this.startSearch = false
+      }, 10)
+      this.saveToStorage()
     },
     highlightSchedule(code, clear) {
-      var year = this.selectYear;
+      var year = this.selectYear
 
       try {
-        var thisCourse = this.courseCode[year][code];
+        var thisCourse = this.courseCode[year][code]
         if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
           $.each(thisCourse['time_parsed'], (ik, iv) => {
             $.each(iv.time, (jk, jv) => {
               var day = iv.day,
-                  time = jv;
+                time = jv
 
-              var course = this.schedule[time-1][day-1];
+              var course = this.schedule[time - 1][day - 1]
 
               if (clear) {
-                this.$set(this.schedule[time-1][day-1], '1', 0);
-              }
-              else {
+                this.$set(this.schedule[time - 1][day - 1], '1', 0)
+              }else {
                 if (_.isEmpty(course[0])) {
                   // is free
-                  this.$set(this.schedule[time-1][day-1], '1', 1);
-                }
-                else {
+                  this.$set(this.schedule[time - 1][day - 1], '1', 1)
+                }else {
                   // not free
-                  var scheduleCode = this.schedule[time-1][day-1][0]['code'];
+                  var scheduleCode = this.schedule[time - 1][day - 1][0]['code']
 
                   if (scheduleCode == code) {
                     // self
-                    this.$set(this.schedule[time-1][day-1], '1', 3);
-                  }
-                  else {
-                    this.$set(this.schedule[time-1][day-1], '1', 2);
+                    this.$set(this.schedule[time - 1][day - 1], '1', 3)
+                  }else {
+                    this.$set(this.schedule[time - 1][day - 1], '1', 2)
                   }
                 }
               }
 
-              var highlight = this.schedule[time-1][day-1][1];
-              // console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight);
-            });
-          });
+              var highlight = this.schedule[time - 1][day - 1][1]
+            // console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight)
+            })
+          })
         }
+      } catch (e) {
+        console.error(thisCourse)
       }
-      catch (e) {
-        console.error(thisCourse);
-      }
-
     },
     // 判斷是否衝堂
     isFree(code) {
-      var year = this.selectYear;
-      var free = true;
+      var year = this.selectYear
+      var free = true
       try {
-        var thisCourse = this.courseCode[year][code];
+        var thisCourse = this.courseCode[year][code]
 
         if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
           $.each(thisCourse['time_parsed'], (ik, iv) => {
             $.each(iv.time, (jk, jv) => {
               var day = iv.day,
-                  time = jv;
-              if(!_.isEmpty(this.schedule[time-1][day-1][0])) {
-                free = false;
+                time = jv
+              if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
+                free = false
               }
-            });
-          });
+            })
+          })
         }
+      } catch (e) {
+        console.error(thisCourse)
       }
-      catch (e) {
-        console.error(thisCourse);
-      }
-      return free;
+      return free
     },
     saveSchedule() {
-      $('#saveSchedule').modal();
-      if(!this.savedImg || pickingCourse.length != 0) {
-        this.startUpload = true;
+      $('#saveSchedule').modal()
+      if (!this.savedImg || pickingCourse.length != 0) {
+        this.startUpload = true
         html2canvas($('#scheduleBlock'), {
           onrendered: (canvas) => {
-            var canvasUrl = canvas.toDataURL('image/png');
+            var canvasUrl = canvas.toDataURL('image/png')
 
             this.uploadImg(canvasUrl).then((response) => {
-              if(response.success) {
-                this.imgUrl = response.data.link;
-                // $('#saveSchedule').modal();
+              if (response.success) {
+                this.imgUrl = response.data.link
+              // $('#saveSchedule').modal()
+              }else {
+                console.error('upload error')
               }
-              else {
-                console.error('upload error');
-              }
-              this.startUpload = false;
-            });
+              this.startUpload = false
+            })
           }
-        });
-        this.savedImg = true;
+        })
+        this.savedImg = true
       }
     },
     clearSearch() {
-      this.searchCourse = [];
-      this.saveToStorage();
+      this.searchCourse = []
+      this.saveToStorage()
     },
     clearKeep() {
-      this.keepCourse = [];
-      this.saveToStorage();
+      this.keepCourse = []
+      this.saveToStorage()
     },
     clearCourse() {
-      this.savedImg = false;
+      this.savedImg = false
 
-      this.pickingCourse = [];
+      this.pickingCourse = []
 
       $.each(this.schedule, (ik, iv) => {
         $.each(iv, (jk, jv) => {
-          this.schedule[ik][jk][0] = [];
-        });
-      });
-      this.saveToStorage();
+          this.schedule[ik][jk][0] = []
+        })
+      })
+      this.saveToStorage()
     },
     clearAll() {
-      this.clearSearch();
-      this.clearKeep();
-      this.clearCourse();
+      this.clearSearch()
+      this.clearKeep()
+      this.clearCourse()
 
-      this.searchKeyword = '';
-      this.searchItem = '';
-      this.searchDetail = '';
-      this.searchTime = '';
+      this.searchKeyword = ''
+      this.searchItem = ''
+      this.searchDetail = ''
+      this.searchTime = ''
 
-      this.selectYear = '1052';
-      this.selectDegree = '';
-      this.selectDept = '';
-      this.selectLevel = '';
+      this.selectYear = '1052'
+      this.selectDegree = ''
+      this.selectDept = ''
+      this.selectLevel = ''
 
-      this.saveToStorage();
+      this.saveToStorage()
     },
     outputCourse() {
-      $("#outputCourse").modal();
+      $('#outputCourse').modal()
     },
     checkClear() {
-      $("#checkClear").modal();
+      $('#checkClear').modal()
     },
     courseType(code) {
-      var year = this.selectYear;
-      var course = this.courseCode[year][code];
+      var year = this.selectYear
+      var course = this.courseCode[year][code]
       var generalType = {
         '人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
         '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
         '自然通識': ['生命科學學群', '環境科學學群', '物質科學學群', '數學統計學群', '工程科技學群']
-      };
-      var sol = '';
+      }
+      var sol = ''
 
-      if(course['discipline'] != '') {
+      if (course['discipline'] != '') {
         $.each(generalType, (ik, iv) => {
           $.each(iv, (jk, jv) => {
             if (course['discipline'] == jv) {
-              sol = ik;
+              sol = ik
             }
-          });
-        });
+          })
+        })
       }
       else if (course['department'] == '通識教育中心' || course['department'] == '夜中文') {
-        sol = '大學國文';
+        sol = '大學國文'
       }
       else if (course.obligatory == '必修' &&
-               (course['department'] == "語言中心" || course['department'] == "夜外文" || (course['department'] == "夜共同科" && ((course['title_parsed']['zh_TW']).substr(0,1) == '英文')))) {
-        sol = '大一英文';
+        (course['department'] == '語言中心' || course['department'] == '夜外文' || (course['department'] == '夜共同科' && ((course['title_parsed']['zh_TW']).substr(0, 1) == '英文')))) {
+        sol = '大一英文'
       }
       else if (course['department'] == '體育室' || course['department'] == '夜共同科') {
-        sol = '體育';
+        sol = '體育'
       }
       else if (course['department'] == '師資培育中心') {
-        sol = '教育學程';
+        sol = '教育學程'
       }
       else if (course['department'] == '教官室') {
-        sol = '國防教育';
+        sol = '國防教育'
       }
       else if (course['department'] == '語言中心') {
-        sol = '全校英外語';
+        sol = '全校英外語'
+      }else {
+        sol = course['obligatory']
       }
-      else {
-        sol = course['obligatory'];
-      }
-      return sol;
+      return sol
     },
     getOnepiceUrl(num) {
-      return 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=' + this.selectYear + '&v_class_nbr=' + num;
+      return 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=' + this.selectYear + '&v_class_nbr=' + num
     },
     uploadImg(canvasUrl) {
       return $.ajax({
@@ -578,27 +562,27 @@ var vm = new Vue({
           image: canvasUrl.split(',').pop()
         },
         dataType: 'json'
-      });
+      })
     },
     saveToStorage() {
-      window.localStorage['searchCourse'] = JSON.stringify(this.searchCourse);
-      window.localStorage['keepCourse'] = JSON.stringify(this.keepCourse);
-      window.localStorage['pickingCourse'] = JSON.stringify(this.pickingCourse);
-      window.localStorage['schedule'] = JSON.stringify(this.schedule);
+      window.localStorage['searchCourse'] = JSON.stringify(this.searchCourse)
+      window.localStorage['keepCourse'] = JSON.stringify(this.keepCourse)
+      window.localStorage['pickingCourse'] = JSON.stringify(this.pickingCourse)
+      window.localStorage['schedule'] = JSON.stringify(this.schedule)
     },
     loadStorage() {
-      if(!_.isUndefined(window.localStorage['searchCourse'])) {
-        this.searchCourse = JSON.parse(window.localStorage['searchCourse']);
+      if (!_.isUndefined(window.localStorage['searchCourse'])) {
+        this.searchCourse = JSON.parse(window.localStorage['searchCourse'])
       }
-      if(!_.isUndefined(window.localStorage['keepCourse'])) {
-        this.keepCourse = JSON.parse(window.localStorage['keepCourse']);
+      if (!_.isUndefined(window.localStorage['keepCourse'])) {
+        this.keepCourse = JSON.parse(window.localStorage['keepCourse'])
       }
-      if(!_.isUndefined(window.localStorage['pickingCourse'])) {
-        this.pickingCourse = JSON.parse(window.localStorage['pickingCourse']);
+      if (!_.isUndefined(window.localStorage['pickingCourse'])) {
+        this.pickingCourse = JSON.parse(window.localStorage['pickingCourse'])
       }
-      if(!_.isUndefined(window.localStorage['schedule'])) {
-        this.schedule = JSON.parse(window.localStorage['schedule']);
+      if (!_.isUndefined(window.localStorage['schedule'])) {
+        this.schedule = JSON.parse(window.localStorage['schedule'])
       }
     }
   }
-});
+})
