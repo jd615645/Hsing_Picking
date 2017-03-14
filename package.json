@@ -14,9 +14,5 @@
     "morgan": "~1.7.0",
     "pug": "~2.0.0-beta6",
     "serve-favicon": "~2.3.0"
-  },
-  "devDependencies": {
-    "bootstrap": "^3.3.7",
-    "font-awesome": "^4.7.0"
   }
 }
