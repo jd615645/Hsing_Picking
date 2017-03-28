@@ -26,7 +26,7 @@
 * 學分試算工具
 
 # License
-![CC](./public/img/by-nc-sa.svg)
+![CC](http://creativecommons.tw/sites/creativecommons.tw/files/cc-by-nc-sa-88x31.png)
 
 姓名標示-非商業性-相同方式分享 
 CC BY-NC-SA
