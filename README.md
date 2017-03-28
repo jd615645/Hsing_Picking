@@ -18,6 +18,12 @@
   ```
   npm install
   ```
+# Todo list
+* 手機板
+* 快速填入課表小工具
+* 圖片輸出尺寸調整
+* 不同年級課表存取
+* 學分試算工具
 
 # License
 ![CC](./public/img/by-nc-sa.svg)
