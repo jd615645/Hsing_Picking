@@ -236,6 +236,7 @@ var vm = new Vue({
       }
 
       this.keepCourse.push(this.courseCode[year][code])
+      this.highlightSchedule(code, true)
       this.saveToStorage()
     },
     removeCourse(code, type) {
