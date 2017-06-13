@@ -133,7 +133,7 @@ var vm = new Vue({
               $.each(iv[0]['course'], (jk, course) => {
                 _.setWith(this.courseCode, [selectYear, course.code], course, Object)
 
-                // 依照this.courseDept[學年度][科系][班級]建立索引，內容微課程代碼
+                // 依照this.courseDept[學年度][科系][班級]建立索引，內容為課程代碼
                 // https://lodash.com/docs/4.17.4#setWith
                 if (!_.has(this.courseDept, [selectYear, course.for_dept, course.class])) {
                   _.setWith(this.courseDept, [selectYear, course.for_dept, course.class], [], Object)
