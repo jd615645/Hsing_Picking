@@ -27,7 +27,7 @@ var vm = new Vue({
       // tab切換
       tabView: 0,
       // titleBar
-      selectYear: '1052',
+      selectYear: '1061',
       selectDegree: '',
       selectDept: '',
       selectLevel: '',
@@ -66,7 +66,7 @@ var vm = new Vue({
       this.waitLoading = false
     })
 
-    this.getCareer(1052)
+    this.getCareer(1061)
 
     // init timetable
     this.schedule = _.map(Array(13), () => {
@@ -493,7 +493,7 @@ var vm = new Vue({
       this.searchDetail = ''
       this.searchTime = ''
 
-      this.selectYear = '1052'
+      this.selectYear = '1061'
       this.selectDegree = ''
       this.selectDept = ''
       this.selectLevel = ''
