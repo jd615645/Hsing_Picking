@@ -18,12 +18,11 @@
     h4(v-if='tabView == 2') 目前課程
   #toolTab
     #searchTab.tool-tab(v-if='tabView == 0')
-      input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword')
+      input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword', @keyup.enter='searchData')
       select#changeItem.form-control(v-model='searchItem')
         option(value='') 選擇項目
         option(value='0') 學士班
         option(value='5') 進修學士班
-        option(value='1') 碩士班
         option(value='6') 通識
         option(value='7') 共同科目
       select#searchDetail.form-control(v-model='searchDetail', v-bind='{ disabled: searchItem == "" }')
