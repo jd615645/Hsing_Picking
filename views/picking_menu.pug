@@ -27,7 +27,7 @@
         option(value='7') 共同科目
       select#searchDetail.form-control(v-model='searchDetail', v-bind='{ disabled: searchItem === "" }')
         option(value='') 選擇分類
-        option(v-for='dept in detailDropdown') {{ dept.dept }}
+        option(v-for='dept in detailDropdown', v-bind:value='dept.code') {{ dept.dept }}
       select#searchTime.form-control(v-model='searchTime', v-bind='{ disabled: searchItem === -1 && searchKeyword === "" }')
         option(value='') 選擇時間
         option(value='0') 空堂

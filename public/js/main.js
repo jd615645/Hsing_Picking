@@ -137,16 +137,21 @@ let vm = new Vue({
       this.pickingCourse = []
       this.credits = 0
 
-      $.getJSON(this.restAPI + '/year/' + year + '/dept/' + dept + '/level/' + level, (courses) => {
-        _.forEach(courses, (course) => {
-          let code = course.code
-          // 確認是否必修
-          if (course.obligatory) {
-            this.addCourse(course)
-          }else {
-            this.addKeep(course)
-          }
-        })
+      let url = this.restAPI + '/year/' + year + '/dept/' + dept + '/level/' + level
+      $.getJSON(url, (courses) => {
+        if (!_.isUndefined(courses.message)) {
+          _.forEach(courses, (course) => {
+            let code = course.code
+            // 確認是否必修
+            if (course.obligatory) {
+              this.addCourse(course)
+            }else {
+              this.addKeep(course)
+            }
+          })
+        }else {
+          console.error(courses.message)
+        }
       })
     },
     warningAdd() {
@@ -234,123 +239,68 @@ let vm = new Vue({
     },
     // 課程搜尋
     searchData() {
+      let type = {
+        '0': 'dept',
+        '5': 'dept',
+        '6': 'general',
+        '7': 'common'
+      }
       let year = this.selectYear
       let keyword = this.searchKeyword
-      let item = this.searchItem
+      let item = !_.isUndefined(type[this.searchItem]) ? type[this.searchItem] : ''
       let detail = this.searchDetail
+      let week = this.searchTime
 
-      console.log('year: ' + year)
-      console.log('keyword: ' + keyword)
-      console.log('item: ' + item)
-      console.log('detail: ' + detail)
+      let urls = []
+      let urlRoot = this.restAPI + '/year/' + year
+      if (keyword !== '' || (item !== '' && detail !== '')) {
+        if (keyword === '' && item !== '' && detail !== '') {
+          let url = urlRoot + '/' + item + '/' + detail
+          switch (week) {
+            case '':
+            case '0':
+              urls.push(url)
+              break
+            default:
+              urls.push(url + '/week/' + week)
+              break
+          }
+        }
+        else if (keyword !== '' && item === '' && detail === '') {
+          let urlAry = [
+            urlRoot + '/code/' + keyword,
+            urlRoot + '/title/' + keyword,
+            urlRoot + '/professor/' + keyword
+          ]
+          switch (week) {
+            case '':
+            case '0':
+              _.each(urlAry, (url) => {
+                urls.push(url)
+              })
+              break
+            default:
+              _.each(urlAry, (url) => {
+                urls.push(url + '/week/' + week)
+              })
+              break
+          }
+        }
+        let ary = []
+        _.each(urls, (url) => {
+          ary.push($.getJSON(url))
+        })
+        $.when
+          .apply($, ary)
+          .then((...inputData) => {
+            _.each(inputData, (courses) => {
+              _.each(courses[0], (course) => {
+                this.searchCourse.push(course)
+              })
+            })
+          })
+      }
     },
-    // searchData() {
-    //   this.startSearch = true
-    //   setTimeout(() => {
-    //     let deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同']
-
-    //     let year = this.selectYear
-    //     let keyword = this.searchKeyword
-    //     let item = this.searchItem
-    //     let detail = this.searchDetail
-    //     time = this.searchTime
-    //     let filteredCourse = []
-
-    //     if (keyword != '') {
-    //       if (keyword.length > 1) {
-    //         let filtered = []
-    //         filtered = _.filter(this.courseCode[year], (course) => {
-    //           if (!(_.isUndefined(course))) {
-    //             return course['code'] == keyword ||
-    //               course['professor'].indexOf(keyword) > -1 ||
-    //               course['title_parsed']['zh_TW'].indexOf(keyword) > -1
-    //           }
-    //         })
-
-    //         filteredCourse = filtered
-    //       }else {
-    //         $('#warningModal').modal()
-    //       }
-    //     }
-
-    //     // 尚未寫無keyword
-    //     if (item != '') {
-    //       let src = filteredCourse
-    //       if (keyword == '') {
-    //         src = this.courseCode[year]
-    //       }
-    //       filtered = _.filter(src, (course) => {
-    //         if (!(_.isUndefined(course))) {
-    //           let dept = course['for_dept']
-    //           if (dept == '全校共同' && course['department'] == '通識教育中心') {
-    //             dept = '通識教育中心'
-    //           }
-    //           return dept.indexOf(deptMap[item]) > -1
-    //         }
-    //       })
-    //       filteredCourse = filtered
-    //     }
-
-    //     if (detail != '') {
-    //       let filtered = []
-
-    //       if (item < 6) {
-    //         if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
-    //           level = level + detail.slice(-1)
-    //           detail = dept.replace(/ A| B/g, '')
-    //         }
-
-    //         filtered = _.filter(filteredCourse, (course) => {
-    //           if (!(_.isUndefined(course))) {
-    //             return course['for_dept'].indexOf(detail) > -1
-    //           }
-    //         })
-    //       }else {
-    //         $.each(filteredCourse, (key, course) => {
-    //           type = this.courseType(course.code)
-    //           if (detail == type) {
-    //             filtered.push(course)
-    //           }
-    //         })
-    //       }
-    //       filteredCourse = filtered
-    //     }
-
-    //     if (time != '') {
-    //       let filtered = []
-    //       if (time != 0) {
-    //         $.each(filteredCourse, (ik, course) => {
-    //           if (!(_.isUndefined(course))) {
-    //             if (course['time'] != '*' && course['time'] != '') {
-    //               try {
-    //                 $.each(course['time_parsed'], (jk, ji) => {
-    //                   let courseDay = ji['day']
-    //                   if (courseDay == time) {
-    //                     filtered.push(course)
-    //                   }
-    //                 })
-    //               } catch (e) {
-    //                 console.error(course)
-    //               }
-    //             }
-    //           }
-    //         })
-    //       }else {
-    //         // find空堂
-    //         $.each(filteredCourse, (ik, course) => {
-    //           if (this.isFree(course)) {
-    //             filtered.push(course)
-    //           }
-    //         })
-    //       }
-    //       filteredCourse = filtered
-    //     }
-
-    //     this.searchCourse = filteredCourse
-    //     this.startSearch = false
-    //   }, 10)
-    //   this.saveToStorage()
-    // },
     highlightSchedule(course, clear) {
       let periods = [course.time_1, course.time_2]
 
