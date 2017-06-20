@@ -1,4 +1,4 @@
-var vm = new Vue({
+let vm = new Vue({
   el: '#app',
   data() {
     return {
@@ -56,7 +56,7 @@ var vm = new Vue({
       $.getJSON('./json/exception.json')
     ).then((selectData, exception) => {
       $.each(selectData[0], (key, val) => {
-        var item = val['item'],
+        let item = val['item'],
           detail = val['detail']
         this.departmentData[key] = detail
       })
@@ -86,7 +86,7 @@ var vm = new Vue({
   },
   computed: {
     calcCredits() {
-      var credits = 0
+      let credits = 0
       $.each(this.pickingCourse, (key, course) => {
         credits += course['credits_parsed']
       })
@@ -119,8 +119,8 @@ var vm = new Vue({
     getCareer(selectYear) {
       if (_.isEmpty(this.courseCode[selectYear])) {
         // 學士班->U, 碩班->G, 夜校->N, 其他->O
-        var careerType = ['U', 'G', 'N', 'O']
-        var careerRequest = []
+        let careerType = ['U', 'G', 'N', 'O']
+        let careerRequest = []
 
         $.each(careerType, (key, val) => {
           careerRequest.push($.getJSON('./json/' + selectYear + '/career_' + val + '.json'))
@@ -128,7 +128,7 @@ var vm = new Vue({
         $.when
           .apply($, careerRequest)
           .then((...careerData) => {
-            // var careerData = [career_U, career_G, career_N, career_O]
+            // let careerData = [career_U, career_G, career_N, career_O]
             $.each(careerData, (ik, iv) => {
               $.each(iv[0]['course'], (jk, course) => {
                 _.setWith(this.courseCode, [selectYear, course.code], course, Object)
@@ -157,11 +157,12 @@ var vm = new Vue({
       this.selectLevel = ''
     },
     changeLevel() {
-      var year = this.selectYear,
-        dept = this.selectDept,
-        level = this.selectLevel
+      let year = this.selectYear
+      let  dept = this.selectDept
+      let  level = this.selectLevel
 
       this.clearCourse()
+      
       // 區分AB班
       if (dept.slice(-1) == 'A' || dept.slice(-1) == 'B') {
         level = level + dept.slice(-1)
@@ -174,7 +175,7 @@ var vm = new Vue({
 
       $.each(this.courseDept[year][dept][level], (key, code) => {
         //  確認是否必修
-        var title = this.courseCode[year][code]['title'],
+        let title = this.courseCode[year][code]['title'],
           isObligatory = true
 
         _.forEach(this.exception, (val) => {
@@ -200,14 +201,14 @@ var vm = new Vue({
     addCourse(code, type) {
       if (this.isFree(code)) {
         this.savedImg = false
-        var year = this.selectYear
+        let year = this.selectYear
 
         if (type == 'search') {
-          var removeSpace = _.findIndex(this.searchCourse, {code: code})
+          letremoveSpace = _.findIndex(this.searchCourse, {code: code})
           this.searchCourse.splice(removeSpace, 1)
         }
         else if (type == 'keep') {
-          var removeSpace = _.findIndex(this.keepCourse, {code: code})
+          let removeSpace = _.findIndex(this.keepCourse, {code: code})
           this.keepCourse.splice(removeSpace, 1)
         }
 
@@ -215,8 +216,8 @@ var vm = new Vue({
         this.pickingCourse.push(this.courseCode[year][code])
         $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
           $.each(iv.time, (jk, jv) => {
-            var day = iv.day,
-              time = jv
+            let day = iv.day
+            let time = jv
             this.schedule[time - 1][day - 1][0] = this.courseCode[year][code]
           })
         })
@@ -227,8 +228,8 @@ var vm = new Vue({
       this.saveToStorage()
     },
     addKeep(code) {
-      var year = this.selectYear
-      var removeSpace = _.findIndex(this.searchCourse, {code: code})
+      let year = this.selectYear
+      let removeSpace = _.findIndex(this.searchCourse, {code: code})
 
       // if sourse is keep remove item
       if (removeSpace != -1) {
@@ -240,29 +241,29 @@ var vm = new Vue({
       this.saveToStorage()
     },
     removeCourse(code, type) {
-      var year = this.selectYear
+      let year = this.selectYear
 
       if (type == 'search') {
         // remove list course
-        var removeSpace = _.findIndex(this.searchCourse, {code: code})
+        let removeSpace = _.findIndex(this.searchCourse, {code: code})
 
         this.searchCourse.splice(removeSpace, 1)
       }
       else if (type == 'keep') {
-        var removeSpace = _.findIndex(this.keepCourse, {code: code})
+        let removeSpace = _.findIndex(this.keepCourse, {code: code})
 
         this.keepCourse.splice(removeSpace, 1)
       }
       else if (type == 'now') {
         this.savedImg = false
 
-        var removeSpace = _.findIndex(this.pickingCourse, {code: code})
+        let removeSpace = _.findIndex(this.pickingCourse, {code: code})
 
         this.pickingCourse.splice(removeSpace, 1)
         // remove table course
         $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
           $.each(iv.time, (jk, jv) => {
-            var day = iv.day,
+            let day = iv.day,
               time = jv
             this.schedule[time - 1][day - 1][0] = {}
           })
@@ -274,18 +275,18 @@ var vm = new Vue({
     searchData() {
       this.startSearch = true
       setTimeout(() => {
-        var deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同']
+        let deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同']
 
-        var year = this.selectYear
+        let year = this.selectYear
         keyword = this.searchKeyword,
         item = this.searchItem,
         detail = this.searchDetail,
         time = this.searchTime
-        var filteredCourse = []
+        let filteredCourse = []
 
         if (keyword != '') {
           if (keyword.length > 1) {
-            var filtered = []
+            let filtered = []
             filtered = _.filter(this.courseCode[year], (course) => {
               if (!(_.isUndefined(course))) {
                 return course['code'] == keyword ||
@@ -302,13 +303,13 @@ var vm = new Vue({
 
         // 尚未寫無keyword
         if (item != '') {
-          var src = filteredCourse
+          let src = filteredCourse
           if (keyword == '') {
             src = this.courseCode[year]
           }
           filtered = _.filter(src, (course) => {
             if (!(_.isUndefined(course))) {
-              var dept = course['for_dept']
+              let dept = course['for_dept']
               if (dept == '全校共同' && course['department'] == '通識教育中心') {
                 dept = '通識教育中心'
               }
@@ -319,7 +320,7 @@ var vm = new Vue({
         }
 
         if (detail != '') {
-          var filtered = []
+          let filtered = []
 
           if (item < 6) {
             if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
@@ -344,14 +345,14 @@ var vm = new Vue({
         }
 
         if (time != '') {
-          var filtered = []
+          let filtered = []
           if (time != 0) {
             $.each(filteredCourse, (ik, course) => {
               if (!(_.isUndefined(course))) {
                 if (course['time'] != '*' && course['time'] != '') {
                   try {
                     $.each(course['time_parsed'], (jk, ji) => {
-                      var courseDay = ji['day']
+                      let courseDay = ji['day']
                       if (courseDay == time) {
                         filtered.push(course)
                       }
@@ -379,17 +380,17 @@ var vm = new Vue({
       this.saveToStorage()
     },
     highlightSchedule(code, clear) {
-      var year = this.selectYear
+      let year = this.selectYear
 
       try {
-        var thisCourse = this.courseCode[year][code]
+        let thisCourse = this.courseCode[year][code]
         if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
           $.each(thisCourse['time_parsed'], (ik, iv) => {
             $.each(iv.time, (jk, jv) => {
-              var day = iv.day,
+              let day = iv.day,
                 time = jv
 
-              var course = this.schedule[time - 1][day - 1]
+              let course = this.schedule[time - 1][day - 1]
 
               if (clear) {
                 this.$set(this.schedule[time - 1][day - 1], '1', 0)
@@ -399,7 +400,7 @@ var vm = new Vue({
                   this.$set(this.schedule[time - 1][day - 1], '1', 1)
                 }else {
                   // not free
-                  var scheduleCode = this.schedule[time - 1][day - 1][0]['code']
+                  let scheduleCode = this.schedule[time - 1][day - 1][0]['code']
 
                   if (scheduleCode == code) {
                     // self
@@ -410,7 +411,7 @@ var vm = new Vue({
                 }
               }
 
-              var highlight = this.schedule[time - 1][day - 1][1]
+              let highlight = this.schedule[time - 1][day - 1][1]
             // console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight)
             })
           })
@@ -421,15 +422,15 @@ var vm = new Vue({
     },
     // 判斷是否衝堂
     isFree(code) {
-      var year = this.selectYear
-      var free = true
+      let year = this.selectYear
+      let free = true
       try {
-        var thisCourse = this.courseCode[year][code]
+        let thisCourse = this.courseCode[year][code]
 
         if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
           $.each(thisCourse['time_parsed'], (ik, iv) => {
             $.each(iv.time, (jk, jv) => {
-              var day = iv.day,
+              let day = iv.day,
                 time = jv
               if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
                 free = false
@@ -448,7 +449,7 @@ var vm = new Vue({
         this.startUpload = true
         html2canvas($('#scheduleBlock'), {
           onrendered: (canvas) => {
-            var canvasUrl = canvas.toDataURL('image/png')
+            let canvasUrl = canvas.toDataURL('image/png')
 
             this.uploadImg(canvasUrl).then((response) => {
               if (response.success) {
@@ -508,14 +509,14 @@ var vm = new Vue({
       $('#checkClear').modal()
     },
     courseType(code) {
-      var year = this.selectYear
-      var course = this.courseCode[year][code]
-      var generalType = {
+      let year = this.selectYear
+      let course = this.courseCode[year][code]
+      let generalType = {
         '人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
         '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
         '自然通識': ['生命科學學群', '環境科學學群', '物質科學學群', '數學統計學群', '工程科技學群']
       }
-      var sol = ''
+      let sol = ''
 
       if (course['discipline'] != '') {
         $.each(generalType, (ik, iv) => {
