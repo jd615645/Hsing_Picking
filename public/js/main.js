@@ -68,8 +68,6 @@ let vm = new Vue({
       this.waitLoading = false
     })
 
-    this.getCareer(1061)
-
     // init timetable
     this.schedule = _.map(Array(13), () => {
       return _.map(Array(5), () => [{}, 0])
@@ -102,10 +100,6 @@ let vm = new Vue({
     detailDropdown() {
       this.searchDetail = ''
       return _.get(this.departmentData, [this.searchItem], [])
-    },
-    obligatoryIcon(inputText) {
-      console.log(inputText)
-      return inputText.slice(0, 1)
     }
   },
   filters: {
@@ -118,39 +112,7 @@ let vm = new Vue({
     }
   },
   methods: {
-    getCareer(selectYear) {
-      if (_.isEmpty(this.courseCode[selectYear])) {
-        // 學士班->U, 碩班->G, 夜校->N, 其他->O
-        let careerType = ['U', 'G', 'N', 'O']
-        let careerRequest = []
-
-        $.each(careerType, (key, val) => {
-          careerRequest.push($.getJSON('./json/' + selectYear + '/career_' + val + '.json'))
-        })
-        $.when
-          .apply($, careerRequest)
-          .then((...careerData) => {
-            // let careerData = [career_U, career_G, career_N, career_O]
-            $.each(careerData, (ik, iv) => {
-              $.each(iv[0]['course'], (jk, course) => {
-                _.setWith(this.courseCode, [selectYear, course.code], course, Object)
-
-                // 依照this.courseDept[學年度][科系][班級]建立索引，內容為課程代碼
-                // https://lodash.com/docs/4.17.4#setWith
-                if (!_.has(this.courseDept, [selectYear, course.for_dept, course.class])) {
-                  _.setWith(this.courseDept, [selectYear, course.for_dept, course.class], [], Object)
-                }
-                this.courseDept[selectYear][course.for_dept][course.class].push(course.code)
-              })
-            })
-
-          // console.log(this.courseCode[selectYear])
-          // console.log(this.courseDept[selectYear])
-          })
-      }
-    },
     changeYear(num) {
-      this.getCareer(num)
       this.selectDegree = 0
       this.selectDept = ''
       this.selectLevel = ''
@@ -186,24 +148,6 @@ let vm = new Vue({
           }
         })
       })
-
-      // $.each(this.courseDept[year][dept][level], (key, code) => {
-      //   //  確認是否必修
-      //   let title = this.courseCode[year][code]['title'],
-      //     isObligatory = true
-
-      //   _.forEach(this.exception, (val) => {
-      //     if (!_.isNull(title.match(val))) {
-      //       isObligatory = false
-      //     }
-      //   })
-
-    //   if (this.courseCode[year][code]['obligatory_tf'] && isObligatory) {
-    //     this.addCourse(code)
-    //   }else {
-    //     this.addKeep(code)
-    //   }
-    // })
     },
     warningAdd() {
       if (_.isUndefined(this.pickingCourse[0])) {
@@ -212,11 +156,20 @@ let vm = new Vue({
         $('#warningAdd').modal()
       }
     },
-    addCourse(course) {
+    addCourse(course, type) {
       let periods = [course.time_1, course.time_2]
 
-      this.pickingCourse.push(course)
       if (this.isFree(course)) {
+        if (type === 'search') {
+          let removeSpace = _.findIndex(this.searchCourse, {code: course.code})
+          this.searchCourse.splice(removeSpace, 1)
+        }
+        else if (type === 'keep') {
+          let removeSpace = _.findIndex(this.keepCourse, {code: course.code})
+          this.keepCourse.splice(removeSpace, 1)
+        }
+
+        this.pickingCourse.push(course)
         _.forEach(periods, (period) => {
           if (period !== '') {
             let parseTime = _.map(_.split(period, '.'), _.parseInt)
@@ -228,32 +181,179 @@ let vm = new Vue({
             })
           }
         })
+        this.highlightSchedule(course, true)
+      }else {
+        console.warn('code: ' + course.code + ',衝堂')
       }
+      this.saveToStorage()
     },
-    // addCourse(code) {
-    //   if (this.this.(code)) {
-    //     this.savedImg = false
-    //     let year = this.selectYear
-
-    //     // add course to picking list
-    //     this.pickingCourse.push(this.courseCode[year][code])
-    //     $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
-    //       $.each(iv.time, (jk, jv) => {
-    //         let day = iv.day
-    //         let time = jv
-    //         this.schedule[time - 1][day - 1][0] = this.courseCode[year][code]
-    //       })
-    //     })
-    //     this.highlightSchedule(code, true)
-    //   }else {
-    //     console.warn('code: ' + code + ',衝堂')
-    //   }
-    //   this.saveToStorage()
-    // },
     addKeep(course) {
       let periods = [course.time_1, course.time_2]
+      let removeSpace = _.findIndex(this.searchCourse, {code: course.code})
 
-      this.pickingCourse.push(course)
+      // if sourse is keep remove item
+      if (removeSpace != -1) {
+        this.searchCourse.splice(removeSpace, 1)
+      }
+
+      this.keepCourse.push(course)
+      this.highlightSchedule(course, true)
+      this.saveToStorage()
+    },
+    removeCourse(course, type) {
+      if (type === 'search') {
+        // remove list course
+        let removeSpace = _.findIndex(this.searchCourse, {code: course.code})
+        this.searchCourse.splice(removeSpace, 1)
+      }
+      else if (type === 'keep') {
+        let removeSpace = _.findIndex(this.keepCourse, {code: course.code})
+        this.keepCourse.splice(removeSpace, 1)
+      }
+      else if (type === 'now') {
+        this.savedImg = false
+
+        let removeSpace = _.findIndex(this.pickingCourse, {code: course.code})
+        this.pickingCourse.splice(removeSpace, 1)
+
+        let periods = [course.time_1, course.time_2]
+        // remove table course
+        _.forEach(periods, (period) => {
+          if (period !== '') {
+            let parseTime = _.map(_.split(period, '.'), _.parseInt)
+            let day = parseTime[0]
+            let times = _.drop(parseTime)
+
+            _.forEach(times, (time) => {
+              this.schedule[time - 1][day - 1][0] = {}
+            })
+          }
+        })
+      }
+      this.highlightSchedule(course, true)
+    },
+    // 課程搜尋
+    searchData() {
+      let year = this.selectYear
+      let keyword = this.searchKeyword
+      let item = this.searchItem
+      let detail = this.searchDetail
+
+      console.log('year: ' + year)
+      console.log('keyword: ' + keyword)
+      console.log('item: ' + item)
+      console.log('detail: ' + detail)
+    },
+    // searchData() {
+    //   this.startSearch = true
+    //   setTimeout(() => {
+    //     let deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同']
+
+    //     let year = this.selectYear
+    //     let keyword = this.searchKeyword
+    //     let item = this.searchItem
+    //     let detail = this.searchDetail
+    //     time = this.searchTime
+    //     let filteredCourse = []
+
+    //     if (keyword != '') {
+    //       if (keyword.length > 1) {
+    //         let filtered = []
+    //         filtered = _.filter(this.courseCode[year], (course) => {
+    //           if (!(_.isUndefined(course))) {
+    //             return course['code'] == keyword ||
+    //               course['professor'].indexOf(keyword) > -1 ||
+    //               course['title_parsed']['zh_TW'].indexOf(keyword) > -1
+    //           }
+    //         })
+
+    //         filteredCourse = filtered
+    //       }else {
+    //         $('#warningModal').modal()
+    //       }
+    //     }
+
+    //     // 尚未寫無keyword
+    //     if (item != '') {
+    //       let src = filteredCourse
+    //       if (keyword == '') {
+    //         src = this.courseCode[year]
+    //       }
+    //       filtered = _.filter(src, (course) => {
+    //         if (!(_.isUndefined(course))) {
+    //           let dept = course['for_dept']
+    //           if (dept == '全校共同' && course['department'] == '通識教育中心') {
+    //             dept = '通識教育中心'
+    //           }
+    //           return dept.indexOf(deptMap[item]) > -1
+    //         }
+    //       })
+    //       filteredCourse = filtered
+    //     }
+
+    //     if (detail != '') {
+    //       let filtered = []
+
+    //       if (item < 6) {
+    //         if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
+    //           level = level + detail.slice(-1)
+    //           detail = dept.replace(/ A| B/g, '')
+    //         }
+
+    //         filtered = _.filter(filteredCourse, (course) => {
+    //           if (!(_.isUndefined(course))) {
+    //             return course['for_dept'].indexOf(detail) > -1
+    //           }
+    //         })
+    //       }else {
+    //         $.each(filteredCourse, (key, course) => {
+    //           type = this.courseType(course.code)
+    //           if (detail == type) {
+    //             filtered.push(course)
+    //           }
+    //         })
+    //       }
+    //       filteredCourse = filtered
+    //     }
+
+    //     if (time != '') {
+    //       let filtered = []
+    //       if (time != 0) {
+    //         $.each(filteredCourse, (ik, course) => {
+    //           if (!(_.isUndefined(course))) {
+    //             if (course['time'] != '*' && course['time'] != '') {
+    //               try {
+    //                 $.each(course['time_parsed'], (jk, ji) => {
+    //                   let courseDay = ji['day']
+    //                   if (courseDay == time) {
+    //                     filtered.push(course)
+    //                   }
+    //                 })
+    //               } catch (e) {
+    //                 console.error(course)
+    //               }
+    //             }
+    //           }
+    //         })
+    //       }else {
+    //         // find空堂
+    //         $.each(filteredCourse, (ik, course) => {
+    //           if (this.isFree(course)) {
+    //             filtered.push(course)
+    //           }
+    //         })
+    //       }
+    //       filteredCourse = filtered
+    //     }
+
+    //     this.searchCourse = filteredCourse
+    //     this.startSearch = false
+    //   }, 10)
+    //   this.saveToStorage()
+    // },
+    highlightSchedule(course, clear) {
+      let periods = [course.time_1, course.time_2]
+
       _.forEach(periods, (period) => {
         if (period !== '') {
           let parseTime = _.map(_.split(period, '.'), _.parseInt)
@@ -261,203 +361,29 @@ let vm = new Vue({
           let times = _.drop(parseTime)
 
           _.forEach(times, (time) => {
-            this.schedule[time - 1][day - 1][0] = course
+            let tableCourse = this.schedule[time - 1][day - 1]
+
+            if (clear) {
+              this.$set(this.schedule[time - 1][day - 1], '1', 0)
+            } else {
+              if (_.isEmpty(tableCourse)) {
+                // is free
+                this.$set(this.schedule[time - 1][day - 1], '1', 1)
+              } else {
+                // not free
+                let scheduleCode = this.schedule[time - 1][day - 1][0]['code']
+
+                if (scheduleCode === course.code) {
+                  // self
+                  this.$set(this.schedule[time - 1][day - 1], '1', 3)
+                } else {
+                  this.$set(this.schedule[time - 1][day - 1], '1', 2)
+                }
+              }
+            }
           })
         }
       })
-    },
-    // addKeep(code) {
-    //   let year = this.selectYear
-    //   let removeSpace = _.findIndex(this.searchCourse, {code: code})
-
-    //   // if sourse is keep remove item
-    //   if (removeSpace != -1) {
-    //     this.searchCourse.splice(removeSpace, 1)
-    //   }
-
-    //   this.keepCourse.push(this.courseCode[year][code])
-    //   this.highlightSchedule(code, true)
-    //   this.saveToStorage()
-    // },
-    removeCourse(code, type) {
-      let year = this.selectYear
-
-      if (type == 'search') {
-        // remove list course
-        let removeSpace = _.findIndex(this.searchCourse, {code: code})
-
-        this.searchCourse.splice(removeSpace, 1)
-      }
-      else if (type == 'keep') {
-        let removeSpace = _.findIndex(this.keepCourse, {code: code})
-
-        this.keepCourse.splice(removeSpace, 1)
-      }
-      else if (type == 'now') {
-        this.savedImg = false
-
-        let removeSpace = _.findIndex(this.pickingCourse, {code: code})
-
-        this.pickingCourse.splice(removeSpace, 1)
-        // remove table course
-        $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
-          $.each(iv.time, (jk, jv) => {
-            let day = iv.day,
-              time = jv
-            this.schedule[time - 1][day - 1][0] = {}
-          })
-        })
-      }
-      this.highlightSchedule(code, true)
-    },
-    // 課程搜尋
-    searchData() {
-      this.startSearch = true
-      setTimeout(() => {
-        let deptMap = ['學士班', '碩士班', '', '', '', '進修學士班', '通識教育中心', '全校共同']
-
-        let year = this.selectYear
-        keyword = this.searchKeyword,
-        item = this.searchItem,
-        detail = this.searchDetail,
-        time = this.searchTime
-        let filteredCourse = []
-
-        if (keyword != '') {
-          if (keyword.length > 1) {
-            let filtered = []
-            filtered = _.filter(this.courseCode[year], (course) => {
-              if (!(_.isUndefined(course))) {
-                return course['code'] == keyword ||
-                  course['professor'].indexOf(keyword) > -1 ||
-                  course['title_parsed']['zh_TW'].indexOf(keyword) > -1
-              }
-            })
-
-            filteredCourse = filtered
-          }else {
-            $('#warningModal').modal()
-          }
-        }
-
-        // 尚未寫無keyword
-        if (item != '') {
-          let src = filteredCourse
-          if (keyword == '') {
-            src = this.courseCode[year]
-          }
-          filtered = _.filter(src, (course) => {
-            if (!(_.isUndefined(course))) {
-              let dept = course['for_dept']
-              if (dept == '全校共同' && course['department'] == '通識教育中心') {
-                dept = '通識教育中心'
-              }
-              return dept.indexOf(deptMap[item]) > -1
-            }
-          })
-          filteredCourse = filtered
-        }
-
-        if (detail != '') {
-          let filtered = []
-
-          if (item < 6) {
-            if (detail.slice(-1) == 'A' || detail.slice(-1) == 'B') {
-              level = level + detail.slice(-1)
-              detail = dept.replace(/ A| B/g, '')
-            }
-
-            filtered = _.filter(filteredCourse, (course) => {
-              if (!(_.isUndefined(course))) {
-                return course['for_dept'].indexOf(detail) > -1
-              }
-            })
-          }else {
-            $.each(filteredCourse, (key, course) => {
-              type = this.courseType(course.code)
-              if (detail == type) {
-                filtered.push(course)
-              }
-            })
-          }
-          filteredCourse = filtered
-        }
-
-        if (time != '') {
-          let filtered = []
-          if (time != 0) {
-            $.each(filteredCourse, (ik, course) => {
-              if (!(_.isUndefined(course))) {
-                if (course['time'] != '*' && course['time'] != '') {
-                  try {
-                    $.each(course['time_parsed'], (jk, ji) => {
-                      let courseDay = ji['day']
-                      if (courseDay == time) {
-                        filtered.push(course)
-                      }
-                    })
-                  } catch (e) {
-                    console.error(course)
-                  }
-                }
-              }
-            })
-          }else {
-            // find空堂
-            $.each(filteredCourse, (ik, course) => {
-              if (this.isFree(course['code'])) {
-                filtered.push(course)
-              }
-            })
-          }
-          filteredCourse = filtered
-        }
-
-        this.searchCourse = filteredCourse
-        this.startSearch = false
-      }, 10)
-      this.saveToStorage()
-    },
-    highlightSchedule(code, clear) {
-      let year = this.selectYear
-
-      try {
-        let thisCourse = this.courseCode[year][code]
-        if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
-          $.each(thisCourse['time_parsed'], (ik, iv) => {
-            $.each(iv.time, (jk, jv) => {
-              let day = iv.day,
-                time = jv
-
-              let course = this.schedule[time - 1][day - 1]
-
-              if (clear) {
-                this.$set(this.schedule[time - 1][day - 1], '1', 0)
-              }else {
-                if (_.isEmpty(course[0])) {
-                  // is free
-                  this.$set(this.schedule[time - 1][day - 1], '1', 1)
-                }else {
-                  // not free
-                  let scheduleCode = this.schedule[time - 1][day - 1][0]['code']
-
-                  if (scheduleCode == code) {
-                    // self
-                    this.$set(this.schedule[time - 1][day - 1], '1', 3)
-                  }else {
-                    this.$set(this.schedule[time - 1][day - 1], '1', 2)
-                  }
-                }
-              }
-
-              let highlight = this.schedule[time - 1][day - 1][1]
-            // console.log('(' + (time-1) + ', ' + (day-1) + ') ' + highlight)
-            })
-          })
-        }
-      } catch (e) {
-        console.error(thisCourse)
-      }
     },
     // 判斷是否衝堂
     isFree(course) {
@@ -478,28 +404,6 @@ let vm = new Vue({
       })
       return true
     },
-    // isFree(code) {
-    //   let year = this.selectYear
-    //   let free = true
-    //   try {
-    //     let thisCourse = this.courseCode[year][code]
-
-    //     if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
-    //       $.each(thisCourse['time_parsed'], (ik, iv) => {
-    //         $.each(iv.time, (jk, jv) => {
-    //           let day = iv.day,
-    //             time = jv
-    //           if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
-    //             free = false
-    //           }
-    //         })
-    //       })
-    //     }
-    //   } catch (e) {
-    //     console.error(thisCourse)
-    //   }
-    //   return free
-    // },
     saveSchedule() {
       $('#saveSchedule').modal()
       if (!this.savedImg || pickingCourse.length != 0) {
