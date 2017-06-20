@@ -51,12 +51,12 @@
             span(v-show='course.obligatory_tf') 必
             span(v-show='!course.obligatory_tf') 選
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
-            p.course-title {{ course.title_parsed.zh_TW | titleShort }}
+            p.course-title {{ course.title_zhTW | titleShort }}
             p.course-detail
               span {{ course.professor }}
               span {{ course.credits }}學分
-              span(v-if='course.location[0]') {{ course.location[0] }}
-              span(v-if='course.location[1]') {{ course.location[1] }}
+              span(v-if='course.location_1') {{ course.location_1 }}
+              span(v-if='course.location_2') {{ course.location_2 }}
           .list-btn.keep-btn(v-on:click='addKeep(course.code)')
             i.fa.fa-shopping-basket
           .list-btn.add-btn(v-on:click='addCourse(course.code, "search")')
@@ -74,12 +74,12 @@
             span(v-show='course.obligatory_tf') 必
             span(v-show='!course.obligatory_tf') 選
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
-            p.course-title {{ course.title_parsed.zh_TW | titleShort }}
+            p.course-title {{ course.title_zhTW | titleShort }}
             p.course-detail
               span {{ course.professor }}
               span {{ course.credits }}學分
-              span(v-if='course.location[0]') {{ course.location[0] }}
-              span(v-if='course.location[1]') {{ course.location[1] }}
+              span(v-if='course.location_1') {{ course.location_1 }}
+              span(v-if='course.location_2') {{ course.location_2 }}
           .list-btn.add-btn(v-on:click='addCourse(course.code, "keep")')
             i.fa.fa-plus
           .list-btn.list-del(v-on:click='removeCourse(course.code, "keep")')
@@ -98,11 +98,11 @@
             span(v-show='course.obligatory_tf') 必
             span(v-show='!course.obligatory_tf') 選
           a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
-            p.course-title {{ course.title_parsed.zh_TW | titleShort }}
+            p.course-title {{ course.title_zhTW | titleShort }}
             p.course-detail
               span {{ course.professor }}
               span {{ course.credits }}學分
-              span(v-if='course.location[0]') {{ course.location[0] }}
-              span(v-if='course.location[1]') {{ course.location[1] }}
+              span(v-if='course.location_1') {{ course.location_1 }}
+              span(v-if='course.location_2') {{ course.location_2 }}
           .list-btn.list-del(v-on:click='removeCourse(course.code, "now")')
             i.fa.fa-times

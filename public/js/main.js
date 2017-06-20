@@ -47,7 +47,9 @@ let vm = new Vue({
       // clipboard init
       clipboard: new Clipboard('#copyLink button'),
       // imgpur APIv3 client id
-      imgurAPI: '30b5b43a2e55afd'
+      imgurAPI: '30b5b43a2e55afd',
+      // restAPI: 'https://api.hsingpicking.com.tw'
+      restAPI: 'http://127.0.0.1:3001'
     }
   },
   mounted() {
@@ -87,8 +89,8 @@ let vm = new Vue({
   computed: {
     calcCredits() {
       let credits = 0
-      $.each(this.pickingCourse, (key, course) => {
-        credits += course['credits_parsed']
+      _.each(this.pickingCourse, (course) => {
+        credits += course['credits']
       })
       return credits
     },
@@ -158,11 +160,11 @@ let vm = new Vue({
     },
     changeLevel() {
       let year = this.selectYear
-      let  dept = this.selectDept
-      let  level = this.selectLevel
+      let dept = this.selectDept
+      let level = this.selectLevel
 
       this.clearCourse()
-      
+
       // 區分AB班
       if (dept.slice(-1) == 'A' || dept.slice(-1) == 'B') {
         level = level + dept.slice(-1)
@@ -173,23 +175,35 @@ let vm = new Vue({
       this.pickingCourse = []
       this.credits = 0
 
-      $.each(this.courseDept[year][dept][level], (key, code) => {
-        //  確認是否必修
-        let title = this.courseCode[year][code]['title'],
-          isObligatory = true
-
-        _.forEach(this.exception, (val) => {
-          if (!_.isNull(title.match(val))) {
-            isObligatory = false
+      $.getJSON(this.restAPI + '/year/' + year + '/dept/' + dept + '/level/' + level, (courses) => {
+        _.forEach(courses, (course) => {
+          let code = course.code
+          // 確認是否必修
+          if (course.obligatory) {
+            this.addCourse(course)
+          }else {
+            this.addKeep(course)
           }
         })
-
-        if (this.courseCode[year][code]['obligatory_tf'] && isObligatory) {
-          this.addCourse(code)
-        }else {
-          this.addKeep(code)
-        }
       })
+
+      // $.each(this.courseDept[year][dept][level], (key, code) => {
+      //   //  確認是否必修
+      //   let title = this.courseCode[year][code]['title'],
+      //     isObligatory = true
+
+      //   _.forEach(this.exception, (val) => {
+      //     if (!_.isNull(title.match(val))) {
+      //       isObligatory = false
+      //     }
+      //   })
+
+    //   if (this.courseCode[year][code]['obligatory_tf'] && isObligatory) {
+    //     this.addCourse(code)
+    //   }else {
+    //     this.addKeep(code)
+    //   }
+    // })
     },
     warningAdd() {
       if (_.isUndefined(this.pickingCourse[0])) {
@@ -198,48 +212,56 @@ let vm = new Vue({
         $('#warningAdd').modal()
       }
     },
-    addCourse(code, type) {
-      if (this.isFree(code)) {
-        this.savedImg = false
-        let year = this.selectYear
+    addCourse(course) {
+      let periods = [course.time_1, course.time_2]
 
-        if (type == 'search') {
-          letremoveSpace = _.findIndex(this.searchCourse, {code: code})
-          this.searchCourse.splice(removeSpace, 1)
-        }
-        else if (type == 'keep') {
-          let removeSpace = _.findIndex(this.keepCourse, {code: code})
-          this.keepCourse.splice(removeSpace, 1)
-        }
+      this.pickingCourse.push(course)
+      _.forEach(periods, (period) => {
+        if (period !== '') {
+          let parseTime = _.map(_.split(period, '.'), _.parseInt)
+          let day = parseTime[0]
+          let times = _.drop(parseTime)
 
-        // add course to picking list
-        this.pickingCourse.push(this.courseCode[year][code])
-        $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
-          $.each(iv.time, (jk, jv) => {
-            let day = iv.day
-            let time = jv
-            this.schedule[time - 1][day - 1][0] = this.courseCode[year][code]
+          _.forEach(times, (time) => {
+            this.schedule[time - 1][day - 1][0] = course
           })
-        })
-        this.highlightSchedule(code, true)
-      }else {
-        console.warn('code: ' + code + ',衝堂')
-      }
-      this.saveToStorage()
+        }
+      })
     },
-    addKeep(code) {
-      let year = this.selectYear
-      let removeSpace = _.findIndex(this.searchCourse, {code: code})
+    // addCourse(code) {
+    //   if (this.isFree(code)) {
+    //     this.savedImg = false
+    //     let year = this.selectYear
 
-      // if sourse is keep remove item
-      if (removeSpace != -1) {
-        this.searchCourse.splice(removeSpace, 1)
-      }
+    //     // add course to picking list
+    //     this.pickingCourse.push(this.courseCode[year][code])
+    //     $.each(this.courseCode[year][code]['time_parsed'], (ik, iv) => {
+    //       $.each(iv.time, (jk, jv) => {
+    //         let day = iv.day
+    //         let time = jv
+    //         this.schedule[time - 1][day - 1][0] = this.courseCode[year][code]
+    //       })
+    //     })
+    //     this.highlightSchedule(code, true)
+    //   }else {
+    //     console.warn('code: ' + code + ',衝堂')
+    //   }
+    //   this.saveToStorage()
+    // },
+    addKeep(course) {},
+    // addKeep(code) {
+    //   let year = this.selectYear
+    //   let removeSpace = _.findIndex(this.searchCourse, {code: code})
 
-      this.keepCourse.push(this.courseCode[year][code])
-      this.highlightSchedule(code, true)
-      this.saveToStorage()
-    },
+    //   // if sourse is keep remove item
+    //   if (removeSpace != -1) {
+    //     this.searchCourse.splice(removeSpace, 1)
+    //   }
+
+    //   this.keepCourse.push(this.courseCode[year][code])
+    //   this.highlightSchedule(code, true)
+    //   this.saveToStorage()
+    // },
     removeCourse(code, type) {
       let year = this.selectYear
 
