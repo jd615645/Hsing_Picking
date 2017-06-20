@@ -216,20 +216,22 @@ let vm = new Vue({
       let periods = [course.time_1, course.time_2]
 
       this.pickingCourse.push(course)
-      _.forEach(periods, (period) => {
-        if (period !== '') {
-          let parseTime = _.map(_.split(period, '.'), _.parseInt)
-          let day = parseTime[0]
-          let times = _.drop(parseTime)
+      if (this.isFree(course)) {
+        _.forEach(periods, (period) => {
+          if (period !== '') {
+            let parseTime = _.map(_.split(period, '.'), _.parseInt)
+            let day = parseTime[0]
+            let times = _.drop(parseTime)
 
-          _.forEach(times, (time) => {
-            this.schedule[time - 1][day - 1][0] = course
-          })
-        }
-      })
+            _.forEach(times, (time) => {
+              this.schedule[time - 1][day - 1][0] = course
+            })
+          }
+        })
+      }
     },
     // addCourse(code) {
-    //   if (this.isFree(code)) {
+    //   if (this.this.(code)) {
     //     this.savedImg = false
     //     let year = this.selectYear
 
@@ -248,7 +250,22 @@ let vm = new Vue({
     //   }
     //   this.saveToStorage()
     // },
-    addKeep(course) {},
+    addKeep(course) {
+      let periods = [course.time_1, course.time_2]
+
+      this.pickingCourse.push(course)
+      _.forEach(periods, (period) => {
+        if (period !== '') {
+          let parseTime = _.map(_.split(period, '.'), _.parseInt)
+          let day = parseTime[0]
+          let times = _.drop(parseTime)
+
+          _.forEach(times, (time) => {
+            this.schedule[time - 1][day - 1][0] = course
+          })
+        }
+      })
+    },
     // addKeep(code) {
     //   let year = this.selectYear
     //   let removeSpace = _.findIndex(this.searchCourse, {code: code})
@@ -443,28 +460,46 @@ let vm = new Vue({
       }
     },
     // 判斷是否衝堂
-    isFree(code) {
-      let year = this.selectYear
-      let free = true
-      try {
-        let thisCourse = this.courseCode[year][code]
+    isFree(course) {
+      let periods = [course.time_1, course.time_2]
 
-        if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
-          $.each(thisCourse['time_parsed'], (ik, iv) => {
-            $.each(iv.time, (jk, jv) => {
-              let day = iv.day,
-                time = jv
-              if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
-                free = false
-              }
-            })
+      _.forEach(periods, (period) => {
+        if (period !== '') {
+          let parseTime = _.map(_.split(period, '.'), _.parseInt)
+          let day = parseTime[0]
+          let times = _.drop(parseTime)
+
+          _.forEach(times, (time) => {
+            if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
+              return false
+            }
           })
         }
-      } catch (e) {
-        console.error(thisCourse)
-      }
-      return free
+      })
+      return true
     },
+    // isFree(code) {
+    //   let year = this.selectYear
+    //   let free = true
+    //   try {
+    //     let thisCourse = this.courseCode[year][code]
+
+    //     if (thisCourse['time'] != '*' && thisCourse['time'] != '') {
+    //       $.each(thisCourse['time_parsed'], (ik, iv) => {
+    //         $.each(iv.time, (jk, jv) => {
+    //           let day = iv.day,
+    //             time = jv
+    //           if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
+    //             free = false
+    //           }
+    //         })
+    //       })
+    //     }
+    //   } catch (e) {
+    //     console.error(thisCourse)
+    //   }
+    //   return free
+    // },
     saveSchedule() {
       $('#saveSchedule').modal()
       if (!this.savedImg || pickingCourse.length != 0) {
