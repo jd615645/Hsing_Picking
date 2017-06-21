@@ -5,9 +5,6 @@ let vm = new Vue({
       waitLoading: true,
       exception: [],
       departmentData: {},
-      // 課程代碼索引
-      courseCode: {},
-      courseDept: {},
       // check is really need to upload img
       savedImg: false,
       // search
@@ -138,7 +135,6 @@ let vm = new Vue({
       this.credits = 0
 
       let url = this.restAPI + '/year/' + year + '/dept/' + dept + '/level/' + level
-      console.log(url)
       $.getJSON(url, (courses) => {
         if (_.isUndefined(courses.message)) {
           _.forEach(courses, (course) => {
@@ -164,6 +160,7 @@ let vm = new Vue({
     },
     addCourse(course, type) {
       let periods = [course.time_1, course.time_2]
+      console.log(this.isFree(course))
 
       if (this.isFree(course)) {
         if (type === 'search') {
@@ -189,7 +186,7 @@ let vm = new Vue({
         })
         this.highlightSchedule(course, true)
       }else {
-        console.warn('code: ' + course.code + ',衝堂')
+        toastr.error('課程代碼 ' + course.code + ' 衝堂', '課程衝堂!')
       }
       this.saveToStorage()
     },
@@ -240,6 +237,7 @@ let vm = new Vue({
     },
     // 課程搜尋
     searchData() {
+      this.startSearch = true
       let type = {
         '0': 'dept',
         '5': 'dept',
@@ -305,7 +303,10 @@ let vm = new Vue({
                 this.searchCourse.push(course)
               })
             }
+            this.startSearch = false
           })
+      }else {
+        this.startSearch = false
       }
     },
     highlightSchedule(course, clear) {
@@ -345,25 +346,25 @@ let vm = new Vue({
     // 判斷是否衝堂
     isFree(course) {
       let periods = [course.time_1, course.time_2]
+      let isfree = true
 
       _.forEach(periods, (period) => {
         if (period !== '') {
           let parseTime = _.map(_.split(period, '.'), _.parseInt)
           let day = parseTime[0]
           let times = _.drop(parseTime)
-
           _.forEach(times, (time) => {
             if (!_.isEmpty(this.schedule[time - 1][day - 1][0])) {
-              return false
+              isfree = false
             }
           })
         }
       })
-      return true
+      return isfree
     },
     saveSchedule() {
       $('#saveSchedule').modal()
-      if (!this.savedImg || pickingCourse.length != 0) {
+      if (!this.savedImg || this.pickingCourse.length != 0) {
         this.startUpload = true
         html2canvas($('#scheduleBlock'), {
           onrendered: (canvas) => {
@@ -425,48 +426,6 @@ let vm = new Vue({
     },
     checkClear() {
       $('#checkClear').modal()
-    },
-    courseType(code) {
-      let year = this.selectYear
-      let course = this.courseCode[year][code]
-      let generalType = {
-        '人文通識': ['文學學群', '歷史學群', '哲學學群', '藝術學群', '文化學群'],
-        '社會通識': ['公民與社會學群', '法律與政治學群', '商業與管理學群', '心理與教育學群', '資訊與傳播學群'],
-        '自然通識': ['生命科學學群', '環境科學學群', '物質科學學群', '數學統計學群', '工程科技學群']
-      }
-      let sol = ''
-
-      if (course['discipline'] != '') {
-        $.each(generalType, (ik, iv) => {
-          $.each(iv, (jk, jv) => {
-            if (course['discipline'] == jv) {
-              sol = ik
-            }
-          })
-        })
-      }
-      else if (course['department'] == '通識教育中心' || course['department'] == '夜中文') {
-        sol = '大學國文'
-      }
-      else if (course.obligatory == '必修' &&
-        (course['department'] == '語言中心' || course['department'] == '夜外文' || (course['department'] == '夜共同科' && ((course['title_parsed']['zh_TW']).substr(0, 1) == '英文')))) {
-        sol = '大一英文'
-      }
-      else if (course['department'] == '體育室' || course['department'] == '夜共同科') {
-        sol = '體育'
-      }
-      else if (course['department'] == '師資培育中心') {
-        sol = '教育學程'
-      }
-      else if (course['department'] == '教官室') {
-        sol = '國防教育'
-      }
-      else if (course['department'] == '語言中心') {
-        sol = '全校英外語'
-      }else {
-        sol = course['obligatory']
-      }
-      return sol
     },
     getOnepiceUrl(num) {
       return 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=' + this.selectYear + '&v_class_nbr=' + num
