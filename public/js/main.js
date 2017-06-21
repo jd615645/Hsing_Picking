@@ -138,7 +138,6 @@ let vm = new Vue({
       $.getJSON(url, (courses) => {
         if (_.isUndefined(courses.message)) {
           _.forEach(courses, (course) => {
-            let code = course.code
             // 確認是否必修
             if (course.obligatory) {
               this.addCourse(course)
@@ -160,9 +159,13 @@ let vm = new Vue({
     },
     addCourse(course, type) {
       let periods = [course.time_1, course.time_2]
-      console.log(this.isFree(course))
 
-      if (this.isFree(course)) {
+      if (this.selectYear !== course.term) {
+        toastr.error('請注意該課程並不是這個學年度的', '新增課程錯誤')
+      }
+      else if (!this.isFree(course)) {
+        toastr.error('課程代碼 ' + course.code + ' 衝堂', '新增課程錯誤')
+      }else {
         if (type === 'search') {
           let removeSpace = _.findIndex(this.searchCourse, {code: course.code})
           this.searchCourse.splice(removeSpace, 1)
@@ -185,10 +188,8 @@ let vm = new Vue({
           }
         })
         this.highlightSchedule(course, true)
-      }else {
-        toastr.error('課程代碼 ' + course.code + ' 衝堂', '課程衝堂!')
+        this.saveToStorage()
       }
-      this.saveToStorage()
     },
     addKeep(course) {
       let periods = [course.time_1, course.time_2]
@@ -292,17 +293,32 @@ let vm = new Vue({
         $.when
           .apply($, ary)
           .then((...inputData) => {
+            let filters = []
             if (ary.length > 1) {
               _.each(inputData, (courses) => {
                 _.each(courses[0], (course) => {
-                  this.searchCourse.push(course)
+                  if (_.isObject(course)) {
+                    filters.push(course)
+                  }
                 })
               })
             }else {
               _.each(inputData[0], (course) => {
-                this.searchCourse.push(course)
+                if (_.isObject(course)) {
+                  filters.push(course)
+                }
               })
             }
+
+            _.each(filters, (course) => {
+              if (week === '0') {
+                if (this.isFree(course)) {
+                  this.searchCourse.push(course)
+                }
+              }else {
+                this.searchCourse.push(course)
+              }
+            })
             this.startSearch = false
           })
       }else {
@@ -373,9 +389,8 @@ let vm = new Vue({
             this.uploadImg(canvasUrl).then((response) => {
               if (response.success) {
                 this.imgUrl = response.data.link
-              // $('#saveSchedule').modal()
               }else {
-                console.error('upload error')
+                toastr.error('上傳圖片失敗請再試一次')
               }
               this.startUpload = false
             })
