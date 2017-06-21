@@ -138,8 +138,9 @@ let vm = new Vue({
       this.credits = 0
 
       let url = this.restAPI + '/year/' + year + '/dept/' + dept + '/level/' + level
+      console.log(url)
       $.getJSON(url, (courses) => {
-        if (!_.isUndefined(courses.message)) {
+        if (_.isUndefined(courses.message)) {
           _.forEach(courses, (course) => {
             let code = course.code
             // 確認是否必修
@@ -293,11 +294,17 @@ let vm = new Vue({
         $.when
           .apply($, ary)
           .then((...inputData) => {
-            _.each(inputData, (courses) => {
-              _.each(courses[0], (course) => {
+            if (ary.length > 1) {
+              _.each(inputData, (courses) => {
+                _.each(courses[0], (course) => {
+                  this.searchCourse.push(course)
+                })
+              })
+            }else {
+              _.each(inputData[0], (course) => {
                 this.searchCourse.push(course)
               })
-            })
+            }
           })
       }
     },
@@ -311,7 +318,7 @@ let vm = new Vue({
           let times = _.drop(parseTime)
 
           _.forEach(times, (time) => {
-            let tableCourse = this.schedule[time - 1][day - 1]
+            let tableCourse = this.schedule[time - 1][day - 1][0]
 
             if (clear) {
               this.$set(this.schedule[time - 1][day - 1], '1', 0)
