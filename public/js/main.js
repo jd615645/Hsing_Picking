@@ -237,7 +237,7 @@ let vm = new Vue({
       this.highlightSchedule(course, true)
     },
     // 課程搜尋
-    searchData() {
+    searchCourseData() {
       this.startSearch = true
       let type = {
         '0': 'dept',
@@ -254,7 +254,7 @@ let vm = new Vue({
       let urls = []
       let urlRoot = this.restAPI + '/year/' + year
       if (keyword !== '' || (item !== '' && detail !== '')) {
-        if (keyword === '' && item !== '' && detail !== '') {
+        if (item !== '' && detail !== '') {
           let url = urlRoot + '/' + item + '/' + detail
           switch (week) {
             case '':
@@ -266,7 +266,7 @@ let vm = new Vue({
               break
           }
         }
-        else if (keyword !== '' && item === '' && detail === '') {
+        if (keyword !== '') {
           let urlAry = [
             urlRoot + '/code/' + keyword,
             urlRoot + '/title/' + keyword,
@@ -295,13 +295,21 @@ let vm = new Vue({
           .then((...inputData) => {
             let filters = []
             if (ary.length > 1) {
-              _.each(inputData, (courses) => {
-                _.each(courses[0], (course) => {
+              if (item === '' && detail === '') {
+                _.each(inputData, (courses) => {
+                  _.each(courses[0], (course) => {
+                    if (_.isObject(course)) {
+                      filters.push(course)
+                    }
+                  })
+                })
+              }else {
+                _.each(inputData[0], (course) => {
                   if (_.isObject(course)) {
                     filters.push(course)
                   }
                 })
-              })
+              }
             }else {
               _.each(inputData[0], (course) => {
                 if (_.isObject(course)) {
