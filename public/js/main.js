@@ -45,8 +45,8 @@ let vm = new Vue({
       clipboard: new Clipboard('#copyLink button'),
       // imgpur APIv3 client id
       imgurAPI: '30b5b43a2e55afd',
-      // restAPI: 'https://api.hsingpicking.com.tw'
-      restAPI: 'http://127.0.0.1:3001'
+      restAPI: 'https://api.hsingpicking.com.tw'
+      // restAPI: 'http://127.0.0.1:3001'
     }
   },
   mounted() {
