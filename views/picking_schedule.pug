@@ -15,7 +15,7 @@
       li.left
         select.form-control(v-model='selectDept', v-on:change='changeDepartment(selectDept.value)')
           option(value='', disabled) 選取科系
-          option(v-for='dept in deptDropdown', v-bind:value='dept.code') {{ dept.dept }}
+          option(v-for='dept in deptDropdown', :value='dept.code') {{ dept.dept }}
       li.left
         select.form-control(v-model='selectLevel', v-on:change='warningAdd()', v-bind='{ disabled: selectDept == -1 }')
           option(value='', disabled) 選取年級
@@ -63,7 +63,7 @@
       tbody
         tr(v-for='(course, index) in schedule', v-if='index < tableView')
           td {{ index+1 }}
-          td(v-for='(item, key) in course', v-bind:class='{free: item[1]==1, notfree: item[1]==2, self: item[1]==3}')
+          td(v-for='(item, key) in course', :class='{free: item[1]==1, notfree: item[1]==2, self: item[1]==3}')
             .course(v-if='!_.isEmpty(item[0])')
               p {{ item[0].title_zhTW }}
               p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}

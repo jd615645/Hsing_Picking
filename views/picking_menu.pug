@@ -4,12 +4,12 @@
     h3 中興選課輔助系統
   #courseTab
     ul.tab-nav
-      li(v-bind:class='{ active: tabView === 0 }', @click='tabView = 0')
+      li(:class='{ active: tabView === 0 }', @click='tabView = 0')
         i.fa.fa-search
-      li(v-bind:class='{ active: tabView === 1 }', @click='tabView = 1')
+      li(:class='{ active: tabView === 1 }', @click='tabView = 1')
         i.fa.fa-shopping-basket
         span#keepNum.notify {{ keepCourse.length }}
-      li(v-bind:class='{ active: tabView === 2 }', @click='tabView = 2')
+      li(:class='{ active: tabView === 2 }', @click='tabView = 2')
         i.fa.fa-list-ul
         span#courseNum.notify {{ pickingCourse.length }}
   #title
@@ -27,7 +27,7 @@
         option(value='7') 共同科目
       select#searchDetail.form-control(v-model='searchDetail', v-bind='{ disabled: searchItem === "" }')
         option(value='') 選擇分類
-        option(v-for='dept in detailDropdown', v-bind:value='dept.code') {{ dept.dept }}
+        option(v-for='dept in detailDropdown', :value='dept.code') {{ dept.dept }}
       select#searchTime.form-control(v-model='searchTime', v-bind='{ disabled: searchItem === -1 && searchKeyword === "" }')
         option(value='') 選擇時間
         option(value='0') 空堂
@@ -50,7 +50,7 @@
           .list-item
             span(v-show='course.obligatory') 必
             span(v-show='!course.obligatory') 選
-          a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
+          a.list-text(:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
             p.course-title {{ course.title_zhTW | titleShort }}
             p.course-detail
               span {{ course.professor }}
@@ -73,7 +73,7 @@
           .list-item
             span(v-show='course.obligatory') 必
             span(v-show='!course.obligatory') 選
-          a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
+          a.list-text(:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
             p.course-title {{ course.title_zhTW | titleShort }}
             p.course-detail
               span {{ course.professor }}
@@ -97,7 +97,7 @@
           .list-item
             span(v-show='course.obligatory') 必
             span(v-show='!course.obligatory') 選
-          a.list-text(v-bind:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
+          a.list-text(:href='getOnepiceUrl(course.url)', title='課程詳細資料', target='_blank')
             p.course-title {{ course.title_zhTW | titleShort }}
             p.course-detail
               span {{ course.professor }}

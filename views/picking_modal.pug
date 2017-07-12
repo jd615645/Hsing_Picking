@@ -12,10 +12,10 @@
             i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startUpload == true')
               span.sr-only Loading...
             #uploadSol(v-else)
-              img#scheduleImg(v-bind:src='imgUrl')
+              img#scheduleImg(:src='imgUrl')
               br
               #qrImg
-                img(v-bind:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
+                img(:src='"https://chart.googleapis.com/chart?cht=qr&chs=100x100&chl=" + imgUrl + "&chld=H|0"')
                 #copyLink
                   span {{ imgUrl }}
                   button.btn.btn-default(type='button', data-clipboard-target='#copyLink span', data-toggle='popover',  data-content='copied')
