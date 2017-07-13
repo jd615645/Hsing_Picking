@@ -3,7 +3,6 @@ let vm = new Vue({
   data() {
     return {
       waitLoading: true,
-      exception: [],
       departmentData: {},
       // check is really need to upload img
       savedImg: false,
@@ -50,17 +49,11 @@ let vm = new Vue({
     }
   },
   mounted() {
-    $.when(
-      $.getJSON('./json/select.json'),
-      $.getJSON('./json/exception.json')
-    ).then((selectData, exception) => {
-      $.each(selectData[0], (key, val) => {
-        let item = val['item'],
-          detail = val['detail']
+    $.getJSON('./data/select.json').then((data) => {
+      _.each(data, (val, key) => {
+        let item = val['item']
+        let detail = val['detail']
         this.departmentData[key] = detail
-      })
-      $.each(exception[0][0]['exception'], (key, val) => {
-        this.exception.push(val)
       })
       this.waitLoading = false
     })
@@ -326,6 +319,10 @@ let vm = new Vue({
       }else {
         this.startSearch = false
       }
+      this.searchKeyword = ''
+      this.searchItem = ''
+      this.searchDetail = ''
+      this.searchTime = ''
     },
     highlightSchedule(course, clear) {
       let periods = [course.time_1, course.time_2]

@@ -1,0 +1,17 @@
+extends layout
+block css
+  link(rel='stylesheet', type='text/css', href='/styles/main.css')
+  link(rel='stylesheet', type='text/css', href='/styles/menu.css')
+  link(rel='stylesheet', type='text/css', href='/styles/schedule.css')
+  link(rel='stylesheet', type='text/css', href='/styles/modal.css')
+block content
+  #app(v-cloak)
+    include ./bookload.pug
+    include ./picking_menu.pug
+    include ./picking_schedule.pug
+    include ./picking_modal.pug
+
+block append js
+  script(src='/js/libs/html2canvas.js')
+  script(src='/js/libs/clipboard.js')
+  script(src='/js/main.js')
