@@ -1,4 +1,6 @@
 # Hsing_Picking
+[![Build Status](https://travis-ci.com/jd615645/Hsing_Picking.svg?token=hixoKqzUPRoRuPFyFFhN&branch=master)](https://travis-ci.com/jd615645/Hsing_Picking)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 一個幫助同學排課的工具，其包含了以下功能：
 * 自動填入該系所年級的必修科目，並把該系所選修課程挑出保留
 * 查詢課程
