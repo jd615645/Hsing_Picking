@@ -18,7 +18,7 @@
     h4(v-if='tabView === 2') 目前課程
   #toolTab
     #searchTab.tool-tab(v-if='tabView === 0')
-      input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword', @keyup.enter='searchData')
+      input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword', @keyup.enter='searchCourseData')
       select#changeItem.form-control(v-model='searchItem')
         option(value='') 選擇項目
         option(value='0') 學士班

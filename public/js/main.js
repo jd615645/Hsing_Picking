@@ -46,7 +46,7 @@ let vm = new Vue({
       // imgpur APIv3 client id
       imgurAPI: '30b5b43a2e55afd',
       restAPI: 'https://api.hsingpicking.com.tw'
-      // restAPI: 'http://127.0.0.1:3001'
+    // restAPI: 'http://127.0.0.1:3001'
     }
   },
   mounted() {
@@ -253,6 +253,7 @@ let vm = new Vue({
 
       let urls = []
       let urlRoot = this.restAPI + '/year/' + year
+
       if (keyword !== '' || (item !== '' && detail !== '')) {
         if (item !== '' && detail !== '') {
           let url = urlRoot + '/' + item + '/' + detail
@@ -286,6 +287,7 @@ let vm = new Vue({
               break
           }
         }
+
         let ary = []
         _.each(urls, (url) => {
           ary.push($.getJSON(url))
@@ -296,26 +298,18 @@ let vm = new Vue({
             let filters = []
             if (ary.length > 1) {
               if (item === '' && detail === '') {
-                _.each(inputData, (courses) => {
-                  _.each(courses[0], (course) => {
-                    if (_.isObject(course)) {
-                      filters.push(course)
-                    }
-                  })
-                })
-              }else {
-                _.each(inputData[0], (course) => {
-                  if (_.isObject(course)) {
-                    filters.push(course)
-                  }
-                })
+                filters = _.union(inputData[0][0], inputData[1][0], inputData[2][0])
+                filters = _.union(filters)
+              } else {
+                filters.push(_.intersectionWith(inputData[0][0], inputData[1][0], _.isEqual))
+                filters.push(_.intersectionWith(inputData[0][0], inputData[2][0], _.isEqual))
+                filters.push(_.intersectionWith(inputData[0][0], inputData[3][0], _.isEqual))
+
+                filters = _.union(filters[0], filters[1], filters[2])
+                filters = _.union(filters)
               }
-            }else {
-              _.each(inputData[0], (course) => {
-                if (_.isObject(course)) {
-                  filters.push(course)
-                }
-              })
+            } else {
+              filters = _.union(inputData[0])
             }
 
             _.each(filters, (course) => {
