@@ -1,0 +1,13 @@
+table#mobile_schedule
+  thead
+    tr
+      th(v-for='day in ["", "一", "二", "三", "四", "五"]') {{ day }}
+  tbody
+    tr(v-for='(course, index) in schedule', v-if='index < tableView')
+      td {{ index+1 }}
+      td(v-for='(item, key) in course')
+        .course(v-if='!_.isEmpty(item[0])')
+          p {{ item[0].title_zhTW }}
+          p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}
+          p(v-if='viewSwitch>=2') {{ item[0].location_1 }}
+          

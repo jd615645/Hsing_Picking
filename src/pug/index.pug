@@ -12,7 +12,9 @@ block content
     .row
       #mobileView.col-xs-12.hidden-sm.hidden-md.hidden-lg
         include ./mobile_nav.pug
-        include ./mobile_schedule.pug
+        #mobileMain
+          include ./mobile_schedule.pug
+          include ./mobile_setting.pug
         include ./mobile_footer.pug
       #webView.hidden-xs.col-sm-12
         include ./picking_menu.pug
