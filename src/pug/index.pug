@@ -11,15 +11,11 @@ block content
     include ./bookload.pug
     .row
       #mobileView.col-xs-12.hidden-sm.hidden-md.hidden-lg
-        include ./mobile_nav.pug
-        #mobileMain
-          include ./mobile_schedule.pug
-          include ./mobile_setting.pug
-        include ./mobile_footer.pug
+        include ./mobile_picking.pug
       #webView.hidden-xs.col-sm-12
         include ./picking_menu.pug
         include ./picking_schedule.pug
-        include ./picking_modal.pug
+      include ./picking_modal.pug
 
 block append js
   script(src='/js/libs/html2canvas.js')

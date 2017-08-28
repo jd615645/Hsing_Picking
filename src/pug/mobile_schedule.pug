@@ -1,13 +1,31 @@
-table#mobile_schedule
-  thead
-    tr
-      th(v-for='day in ["", "一", "二", "三", "四", "五"]') {{ day }}
-  tbody
-    tr(v-for='(course, index) in schedule', v-if='index < tableView')
-      td {{ index+1 }}
-      td(v-for='(item, key) in course')
-        .course(v-if='!_.isEmpty(item[0])')
-          p {{ item[0].title_zhTW }}
-          p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}
-          p(v-if='viewSwitch>=2') {{ item[0].location_1 }}
-          
+#mobile_schedule
+  .course(v-for='(courses, week) in scheduleWeek')
+    h3.week {{ week }}
+    ul
+      li(v-for='course in courses')
+        .row
+          .col-xs-8
+            p.title
+              | (
+              | {{ course.code }}
+              | )
+              | {{ course.title_zhTW }}
+            p.info
+              span.professor
+                i.fa.fa-fw.fa-user
+                | {{ course.professor }}
+              span.location(v-show='course.location_1 !== ""')
+                i.fa.fa-fw.fa-map-marker
+                | {{ course.location_1 }}
+                | {{ course.location_2 }}
+              span.credits
+                i.fa.fa-fw.fa-graduation-cap
+                | {{ course.credits }}
+                | 學分
+          .col-xs-4
+            p.time
+              | {{ course.start }}
+              | -
+              | {{ course.end }}
+        button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn(@click='removeCourse(course, "now")')
+          i.fa.fa-fw.fa-times

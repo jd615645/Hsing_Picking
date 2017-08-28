@@ -1,13 +1,16 @@
 const gulp = require('gulp')
 const path = require('path')
 const $ = require('gulp-load-plugins')()
+const autoprefixer = require('gulp-autoprefixer')
 
 const paths = {
   src: {
     less: './src/styles/less/**',
     css: './src/styles/css/*.css',
-    js: './src/js/**',
+    js: './src/js/*.js',
+    jslib: './src/js/libs/*',
     data: './src/data/**',
+    font: './src/font/**',
     pug: './src/pug/*.pug',
     images: './src/img/*'
   },
@@ -15,7 +18,9 @@ const paths = {
     html: './dist',
     css: './dist/styles',
     js: './dist/js',
+    jslib: './dist/js/libs',
     data: './dist/data',
+    font: './dist/font',
     images: './dist/img'
   }
 }
@@ -31,6 +36,10 @@ gulp.task('pug', () => {
 gulp.task('less', () => {
   gulp.src(paths.src.less)
     .pipe($.less())
+    .pipe(autoprefixer({
+      browsers: ['last 3 versions'],
+      cascade: false
+    }))
     .pipe(gulp.dest(paths.dist.css))
 })
 gulp.task('css', () => {
@@ -45,10 +54,19 @@ gulp.task('scripts', () => {
     }))
     .pipe(gulp.dest(paths.dist.js))
 })
+gulp.task('jslib', () => {
+  gulp.src(paths.src.jslib)
+    .pipe(gulp.dest(paths.dist.jslib))
+})
 
 gulp.task('data', () => {
   gulp.src(paths.src.data)
     .pipe(gulp.dest(paths.dist.data))
+})
+
+gulp.task('font', () => {
+  gulp.src(paths.src.font)
+    .pipe(gulp.dest(paths.dist.font))
 })
 
 gulp.task('images', () => {
@@ -75,4 +93,4 @@ gulp.task('watch', () => {
 })
 
 gulp.task('default', ['webserver', 'watch'])
-gulp.task('build', ['pug', 'less', 'css', 'scripts', 'data'])
+gulp.task('build', ['pug', 'less', 'css', 'scripts', 'jslib', 'data', 'font'])

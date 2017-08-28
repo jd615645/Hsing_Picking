@@ -29,6 +29,7 @@ let vm = new Vue({
       selectLevel: '',
       // timeTable
       schedule: [],
+      scheduleWeek: {'一': [], '二': [], '三': [], '四': [], '五': []},
       // modal
       imgUrl: '#',
       startUpload: false,
@@ -40,12 +41,13 @@ let vm = new Vue({
       selfLocation: '',
       selfCredits: '',
       selfTime: '',
+      periodStart: ['08:10', '09:10', '10:10', '11:10', '13:10', '14:10', '15:10', '16:10', '17:10', '18:20', '19:15', '20:10', '21:05'],
+      periodEnd: ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:10', '20:05', '21:00', '21:55'],
       // clipboard init
       clipboard: new Clipboard('#copyLink button'),
       // imgpur APIv3 client id
       imgurAPI: '30b5b43a2e55afd',
       restAPI: 'https://api.hsingpicking.com.tw'
-    // restAPI: 'http://127.0.0.1:3001'
     }
   },
   mounted() {
@@ -73,6 +75,7 @@ let vm = new Vue({
         console.error('Trigger:', e.trigger)
       })
     this.loadStorage()
+    $('#mobileView .btn-group').dropdown('toggle')
   },
   computed: {
     calcCredits() {
@@ -171,9 +174,21 @@ let vm = new Vue({
         this.pickingCourse.push(course)
         _.forEach(periods, (period) => {
           if (period !== '') {
+            let weeks = ['一', '二', '三', '四', '五']
+
             let parseTime = _.map(_.split(period, '.'), _.parseInt)
             let day = parseTime[0]
             let times = _.drop(parseTime)
+            let start = this.periodStart[times[0]]
+            let end = this.periodEnd[times[times.length - 1]]
+
+            let courseData = {
+              start: start,
+              end: end
+            }
+            _.assign(courseData, course)
+
+            this.scheduleWeek[weeks[parseTime[0] - 1]].push(courseData)
 
             _.forEach(times, (time) => {
               this.schedule[time - 1][day - 1][0] = course
@@ -210,8 +225,15 @@ let vm = new Vue({
       else if (type === 'now') {
         this.savedImg = false
 
-        let removeSpace = _.findIndex(this.pickingCourse, {code: course.code})
+        let removeSpace = _.findIndex(this.pickingCourse, course)
         this.pickingCourse.splice(removeSpace, 1)
+
+        _.forEach(this.scheduleWeek, (week, key) => {
+          removeSpace = _.findKey(week, course)
+          if (!_.isUndefined(removeSpace)) {
+            this.scheduleWeek[key].splice(removeSpace, 1)
+          }
+        })
 
         let periods = [course.time_1, course.time_2]
         // remove table course
@@ -228,6 +250,7 @@ let vm = new Vue({
         })
       }
       this.highlightSchedule(course, true)
+      this.saveToStorage()
     },
     // 課程搜尋
     searchCourseData() {
@@ -416,6 +439,7 @@ let vm = new Vue({
           this.schedule[ik][jk][0] = []
         })
       })
+      this.scheduleWeek = { '一': [], '二': [], '三': [], '四': [], '五': [] }
       this.saveToStorage()
     },
     clearAll() {
@@ -441,6 +465,9 @@ let vm = new Vue({
     checkClear() {
       $('#checkClear').modal()
     },
+    mobileAddCourseModal() {
+      $('#mobileAddCourse').modal()
+    },
     getOnepiceUrl(num) {
       return 'https://onepiece.nchu.edu.tw/cofsys/plsql/Syllabus_main_q?v_strm=' + this.selectYear + '&v_class_nbr=' + num
     },
@@ -462,6 +489,7 @@ let vm = new Vue({
       window.localStorage['keepCourse'] = JSON.stringify(this.keepCourse)
       window.localStorage['pickingCourse'] = JSON.stringify(this.pickingCourse)
       window.localStorage['schedule'] = JSON.stringify(this.schedule)
+      window.localStorage['scheduleWeek'] = JSON.stringify(this.scheduleWeek)
     },
     loadStorage() {
       if (!_.isUndefined(window.localStorage['searchCourse'])) {
@@ -476,39 +504,9 @@ let vm = new Vue({
       if (!_.isUndefined(window.localStorage['schedule'])) {
         this.schedule = JSON.parse(window.localStorage['schedule'])
       }
+      if (!_.isUndefined(window.localStorage['scheduleWeek'])) {
+        this.scheduleWeek = JSON.parse(window.localStorage['scheduleWeek'])
+      }
     }
   }
 })
-
-String.prototype.parseURL = function () {
-  var url = this.toString()
-  var a = document.createElement('a')
-  a.href = url
-  return {
-    source: url,
-    protocol: a.protocol.replace(':', ''),
-    host: a.hostname,
-    port: a.port,
-    query: a.search,
-    file: (a.pathname.match(/\/([^\/?#]+)$/i) || [, ''])[1],
-    hash: a.hash.replace('#', ''),
-    path: a.pathname.replace(/^([^\/])/, '/$1'),
-    relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [, ''])[1],
-    segments: a.pathname.replace(/^\//, '').split('/'),
-    params: (function () {
-      var ret = {}
-      var seg = a.search.replace(/^\?/, '').split('&').filter(function (v, i) {
-        if (v !== '' && v.indexOf('=')) {
-          return true
-        }
-      })
-      seg.forEach(function (element, index) {
-        var idx = element.indexOf('=')
-        var key = element.substring(0, idx)
-        var val = element.substring(idx + 1)
-        ret[key] = val
-      })
-      return ret
-    })()
-  }
-}

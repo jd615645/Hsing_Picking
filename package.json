@@ -4,13 +4,13 @@
   "description": "",
   "main": "gulpfile.js",
   "private": true,
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "CC BY-NC-SA 4.0",
   "devDependencies": {
     "browserify": "^13.1.0",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.0.0",
     "gulp-less": "^3.1.0",
     "gulp-pug": "^3.1.0",
     "gulp-webserver": "^0.9.1",

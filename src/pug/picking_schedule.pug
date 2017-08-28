@@ -56,6 +56,74 @@
           i.fa.fa-eye(v-if='viewSwitch==3')
             span 全部顯示
   #scheduleBlock
+    //- .cd-schedule.loading
+    //-   .timeline
+    //-     ul
+    //-       li
+    //-         span 09:00
+    //-       li
+    //-         span 09:30
+    //-       li
+    //-         span 10:00
+    //-       li
+    //-         span 10:30
+    //-       li
+    //-         span 11:00
+    //-       li
+    //-         span 11:30
+    //-       li
+    //-         span 12:00
+    //-       li
+    //-         span 12:30
+    //-       li
+    //-         span 13:00
+    //-       li
+    //-         span 13:30
+    //-       li
+    //-         span 14:00
+    //-       li
+    //-         span 14:30
+    //-       li
+    //-         span 15:00
+    //-       li
+    //-         span 15:30
+    //-       li
+    //-         span 16:00
+    //-       li
+    //-         span 16:30
+    //-       li
+    //-         span 17:00
+    //-       li
+    //-         span 17:30
+    //-       li
+    //-         span 18:00
+    //-   //- 晚上六點二十分開始上課,一個晚上四節課，稱為ABCD四節，最後一節到晚上九點五十五分
+    //-   .events
+    //-     ul
+    //-       li.events-group(v-for='(data, week) in schedule_1')
+    //-         .top-info
+    //-           span {{ week }}
+    //-         ul
+    //-           li.single-event(v-for='i in data', :data-start='i.start', :data-end='i.end', data-content='<h1>Hello, World</h1>', data-event='event-1')
+    //-             a(href='#0')
+    //-               span.event-date
+    //-                 | {{ i.start }}
+    //-                 | -
+    //-                 | {{ i.end }}
+    //-               em.event-name {{ i.title }}
+
+      .event-modal
+        header.header
+          .content
+            span.event-date
+            h3.event-name
+          .header-bg
+        .body
+          .event-info
+          .body-bg
+        a.close(href="#0") Close
+      .cover-layer
+
     table#scheduleTable
       thead
         tr
@@ -68,6 +136,3 @@
               p {{ item[0].title_zhTW }}
               p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}
               p(v-if='viewSwitch>=2') {{ item[0].location_1 }}
-  //- #contentInfo
-  //-   | Sakamoto © 2016
-  //-   a(href='#', target='_blank') About this Website
