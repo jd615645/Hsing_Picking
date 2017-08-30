@@ -77,7 +77,7 @@ let vm = new Vue({
       })
     this.loadStorage()
     $('#mobileView .btn-group').dropdown('toggle')
-    this.mobileAddCourseModal()
+    // this.mobileAddCourseModal()
   },
   computed: {
     calcCredits() {
