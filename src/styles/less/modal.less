@@ -103,6 +103,7 @@
     overflow-y: auto;
     padding-top: 0px !important;
     padding-bottom: 0px !important;
+    border: 0px;
     .modal-dialog {
       margin: 0px;
     }
@@ -111,6 +112,67 @@
       width: 100vw;
       overflow-y: auto;
       padding: 0 !important;
+    }
+    .form-control {
+      border-radius: 0;
+      box-shadow: none;
+      font-weight: 400;
+      background: none;
+      border-color: #333945;
+      color: #666;
+      &:focus {
+        box-shadow: none;
+      }
+      &[disabled='disabled'] {
+        background-color: #ccc !important;
+      }
+    }
+    #searchBtnMobi {
+      width: 100%;
+      background-color: #3F729B;
+      color: #fff;
+      margin: 0px;
+      i {
+        font-size: 1em;
+      }
+    }
+    .course {
+      margin-top: 10px;
+      p {
+        margin: 0px;
+      }
+      li {
+        margin-bottom: 3px;
+        border-bottom: 1px #d4d4d4 solid;
+      }
+      .row {
+        width: 100%;
+        
+        margin: 0px;
+        display: flex;
+        align-items: center;
+        .col-xs-2 {
+          display: flex;
+          justify-content: center;
+        }
+      }
+      .info {
+        span {
+          padding-right: 5px;
+          font-size: 0.9em;
+          color: #757575;
+        }
+      }
+      .keep-btn, .add-btn {
+        border-radius: 50%;
+        font-size: 1.2em;
+      }
+      .keep-btn {
+        color: #4285F4;
+      }
+      .add-btn {
+        color: #2BBBAD;
+      }
     }
   }
 }

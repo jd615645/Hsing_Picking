@@ -41,10 +41,19 @@
       font-size: 1.4em;
     }
   }
-  #mobile_schedule {
+  .add-course {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+  #mobile_schedule, #mobile_keep {
     width: 100%;
-    // background-color: #fff;
-
+    
+    .nocourse {
+      color: #333333;
+      text-align: center;
+      border-bottom: 1px #d4d4d4 solid;
+    }
     .course {
       ul {
         padding: 0px;
@@ -91,7 +100,7 @@
       .time {
         text-align: right;
       }
-      .title, .time, .professor, .location {
+      .info, .title, .time, .professor, .location {
         margin-bottom: 3px;
       }
     }

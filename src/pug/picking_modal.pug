@@ -130,34 +130,64 @@
         .modal-footer
           button.btn.btn-success(type='button', v-on:click='addSelf()') 確定新增
 
-  #mobileAddCourse.modal.fade(tabindex='-1', role='dialog')
+  #mobileAddCourse.modal.fade-scale(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
       .modal-content
         .modal-header
           button.close(type='button', data-dismiss='modal') ×
           h4.modal-title
-            i.fa.fa-fw.fa-search
+            i.fa.fa-fw.fa-pencil
             | 新增課程
         .modal-body
           #mobileSearch
-            input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword', @keyup.enter='searchCourseData')
-            select#changeItem.form-control(v-model='searchItem')
-              option(value='') 選擇項目
-              option(value='0') 學士班
-              option(value='5') 進修學士班
-              option(value='6') 通識
-              option(value='7') 共同科目
-            select#searchDetail.form-control(v-model='searchDetail', v-bind='{ disabled: searchItem === "" }')
-              option(value='') 選擇分類
-              option(v-for='dept in detailDropdown', :value='dept.code') {{ dept.dept }}
-            select#searchTime.form-control(v-model='searchTime', v-bind='{ disabled: searchItem === -1 && searchKeyword === "" }')
-              option(value='') 選擇時間
-              option(value='0') 空堂
-              option(value='1') 星期一
-              option(value='2') 星期二
-              option(value='3') 星期三
-              option(value='4') 星期四
-              option(value='5') 星期五
-            button.btn#searchBtn(@click='searchCourseData()')
-              i.fa.fa-search
-                span 搜尋符合項目
+            #filterBlock
+              input#searchKeyword.form-control(type='text', name='Item', placeholder='搜尋關鍵字', v-model='searchKeyword', @keyup.enter='searchCourseData')
+              select#changeItemMobi.form-control(v-model='searchItem')
+                option(value='') 選擇項目
+                option(value='0') 學士班
+                option(value='5') 進修學士班
+                option(value='6') 通識
+                option(value='7') 共同科目
+              select#searchDetailMobi.form-control(v-model='searchDetail', v-bind='{ disabled: searchItem === "" }')
+                option(value='') 選擇分類
+                option(v-for='dept in detailDropdown', :value='dept.code') {{ dept.dept }}
+              select#searchTimeMobi.form-control(v-model='searchTime', v-bind='{ disabled: searchItem === -1 && searchKeyword === "" }')
+                option(value='') 選擇時間
+                option(value='0') 空堂
+                option(value='1') 星期一
+                option(value='2') 星期二
+                option(value='3') 星期三
+                option(value='4') 星期四
+                option(value='5') 星期五
+              a#searchBtnMobi.btn.waves-effect(@click='searchCourseData()')
+                i.fa.fa-search
+                  span 搜尋符合項目
+            .course
+              ul
+                li(v-for='course in searchCourse')
+                  .row
+                    .col-xs-8
+                      p.title
+                        | (
+                        | {{ course.code }}
+                        | )
+                        | {{ course.title_zhTW }}
+                      p.info
+                        span.professor
+                          i.fa.fa-fw.fa-user
+                          | {{ course.professor }}
+                        span.location(v-show='course.location_1 !== ""')
+                          i.fa.fa-fw.fa-map-marker
+                          | {{ course.location_1 }}
+                          | {{ course.location_2 }}
+                        span.credits
+                          i.fa.fa-fw.fa-graduation-cap
+                          | {{ course.credits }}
+                          | 學分
+                    .col-xs-2
+                      button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn.keep-btn(@click='addKeep(course)')
+                        i.fa.fa-shopping-basket
+                    .col-xs-2
+                      button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn.add-btn(@click='addCourse(course, "search")')
+                        i.fa.fa-plus
+                        

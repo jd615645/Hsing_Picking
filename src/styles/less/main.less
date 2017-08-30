@@ -33,6 +33,32 @@ a {
       color: #3D84A8;
     }
   }
+  // input style
+  .form-control {
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: 400;
+    background: none;
+    border-color: #333945;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  select {
+    &[disabled='disabled'] {
+      background-color: #2b303a !important;
+      color: #777777 !important;
+    }
+    &.form-control {
+      color: #fff;
+      option {
+        color: #333945;
+      }
+    }
+  }
+}
+select {
+  -moz-appearance:none
 }
 
 #app { height: 100%; }
@@ -40,29 +66,6 @@ a {
 .icon-loading {
   display: block;
   margin: 0px auto;
-}
-// input style
-.form-control {
-  border-radius: 0;
-  box-shadow: none;
-  font-weight: 400;
-  background: none;
-  border-color: #333945;
-  &:focus {
-    box-shadow: none;
-  }
-}
-select {
-  &[disabled='disabled'] {
-    background-color: #2b303a !important;
-    color: #777777 !important;
-  }
-  &.form-control {
-    color: #fff;
-    option {
-      color: #333945;
-    }
-  }
 }
 
 #main {
@@ -106,6 +109,58 @@ ul.tab-nav {
 }
 .btn span {
   font-family: 'Roboto', '黑體-繁', 'Microsoft JhengHei', sans-serif;
+}
+
+// material select
+.getmdl-select {
+  .mdl-icon-toggle__label {
+    float: right;
+    margin-top: -30px;
+    color: #676767;
+  }
+  .mdl-menu__container {
+    width: 100% !important;
+    overflow: hidden;
+    .mdl-menu {
+      .mdl-menu__item {
+        font-size: 16px;
+      }
+    }
+  }
+}
+.getmdl-select.is-focused {
+  .mdl-icon-toggle__label {
+    color: #4285F4;
+  }
+}
+.getmdl-select__fullwidth {
+  .mdl-menu {
+    width: 100%;
+  }
+}
+.getmdl-select__fix-height {
+  .mdl-menu__container {
+    overflow-y: auto;
+    max-height: 300px !important;
+  }
+  .mdl-menu.mdl-menu--top-left {
+    bottom: auto;
+    top: 0;
+  }
+}
+.mobile-search {
+  width: 100% !important;
+}
+
+// modal effect
+.fade-scale {
+  transform: scale(0);
+  opacity: 0;
+  transition: all .2s linear;
+}
+.fade-scale.in {
+  opacity: 1;
+  transform: scale(1);
 }
 
 /*scrollbar css*/

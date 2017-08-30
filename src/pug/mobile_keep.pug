@@ -1,9 +1,8 @@
-#mobile_schedule
+#mobile_keep
   a.add-course.btn-floating.btn-small.waves-effect.waves-light.blue.lighten-1(@click='mobileAddCourseModal')
     i.fa.fa-fw.fa-pencil
   .course(v-for='(courses, week) in scheduleWeek')
     h3.week {{ week }}
-    p.nocourse(v-if='courses.length === 0') 無課程安排
     ul
       li(v-for='course in courses')
         .row
@@ -25,10 +24,10 @@
                 i.fa.fa-fw.fa-graduation-cap
                 | {{ course.credits }}
                 | 學分
-          .col-xs-4
+          .col-xs-2
             p.time
               | {{ course.start }}
               | -
               | {{ course.end }}
-        button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn(@click='removeCourse(course, "now")')
+        button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn(@click='removeCourse(course, "keep")')
           i.fa.fa-fw.fa-times

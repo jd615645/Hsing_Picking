@@ -8,7 +8,7 @@
         | 課表
       a.mdl-layout__tab(href='#scroll-tab-2')
         i.fa.fa-fw.fa-pencil
-        | 編輯課表
+        | 暫存課表
       a.mdl-layout__tab(href='#scroll-tab-3')
         i.fa.fa-fw.fa-cog
         | 設定
@@ -18,7 +18,8 @@
         include ./mobile_schedule.pug
     section#scroll-tab-2.mdl-layout__tab-panel
       .page-content
+        include ./mobile_keep.pug
     section#scroll-tab-3.mdl-layout__tab-panel
       .page-content
         include ./mobile_setting.pug
-        // Your content goes here
+    

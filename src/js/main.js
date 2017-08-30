@@ -30,6 +30,7 @@ let vm = new Vue({
       // timeTable
       schedule: [],
       scheduleWeek: {'一': [], '二': [], '三': [], '四': [], '五': []},
+      scheduleWeekKeep: {'一': [], '二': [], '三': [], '四': [], '五': []},
       // modal
       imgUrl: '#',
       startUpload: false,
@@ -76,6 +77,7 @@ let vm = new Vue({
       })
     this.loadStorage()
     $('#mobileView .btn-group').dropdown('toggle')
+    this.mobileAddCourseModal()
   },
   computed: {
     calcCredits() {
