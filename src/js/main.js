@@ -77,7 +77,7 @@ let vm = new Vue({
       })
     this.loadStorage()
     $('#mobileView .btn-group').dropdown('toggle')
-    // this.mobileAddCourseModal()
+  // this.mobileAddCourseModal()
   },
   computed: {
     calcCredits() {
@@ -209,6 +209,26 @@ let vm = new Vue({
       if (removeSpace != -1) {
         this.searchCourse.splice(removeSpace, 1)
       }
+
+      _.forEach(periods, (period) => {
+        if (period !== '') {
+          let weeks = ['一', '二', '三', '四', '五']
+
+          let parseTime = _.map(_.split(period, '.'), _.parseInt)
+          let day = parseTime[0]
+          let times = _.drop(parseTime)
+          let start = this.periodStart[times[0]]
+          let end = this.periodEnd[times[times.length - 1]]
+
+          let courseData = {
+            start: start,
+            end: end
+          }
+          _.assign(courseData, course)
+
+          this.scheduleWeekKeep[weeks[parseTime[0] - 1]].push(courseData)
+        }
+      })
 
       this.keepCourse.push(course)
       this.highlightSchedule(course, true)
@@ -442,6 +462,7 @@ let vm = new Vue({
         })
       })
       this.scheduleWeek = { '一': [], '二': [], '三': [], '四': [], '五': [] }
+      this.scheduleWeekKeep = { '一': [], '二': [], '三': [], '四': [], '五': [] }
       this.saveToStorage()
     },
     clearAll() {
@@ -492,6 +513,7 @@ let vm = new Vue({
       window.localStorage['pickingCourse'] = JSON.stringify(this.pickingCourse)
       window.localStorage['schedule'] = JSON.stringify(this.schedule)
       window.localStorage['scheduleWeek'] = JSON.stringify(this.scheduleWeek)
+      window.localStorage['scheduleWeekKeep'] = JSON.stringify(this.scheduleWeekKeep)
     },
     loadStorage() {
       if (!_.isUndefined(window.localStorage['searchCourse'])) {
@@ -508,6 +530,9 @@ let vm = new Vue({
       }
       if (!_.isUndefined(window.localStorage['scheduleWeek'])) {
         this.scheduleWeek = JSON.parse(window.localStorage['scheduleWeek'])
+      }
+      if (!_.isUndefined(window.localStorage['scheduleWeekKeep'])) {
+        this.scheduleWeekKeep = JSON.parse(window.localStorage['scheduleWeekKeep'])
       }
     }
   }

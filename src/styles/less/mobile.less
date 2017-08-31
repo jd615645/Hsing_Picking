@@ -41,6 +41,22 @@
       font-size: 1.4em;
     }
   }
+
+  .form-control {
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: 400;
+    background: none;
+    border-color: #747474;
+    color: #666;
+    margin-bottom: 5px;
+    &:focus {
+      box-shadow: none;
+    }
+    &[disabled='disabled'] {
+      background-color: #ccc !important;
+    }
+  }
   .add-course {
     position: fixed;
     bottom: 0;
@@ -70,6 +86,9 @@
         
         align-items: center;
         display: flex;
+        .col-xs-2 {
+          padding: 0px;
+        }
       }
       .setting-btn {
         position: absolute;
@@ -106,12 +125,23 @@
     }
   }
   #mobile_setting {
+    h3 {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #757575;
+    }
     p {
       margin: 0px;
     }
     .row {
       display: flex;
       align-items: center;
+    }
+    a.btn {
+      margin: 5px 0px;
+      i {
+        margin-right: 5px;
+      }
     }
   }
 }

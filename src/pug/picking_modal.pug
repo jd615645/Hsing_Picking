@@ -8,7 +8,7 @@
             i.fa.fa-fw.fa-download
             | 課表輸出
         .modal-body
-          #uploadBlock(v-if='pickingCourse.length != 0')
+          #uploadBlock(v-if='pickingCourse.length !== 0')
             i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startUpload == true')
               span.sr-only Loading...
             #uploadSol(v-else)
@@ -176,6 +176,10 @@
                         span.professor
                           i.fa.fa-fw.fa-user
                           | {{ course.professor }}
+                        span.time
+                          i.fa.fa-fw.fa-clock-o
+                          | {{ course.time_1 }}
+                          | {{ course.time_2 }}
                         span.location(v-show='course.location_1 !== ""')
                           i.fa.fa-fw.fa-map-marker
                           | {{ course.location_1 }}

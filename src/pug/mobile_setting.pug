@@ -1,5 +1,32 @@
 #mobile_setting
   .container
-    .row
-      .col-xs-6
-      .col-xs-6
+    .select-dept
+      h3 科系
+      select.form-control(v-model='selectYear', v-on:change='changeYear(selectYear)')
+        option(value='1061') 106學年度第1學期
+        option(value='1052') 105學年度第2學期
+        option(value='1051') 105學年度第1學期
+        option(value='1042') 104學年度第2學期
+      select.form-control(v-model='selectDegree')
+        option(value='', disabled) 選取部門
+        option(value='0') 學士班
+        option(value='5') 進修學士班
+      select.form-control(v-model='selectDept', v-on:change='changeDepartment(selectDept.value)')
+        option(value='', disabled) 選取科系
+        option(v-for='dept in deptDropdown', :value='dept.code') {{ dept.dept }}
+      select.form-control(v-model='selectLevel', v-on:change='warningAdd()', v-bind='{ disabled: selectDept == -1 }')
+        option(value='', disabled) 選取年級
+        option(value='1', v-if='selectDegree != -1') 一年級
+        option(value='2', v-if='selectDegree != -1') 二年級
+        option(value='3', v-if='selectDegree == 0 || selectDegree == 5') 三年級
+        option(value='4', v-if='selectDegree == 0 || selectDegree == 5') 四年級
+        option(value='5', v-if='selectDegree == 0 || selectDegree == 5') 五年級
+    //- a.btn.btn-block.btn-default.waves-effect.waves-light(@click='saveSchedule()')
+    //-   i.fa.fa-download
+    //-   | 另存圖片
+    a.btn.btn-block.btn-primary.waves-effect.waves-light(@click='outputCourse()')
+      i.fa.fa-floppy-o
+      | 輸出課碼
+    a.btn.btn-block.btn-warning.waves-effect.waves-light(@click='checkClear()')
+      i.fa.fa-trash
+      | 重置課表

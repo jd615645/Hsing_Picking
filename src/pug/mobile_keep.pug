@@ -1,8 +1,9 @@
 #mobile_keep
   a.add-course.btn-floating.btn-small.waves-effect.waves-light.blue.lighten-1(@click='mobileAddCourseModal')
     i.fa.fa-fw.fa-pencil
-  .course(v-for='(courses, week) in scheduleWeek')
+  .course(v-for='(courses, week) in scheduleWeekKeep')
     h3.week {{ week }}
+    p.nocourse(v-if='courses.length === 0') 無課程保留
     ul
       li(v-for='course in courses')
         .row
