@@ -7,7 +7,7 @@
     ul
       li(v-for='course in courses')
         .row
-          .col-xs-8
+          .col-xs-7
             p.title
               | (
               | {{ course.code }}
@@ -25,10 +25,13 @@
                 i.fa.fa-fw.fa-graduation-cap
                 | {{ course.credits }}
                 | 學分
-          .col-xs-2
+          .col-xs-3.time-block
             p.time
               | {{ course.start }}
               | -
               | {{ course.end }}
+          .col-xs-2
+            button.mdl-button.mdl-js-button.mdl-button--icon.add-btn(@click='addCourse(course, "keep")')
+              i.fa.fa-plus
         button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn(@click='removeCourse(course, "keep")')
           i.fa.fa-fw.fa-times

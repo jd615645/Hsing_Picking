@@ -22,6 +22,8 @@ let vm = new Vue({
       pickingCourse: [],
       // tab切換
       tabView: 0,
+      // mobile schedule view
+      courseViewType: '1',
       // titleBar
       selectYear: '1061',
       selectDegree: '',
@@ -29,8 +31,8 @@ let vm = new Vue({
       selectLevel: '',
       // timeTable
       schedule: [],
-      scheduleWeek: {'一': [], '二': [], '三': [], '四': [], '五': []},
-      scheduleWeekKeep: {'一': [], '二': [], '三': [], '四': [], '五': []},
+      scheduleWeek: {'一': [], '二': [], '三': [], '四': [], '五': [], '無上課時間': []},
+      scheduleWeekKeep: {'一': [], '二': [], '三': [], '四': [], '五': [], '無上課時間': []},
       // modal
       imgUrl: '#',
       startUpload: false,
@@ -171,6 +173,13 @@ let vm = new Vue({
         else if (type === 'keep') {
           let removeSpace = _.findIndex(this.keepCourse, {code: course.code})
           this.keepCourse.splice(removeSpace, 1)
+
+          _.forEach(this.scheduleWeekKeep, (week, key) => {
+            removeSpace = _.findKey(week, course)
+            if (!_.isUndefined(removeSpace)) {
+              this.scheduleWeekKeep[key].splice(removeSpace, 1)
+            }
+          })
         }
 
         this.pickingCourse.push(course)
@@ -197,6 +206,9 @@ let vm = new Vue({
             })
           }
         })
+        if (course.time_1 === '') {
+          this.scheduleWeek['無上課時間'].push(course)
+        }
         this.highlightSchedule(course, true)
         this.saveToStorage()
       }
@@ -230,6 +242,10 @@ let vm = new Vue({
         }
       })
 
+      if (course.time_1 === '') {
+        this.scheduleWeekKeep['無上課時間'].push(course)
+      }
+
       this.keepCourse.push(course)
       this.highlightSchedule(course, true)
       this.saveToStorage()
@@ -237,12 +253,19 @@ let vm = new Vue({
     removeCourse(course, type) {
       if (type === 'search') {
         // remove list course
-        let removeSpace = _.findIndex(this.searchCourse, {code: course.code})
+        let removeSpace = _.findIndex(this.searchCourse, course)
         this.searchCourse.splice(removeSpace, 1)
       }
       else if (type === 'keep') {
-        let removeSpace = _.findIndex(this.keepCourse, {code: course.code})
+        let removeSpace = _.findIndex(this.keepCourse, course)
         this.keepCourse.splice(removeSpace, 1)
+
+        _.forEach(this.scheduleWeekKeep, (week, key) => {
+          removeSpace = _.findKey(week, course)
+          if (!_.isUndefined(removeSpace)) {
+            this.scheduleWeekKeep[key].splice(removeSpace, 1)
+          }
+        })
       }
       else if (type === 'now') {
         this.savedImg = false
@@ -277,6 +300,7 @@ let vm = new Vue({
     // 課程搜尋
     searchCourseData() {
       this.startSearch = true
+      this.searchCourse = []
       let type = {
         '0': 'dept',
         '5': 'dept',
@@ -461,8 +485,8 @@ let vm = new Vue({
           this.schedule[ik][jk][0] = []
         })
       })
-      this.scheduleWeek = { '一': [], '二': [], '三': [], '四': [], '五': [] }
-      this.scheduleWeekKeep = { '一': [], '二': [], '三': [], '四': [], '五': [] }
+      this.scheduleWeek = { '一': [], '二': [], '三': [], '四': [], '五': [], '無上課時間': [] }
+      this.scheduleWeekKeep = { '一': [], '二': [], '三': [], '四': [], '五': [], '無上課時間': [] }
       this.saveToStorage()
     },
     clearAll() {

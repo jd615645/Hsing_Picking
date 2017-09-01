@@ -162,6 +162,8 @@
               a#searchBtnMobi.btn.waves-effect(@click='searchCourseData()')
                 i.fa.fa-search
                   span 搜尋符合項目
+            i.icon-loading.fa.fa-spinner.fa-pulse.fa-2x.fa-fw.margin-bottom(v-if='startSearch === true')
+               span.sr-only Loading...
             .course
               ul
                 li(v-for='course in searchCourse')

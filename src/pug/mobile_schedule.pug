@@ -1,34 +1,64 @@
 #mobile_schedule
+  .row.schedule-setting
+    .col-xs-6
+      .course-view-type
+        label.mdl-radio.mdl-js-radio.mdl-js-ripple-effect(for='schedule-setting-1')
+          input#schedule-setting-1.mdl-radio__button(type='radio', name='schedule-setting', value='1', v-model='courseViewType')
+          span.mdl-radio__label
+            i.fa.fa-fw.fa-list-ul
+        label.mdl-radio.mdl-js-radio.mdl-js-ripple-effect(for='schedule-setting-2')
+          input#schedule-setting-2.mdl-radio__button(type='radio', name='schedule-setting', value='2', v-model='courseViewType')
+          span.mdl-radio__label
+            i.fa.fa-fw.fa-table
+    .col-xs-6
+      h3.credits
+        span {{ calcCredits }}
+        | 學分
+
   a.add-course.btn-floating.btn-small.waves-effect.waves-light.blue.lighten-1(@click='mobileAddCourseModal')
     i.fa.fa-fw.fa-pencil
-  .course(v-for='(courses, week) in scheduleWeek')
-    h3.week {{ week }}
-    p.nocourse(v-if='courses.length === 0') 無課程安排
-    ul
-      li(v-for='course in courses')
-        .row
-          .col-xs-8
-            p.title
-              | (
-              | {{ course.code }}
-              | )
-              | {{ course.title_zhTW }}
-            p.info
-              span.professor
-                i.fa.fa-fw.fa-user
-                | {{ course.professor }}
-              span.location(v-show='course.location_1 !== ""')
-                i.fa.fa-fw.fa-map-marker
-                | {{ course.location_1 }}
-                | {{ course.location_2 }}
-              span.credits
-                i.fa.fa-fw.fa-graduation-cap
-                | {{ course.credits }}
-                | 學分
-          .col-xs-4
-            p.time
-              | {{ course.start }}
-              | -
-              | {{ course.end }}
-        button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn(@click='removeCourse(course, "now")')
-          i.fa.fa-fw.fa-times
+
+  #scheduleListMoblie(v-show='courseViewType === "1"')
+    .course(v-for='(courses, week) in scheduleWeek')
+      h3.week {{ week }}
+      p.nocourse(v-if='courses.length === 0') 無課程安排
+      ul
+        li(v-for='course in courses')
+          .row
+            .col-xs-7
+              p.title
+                | (
+                | {{ course.code }}
+                | )
+                | {{ course.title_zhTW }}
+              p.info
+                span.professor
+                  i.fa.fa-fw.fa-user
+                  | {{ course.professor }}
+                span.location(v-show='course.location_1 !== ""')
+                  i.fa.fa-fw.fa-map-marker
+                  | {{ course.location_1 }}
+                  | {{ course.location_2 }}
+                span.credits
+                  i.fa.fa-fw.fa-graduation-cap
+                  | {{ course.credits }}
+                  | 學分
+            .col-xs-5
+              p.time
+                | {{ course.start }}
+                | -
+                | {{ course.end }}
+          button.mdl-button.mdl-js-button.mdl-button--icon.setting-btn(@click='removeCourse(course, "now")')
+            i.fa.fa-fw.fa-times
+  #scheduleTableMoblie(v-show='courseViewType === "2"')
+    table
+      thead
+        tr
+          th(v-for='day in ["一", "二", "三", "四", "五"]') {{ day }}
+      tbody
+        tr(v-for='(course, index) in schedule')
+          td(v-for='(item, key) in course', :class='{free: item[1]==1, notfree: item[1]==2, self: item[1]==3}')
+            .course(v-if='!_.isEmpty(item[0])')
+              p {{ item[0].title_zhTW }}
+              p(v-if='viewSwitch==1 || viewSwitch==3') {{ item[0].professor }}
+              p(v-if='viewSwitch>=2') {{ item[0].location_1 }}
