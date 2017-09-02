@@ -2,6 +2,7 @@ const gulp = require('gulp')
 const path = require('path')
 const $ = require('gulp-load-plugins')()
 const autoprefixer = require('gulp-autoprefixer')
+const minifyCSS = require('gulp-minify-css')
 
 const paths = {
   src: {
@@ -39,6 +40,9 @@ gulp.task('less', () => {
     .pipe(autoprefixer({
       browsers: ['last 3 versions'],
       cascade: false
+    }))
+    .pipe(minifyCSS({
+      keepBreaks: true
     }))
     .pipe(gulp.dest(paths.dist.css))
 })
