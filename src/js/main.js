@@ -126,9 +126,11 @@ let vm = new Vue({
       this.clearCourse()
 
       // 區分AB班
-      if (dept.slice(-1) == 'A' || dept.slice(-1) == 'B') {
-        level = level + dept.slice(-1)
-        dept = dept.replace(/ A| B/g, '')
+      if (dept.slice(-1) === 'A' || dept.slice(-1) === 'B') {
+        if (dept.indexOf('U54') === -1) {
+          level = level + dept.slice(-1)
+          dept = dept.replace(/ A| B/g, '')
+        }
       }
 
       this.keepCourse = []
