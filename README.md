@@ -22,11 +22,11 @@
   npm install
   ```
 # Todo list
-* 手機板
-* 快速填入課表小工具
 * 圖片輸出尺寸調整
 * 不同年級課表存取
-* 學分試算工具
+
+# Other
+* 部份icon取自 [FLATICON](https://www.flaticon.com/)
 
 # License
 ![CC](http://creativecommons.tw/sites/creativecommons.tw/files/cc-by-nc-sa-88x31.png)
