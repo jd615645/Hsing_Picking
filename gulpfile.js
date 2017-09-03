@@ -3,6 +3,7 @@ const path = require('path')
 const $ = require('gulp-load-plugins')()
 const autoprefixer = require('gulp-autoprefixer')
 const minifyCSS = require('gulp-minify-css')
+const uglify = require('gulp-uglify')
 
 const paths = {
   src: {
@@ -56,6 +57,7 @@ gulp.task('scripts', () => {
     .pipe($.babel({
       presets: ['es2015']
     }))
+    .pipe(uglify())
     .pipe(gulp.dest(paths.dist.js))
 })
 gulp.task('jslib', () => {

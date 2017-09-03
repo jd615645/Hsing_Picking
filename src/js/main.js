@@ -96,7 +96,6 @@ let vm = new Vue({
     },
     detailDropdown() {
       this.searchDetail = ''
-      console.log('hi')
       toastr.info('記得要選擇分類喔')
       return _.get(this.departmentData, [this.searchItem], [])
     }
