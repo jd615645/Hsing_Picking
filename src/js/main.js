@@ -50,7 +50,7 @@ let vm = new Vue({
       clipboard: new Clipboard('#copyLink button'),
       // imgpur APIv3 client id
       imgurAPI: '30b5b43a2e55afd',
-      restAPI: 'https://api.hsingpicking.com.tw'
+      restAPI: 'https://api.hsingpicking.tk'
     }
   },
   mounted() {
