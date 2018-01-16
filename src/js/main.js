@@ -25,7 +25,7 @@ let vm = new Vue({
       // mobile schedule view
       courseViewType: '1',
       // titleBar
-      selectYear: '1061',
+      selectYear: '1062',
       selectDegree: '',
       selectDept: '',
       selectLevel: '',
@@ -50,7 +50,8 @@ let vm = new Vue({
       clipboard: new Clipboard('#copyLink button'),
       // imgpur APIv3 client id
       imgurAPI: '30b5b43a2e55afd',
-      restAPI: 'https://api.hsingpicking.tk'
+      restAPI: 'https://api.hsingpicking.tk',
+      firstIn: true
     }
   },
   mounted() {
@@ -96,7 +97,12 @@ let vm = new Vue({
     },
     detailDropdown() {
       this.searchDetail = ''
-      toastr.info('記得要選擇分類喔')
+      if (!this.firstIn) {
+        toastr.info('記得要選擇分類喔')
+      }
+      else {
+        this.firstIn = false
+      }
       return _.get(this.departmentData, [this.searchItem], [])
     }
   },
