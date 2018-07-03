@@ -508,7 +508,7 @@ let vm = new Vue({
       this.searchDetail = ''
       this.searchTime = ''
 
-      this.selectYear = '1062'
+      this.selectYear = '1071'
       this.selectDegree = ''
       this.selectDept = ''
       this.selectLevel = ''
